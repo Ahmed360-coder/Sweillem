@@ -1,0 +1,352 @@
+@import "tailwindcss";
+
+/* SWEILLEM design tokens, ported from design/tokens.css (redesign prototype).
+   Maroon and grey are sampled from the logo in SWEILLEM's deck and still need
+   SWEILLEM's confirmation (docs/content-gaps.md 6.1). Change colours here only. */
+:root {
+  --paper: #f2f2ef;
+  --surface: #ffffff;
+  --sunk: #e8e7e3;
+  --ink: #1c1818;
+  --muted: #5d5f62;
+  --line: #d6d4cf;
+  --maroon: #7a0404;
+  --maroon-hi: #9c1010;
+  --on-maroon: #ffffff;
+  --slate: #7f8285;
+  --glaze: #3b2119;
+  --glaze-hi: #6b3a26;
+  --clay: #c07a4a;
+  --fire: #e4572e;
+  --bore: #f7f1ea;
+  --ok: #1d6b43;
+  --warn: #a15c00;
+  --err: #b3261e;
+  --shadow: 0 1px 2px rgb(28 24 24 / 0.06), 0 8px 24px -8px rgb(28 24 24 / 0.18);
+  --logo-filter: none;
+
+  --font-display: var(--font-jost), system-ui, sans-serif;
+  --font-body: var(--font-plex-sans), system-ui, sans-serif;
+  --font-data: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --t-instant: 120ms;
+  --t-quick: 200ms;
+  --t-base: 320ms;
+  --t-slow: 560ms;
+  --t-story: 900ms;
+  --ease-glaze: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-kiln: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-set: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --hex: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  --frame-cut: polygon(0 0, 82% 0, 100% 18%, 100% 100%, 18% 100%, 0 82%);
+
+  --header-h: 76px;
+  color-scheme: light;
+}
+
+/* Dark theme: follows the device unless a page sets data-theme. The redesign
+   thread's "dark kiln" theme plugs in here by overriding these tokens. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #141011;
+    --surface: #1d1718;
+    --sunk: #261f1f;
+    --ink: #f1ebe8;
+    --muted: #aaa19d;
+    --line: #382e2d;
+    --maroon: #e0524a;
+    --maroon-hi: #f07068;
+    --on-maroon: #1a0706;
+    --slate: #9a9da0;
+    --glaze: #5a3325;
+    --glaze-hi: #8a5238;
+    --clay: #d08a58;
+    --fire: #ff7a45;
+    --bore: #0f0b0b;
+    --ok: #5cc28c;
+    --warn: #e5a24a;
+    --err: #ff8a80;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 10px 30px -10px rgb(0 0 0 / 0.7);
+    --logo-filter: brightness(0) invert(0.94);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #141011;
+  --surface: #1d1718;
+  --sunk: #261f1f;
+  --ink: #f1ebe8;
+  --muted: #aaa19d;
+  --line: #382e2d;
+  --maroon: #e0524a;
+  --maroon-hi: #f07068;
+  --on-maroon: #1a0706;
+  --slate: #9a9da0;
+  --glaze: #5a3325;
+  --glaze-hi: #8a5238;
+  --clay: #d08a58;
+  --fire: #ff7a45;
+  --bore: #0f0b0b;
+  --ok: #5cc28c;
+  --warn: #e5a24a;
+  --err: #ff8a80;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 10px 30px -10px rgb(0 0 0 / 0.7);
+  --logo-filter: brightness(0) invert(0.94);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-sunk: var(--sunk);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-maroon: var(--maroon);
+  --color-maroon-hi: var(--maroon-hi);
+  --color-on-maroon: var(--on-maroon);
+  --color-slate: var(--slate);
+  --color-glaze: var(--glaze);
+  --color-glaze-hi: var(--glaze-hi);
+  --color-clay: var(--clay);
+  --color-fire: var(--fire);
+  --color-bore: var(--bore);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-err: var(--err);
+
+  --font-display: var(--font-display);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-data);
+
+  --radius-chip: 999px;
+  --radius-control: 10px;
+  --radius-card: 16px;
+  --radius-panel: 20px;
+
+  --shadow-card: var(--shadow);
+
+  --ease-glaze: var(--ease-glaze);
+  --ease-kiln: var(--ease-kiln);
+  --ease-set: var(--ease-set);
+}
+
+@layer base {
+  html {
+    scroll-padding-top: calc(var(--header-h) + 16px);
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font: 16px/1.6 var(--font-body);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    text-rendering: optimizeLegibility;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    line-height: 1.08;
+    font-weight: 600;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  :focus-visible {
+    outline: 2px solid var(--maroon);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--maroon) 22%, transparent);
+  }
+}
+
+@layer components {
+  .wrap {
+    width: 100%;
+    max-width: 1180px;
+    margin-inline: auto;
+    padding-inline: clamp(16px, 4vw, 40px);
+  }
+  .eyebrow {
+    font-family: var(--font-data);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--maroon);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 9px;
+    height: 10px;
+    background: currentColor;
+    clip-path: var(--hex);
+    flex: none;
+  }
+  .lede {
+    font-size: clamp(17px, 1.6vw, 19px);
+    color: var(--muted);
+    max-width: 62ch;
+  }
+  .link {
+    color: var(--maroon);
+    font-weight: 600;
+    text-decoration: none;
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1.5px no-repeat;
+    transition: background-size var(--t-base) var(--ease-glaze);
+  }
+  .link:hover,
+  .link:focus-visible {
+    background-size: 100% 1.5px;
+  }
+  [dir="rtl"] .link {
+    background-position: 100% 100%;
+  }
+  .skip-link {
+    position: absolute;
+    inset-inline-start: 16px;
+    top: -100px;
+    z-index: 100;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .skip-link:focus {
+    top: 12px;
+  }
+  .hex {
+    clip-path: var(--hex);
+  }
+}
+
+/* M01 page transition: views rise 14 px and fade in on route change. */
+@keyframes view-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+.view-enter {
+  animation: view-enter var(--t-base) var(--ease-glaze) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- home hero (M03 headline rise, M05 ring draw) ---------- */
+.rise-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-block-end: 0.08em;
+}
+.rise-word > span {
+  display: inline-block;
+  animation: rise var(--t-story) var(--ease-glaze) both;
+  animation-delay: calc(var(--i) * 55ms + 120ms);
+}
+@keyframes rise {
+  from {
+    transform: translateY(105%);
+  }
+}
+.fade-up {
+  animation: fade-up var(--t-slow) var(--ease-glaze) both;
+  animation-delay: var(--dl, 0ms);
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+.frame-cut {
+  clip-path: var(--frame-cut);
+}
+[dir="rtl"] .frame-cut {
+  clip-path: polygon(18% 0, 100% 0, 100% 82%, 82% 100%, 0 100%, 0 18%);
+}
+.rings circle {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1;
+  stroke-dasharray: var(--c);
+  stroke-dashoffset: var(--c);
+  animation: ring-draw 2.4s var(--ease-kiln) forwards;
+  animation-delay: calc(var(--i) * 180ms);
+}
+@keyframes ring-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.badge-1935 {
+  animation: spin-in 1.2s var(--ease-set) 0.5s both;
+}
+@keyframes spin-in {
+  from {
+    transform: rotate(-60deg) scale(0.4);
+    opacity: 0;
+  }
+}
+
+/* ---------- 404 (M27 pipe roll) ---------- */
+.nf-pipe {
+  animation: nf-roll 2.2s var(--ease-glaze) both;
+}
+@keyframes nf-roll {
+  from {
+    transform: translateX(-120%) rotate(-360deg);
+  }
+}
+[dir="rtl"] .nf-pipe {
+  animation-name: nf-roll-rtl;
+}
+@keyframes nf-roll-rtl {
+  from {
+    transform: translateX(120%) rotate(360deg);
+  }
+}
+.nf-drop {
+  animation: nf-drop 1.4s ease-in 2.2s infinite;
+  opacity: 0;
+}
+@keyframes nf-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nf-pipe,
+  .nf-drop {
+    animation: none !important;
+  }
+}

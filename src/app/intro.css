@@ -1,0 +1,251 @@
+/* M00 intro overlay (design/intro-spec.md). Timings mirror the prototype.
+   It only shows when the inline gate script sets <html data-intro="play">, so
+   without JavaScript there is no intro and nothing can get stuck on screen. */
+.intro {
+  display: none;
+}
+html[data-intro="play"] .intro {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  cursor: pointer;
+  background: #140a08;
+  color: #fff;
+  --px: 0;
+  --py: 0;
+  clip-path: polygon(50% -70%, 170% -10%, 170% 110%, 50% 170%, -70% 110%, -70% -10%);
+  animation: intro-exit 0.7s var(--ease-kiln) 3s forwards;
+}
+html[data-intro="play"] .intro[data-state="out"] {
+  animation: intro-exit 0.7s var(--ease-kiln) forwards;
+}
+@keyframes intro-exit {
+  99% {
+    visibility: visible;
+  }
+  to {
+    clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%);
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+.intro-art {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+.intro-bg {
+  position: absolute;
+  inset: -4%;
+  transform: translate(calc(var(--px) * -14px), calc(var(--py) * -14px));
+  transition: transform 0.6s var(--ease-glaze);
+}
+.intro-photo {
+  width: 100%;
+  height: 100%;
+  background: url("/images/site/glazed.webp") center / cover no-repeat;
+  opacity: 0;
+  animation: intro-bg 3.4s var(--ease-glaze) forwards;
+}
+@keyframes intro-bg {
+  0% {
+    opacity: 0;
+    transform: scale(1.18);
+  }
+  35% {
+    opacity: 0.62;
+  }
+  100% {
+    opacity: 0.62;
+    transform: scale(1.03);
+  }
+}
+.intro-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 48%, rgb(20 10 8 / 0.25), rgb(20 10 8 / 0.88) 70%),
+    linear-gradient(to top, rgb(122 4 4 / 0.55), transparent 55%);
+}
+.intro-glow {
+  position: absolute;
+  left: calc(50% + var(--px) * 30%);
+  top: calc(50% + var(--py) * 30%);
+  width: 60vmax;
+  height: 60vmax;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(228 87 46 / 0.28), transparent 60%);
+  mix-blend-mode: screen;
+  transition:
+    left 0.5s,
+    top 0.5s;
+  pointer-events: none;
+}
+.intro-embers {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.intro-center {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 22px;
+  padding-inline: 16px;
+  transform: perspective(700px) rotateX(calc(var(--py) * -7deg)) rotateY(calc(var(--px) * 9deg));
+  transition: transform 0.5s var(--ease-glaze);
+}
+.intro-hex {
+  position: absolute;
+  width: min(300px, 62vw);
+  top: 50%;
+  left: 50%;
+  translate: -50% -58%;
+  overflow: visible;
+}
+.intro-hex path {
+  fill: none;
+  stroke: rgb(255 255 255 / 0.5);
+  stroke-width: 1.2;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: intro-hex 0.8s var(--ease-kiln) 1.25s forwards;
+}
+.intro-hex path.h2 {
+  stroke: rgb(228 87 46 / 0.8);
+  stroke-width: 2;
+  animation:
+    intro-hex 1.3s var(--ease-kiln) 1.35s forwards,
+    intro-hex-fade 0.5s 2.6s forwards;
+}
+@keyframes intro-hex {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes intro-hex-fade {
+  to {
+    opacity: 0.25;
+  }
+}
+.intro-logo {
+  position: relative;
+  width: min(360px, 74vw);
+  height: auto;
+  filter: brightness(0) invert(1) drop-shadow(0 6px 26px rgb(0 0 0 / 0.5));
+  clip-path: inset(0 100% 0 0);
+  animation: intro-logo 0.65s var(--ease-glaze) 1.35s forwards;
+}
+[dir="rtl"] .intro-logo {
+  clip-path: inset(0 0 0 100%);
+}
+@keyframes intro-logo {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+.intro-tag {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  white-space: nowrap;
+  font: 500 12px/1 var(--font-data);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: intro-up 0.5s var(--ease-glaze) 1.85s forwards;
+}
+.intro-tag b {
+  font: 600 13px var(--font-data);
+  color: #ffb08a;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.1em;
+}
+@keyframes intro-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.intro-slot {
+  width: min(560px, 86vw);
+}
+.intro-pipes {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  transform: translateY(-110px) scale(1.35);
+  transition: transform 0.45s var(--ease-kiln);
+}
+.intro-pipes[data-settled] {
+  transform: none;
+}
+/* With JS and full motion, the assembled line is hidden until the per-frame drawing takes over. */
+html[data-intro="play"] .intro:not([data-live]) .intro-pipes {
+  opacity: 0;
+}
+.intro-skip {
+  position: absolute;
+  bottom: 22px;
+  inset-inline-end: 22px;
+  border: 1px solid rgb(255 255 255 / 0.3);
+  background: rgb(0 0 0 / 0.2);
+  color: #fff;
+  border-radius: 999px;
+  padding: 7px 14px;
+  font: 500 12px var(--font-body);
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  animation: intro-up 0.4s 0.6s forwards;
+}
+
+/* Reduced motion: joined pipes, logo, photo and year shown still for 0.9 s, then a 0.2 s fade. */
+@media (prefers-reduced-motion: reduce) {
+  html[data-intro="play"] .intro,
+  html[data-intro="play"] .intro[data-state="out"] {
+    animation: intro-fade 0.2s linear 0.9s forwards !important;
+  }
+  html[data-intro="play"] .intro[data-state="out"] {
+    animation-delay: 0s !important;
+  }
+  .intro-photo {
+    animation: none !important;
+    opacity: 0.62;
+  }
+  .intro-hex {
+    display: none;
+  }
+  .intro-logo {
+    animation: none !important;
+    clip-path: none;
+  }
+  .intro-tag,
+  .intro-skip {
+    animation: none !important;
+    opacity: 1;
+  }
+  html[data-intro] .intro .intro-pipes {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes intro-fade {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}

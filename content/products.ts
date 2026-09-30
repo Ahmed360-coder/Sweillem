@@ -1,8 +1,8 @@
 import type { Product, ProductSpecs } from "./types";
-import pipes from "./specs/pipes.json";
-import bends from "./specs/bends.json";
-import junctions from "./specs/junctions.json";
-import shortPieces from "./specs/short-pieces.json";
+import pipes from "./specs/pipes.json" with { type: "json" };
+import bends from "./specs/bends.json" with { type: "json" };
+import junctions from "./specs/junctions.json" with { type: "json" };
+import shortPieces from "./specs/short-pieces.json" with { type: "json" };
 
 /** The ten product pages on the live site, in its menu order. */
 export const products: Product[] = [

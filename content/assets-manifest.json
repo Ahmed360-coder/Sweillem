@@ -201,6 +201,36 @@
       "notes": "Black tile with \"sweillem roofing tiles\" badge.",
       "publish": "needs-confirmation",
       "status": "in-repo"
+    },
+    {
+      "path": "public/images/brand/sweillem-logo.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image2.png",
+      "slide": 2,
+      "notes": "Logo cropped tight with a transparent background, 640x217 WebP (from the redesign prototype). Used in the header, footer and intro. No vector supplied.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/site/hero.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image16.png",
+      "slide": 16,
+      "notes": "Home hero: pipes on a German site, cropped and compressed to 1227x920 WebP for the redesign prototype (same photo as projects/germany-site.jpg).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/site/glazed.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image9.jpg",
+      "slide": 10,
+      "notes": "Intro background: glazed pipes from the final firing slide, 900x808 WebP (same photo as manufacturing/glazed-pipes-02.jpg).",
+      "publish": "yes",
+      "status": "in-repo"
     }
   ],
   "liveSite": [

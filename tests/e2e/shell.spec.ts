@@ -1,0 +1,84 @@
+import { expect, test } from "@playwright/test";
+import { skipIntro } from "./helpers";
+
+test.describe("header", () => {
+  test.beforeEach(async ({ page }) => skipIntro(page));
+
+  test("marks the current page and condenses on scroll", async ({ page, isMobile }) => {
+    test.skip(isMobile, "desktop navigation");
+    await page.goto("/about");
+    const nav = page.getByRole("navigation", { name: "Main" });
+    await expect(nav.getByRole("link", { name: "About" })).toHaveAttribute("aria-current", "page");
+    const header = page.locator("header").first();
+    await expect(header).not.toHaveAttribute("data-stuck");
+    await page.mouse.wheel(0, 400);
+    await expect(header).toHaveAttribute("data-stuck", "");
+  });
+
+  test("mobile menu opens, traps nothing, closes on Escape and after navigating", async ({ page, isMobile }) => {
+    test.skip(!isMobile, "mobile navigation");
+    await page.goto("/");
+    const burger = page.getByRole("button", { name: "Menu" });
+    const menu = page.locator("#mobile-menu");
+    await expect(burger).toHaveAttribute("aria-expanded", "false");
+    await expect(menu).toHaveAttribute("inert", "");
+
+    await burger.click();
+    await expect(burger).toHaveAttribute("aria-expanded", "true");
+    await expect(menu).not.toHaveAttribute("inert");
+    await page.keyboard.press("Escape");
+    await expect(burger).toHaveAttribute("aria-expanded", "false");
+    await expect(burger).toBeFocused();
+
+    await burger.click();
+    await menu.getByRole("link", { name: "Projects" }).click();
+    await expect(page).toHaveURL(/\/projects$/);
+    await expect(burger).toHaveAttribute("aria-expanded", "false");
+  });
+
+  test("quote button shows the list count", async ({ page }) => {
+    await page.goto("/quote");
+    await expect(page.getByRole("heading", { name: "Your quote list is empty" })).toBeVisible();
+    await page.evaluate(() => {
+      localStorage.setItem("sweillem.quote.v1", JSON.stringify([{ product: "Pipes", size: "DN 200", strengthClass: "N", qty: 3 }]));
+      window.dispatchEvent(new Event("sweillem:quote"));
+    });
+    await expect(page.locator("[data-quote-count]")).toHaveText("3");
+    await expect(page.getByText("Pipes · DN 200 · N")).toBeVisible();
+  });
+});
+
+test.describe("intro", () => {
+  test("plays once per session on the home page and can be skipped", async ({ page }) => {
+    await page.goto("/");
+    const intro = page.locator("#intro");
+    await expect(page.locator("html")).toHaveAttribute("data-intro", "play");
+    await expect(intro).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(page.locator("html")).toHaveAttribute("data-intro", "done", { timeout: 2000 });
+    await expect(intro).toBeHidden();
+
+    await page.reload();
+    await expect(page.locator("html")).toHaveAttribute("data-intro", "done");
+    await expect(intro).toBeHidden();
+  });
+
+  test("ends by itself within four seconds", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator("#intro")).toBeHidden({ timeout: 4500 });
+  });
+
+  test("never shows on deep links", async ({ page }) => {
+    await page.goto("/products");
+    await expect(page.locator("html")).toHaveAttribute("data-intro", "done");
+    await expect(page.locator("#intro")).toBeHidden();
+  });
+
+  test("reduced motion shows it still and briefly", async ({ browser }) => {
+    const ctx = await browser.newContext({ reducedMotion: "reduce" });
+    const page = await ctx.newPage();
+    await page.goto("/");
+    await expect(page.locator("#intro")).toBeHidden({ timeout: 1800 });
+    await ctx.close();
+  });
+});
