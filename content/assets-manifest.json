@@ -574,37 +574,43 @@
       "contentType": "image/jpeg"
     },
     {
-      "url": "https://sweillem.net/wp-content/uploads/2025/07/SASO-2022-2025-ء_Page1_Image1.jpg",
+      "url": "https://sweillem.net/wp-content/uploads/2025/07/SASO-2022-2025-١_Page1_Image1.jpg",
       "path": "public/images/certificates/saso-page-1.jpg",
       "kind": "certificate-scan",
       "usedOn": [
         "/certificates/"
       ],
-      "status": "failed",
+      "status": "downloaded",
       "publish": "yes",
-      "error": "HTTP 404"
+      "bytes": 175370,
+      "sha256": "a4b5469d2f33b417cfe4628d6137d190f392a116051be7fc468002773e2da51a",
+      "contentType": "image/jpeg"
     },
     {
-      "url": "https://sweillem.net/wp-content/uploads/2025/07/SASO-2022-2025-ء-1-rotated.jpg",
+      "url": "https://sweillem.net/wp-content/uploads/2025/07/SASO-2022-2025-١-1-rotated.jpg",
       "path": "public/images/certificates/saso.jpg",
       "kind": "certificate-scan",
       "usedOn": [
         "/certificates/"
       ],
-      "status": "failed",
+      "status": "downloaded",
       "publish": "yes",
-      "error": "HTTP 404"
+      "bytes": 164116,
+      "sha256": "694ae50762941be46098e5255abbac85a9c7a5e82f48f6e7d078aa0fddff1c54",
+      "contentType": "image/jpeg"
     },
     {
-      "url": "https://sweillem.net/wp-content/uploads/2025/07/SASO-2022-2025-ء.jpg",
+      "url": "https://sweillem.net/wp-content/uploads/2025/07/SASO-2022-2025-١.jpg",
       "path": "public/images/certificates/saso-unrotated.jpg",
       "kind": "certificate-scan",
       "usedOn": [
         "media library"
       ],
-      "status": "failed",
+      "status": "downloaded",
       "publish": "yes",
-      "error": "HTTP 404"
+      "bytes": 221296,
+      "sha256": "7cc0d791b03dd4db2f497da692af60e8ae49a679fa032f085eb40502541c1b2a",
+      "contentType": "image/jpeg"
     },
     {
       "url": "https://sweillem.net/wp-content/uploads/2025/07/Sweillam.-ISO-9001-2015.jpg",
@@ -1435,5 +1441,5 @@
       "contentType": "image/jpeg"
     }
   ],
-  "lastFetch": "2026-09-30T19:43:09.963Z"
+  "lastFetch": "2026-09-30T19:45:36.951Z"
 }

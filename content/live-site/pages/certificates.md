@@ -17,12 +17,12 @@ No text: a gallery of certificate scans (WordPress media IDs 2207, 2208, 2209, 2
 | 2209 | 45001 SWEILLEM | https://sweillem.net/wp-content/uploads/2025/07/45001-SWEILLEM.jpg |
 | 2265 | DIN CERTCO31-05-2027-EN | https://sweillem.net/wp-content/uploads/2025/07/DIN-CERTCO31-05-2027-EN.jpg |
 | 2268 | DIN CERTCO31-05-2027-EN_Page1_Image1 | https://sweillem.net/wp-content/uploads/2025/07/DIN-CERTCO31-05-2027-EN_Page1_Image1.jpg |
-| 2277 | SASO 2022 – 2025-ء_Page1_Image1 | https://sweillem.net/wp-content/uploads/2025/07/SASO-2022-2025-ء_Page1_Image1.jpg |
-| 2278 | SASO 2022 – 2025-ء | https://sweillem.net/wp-content/uploads/2025/07/SASO-2022-2025-ء-1-rotated.jpg |
+| 2277 | SASO 2022 – 2025-١_Page1_Image1 | https://sweillem.net/wp-content/uploads/2025/07/SASO-2022-2025-١_Page1_Image1.jpg |
+| 2278 | SASO 2022 – 2025-١ | https://sweillem.net/wp-content/uploads/2025/07/SASO-2022-2025-١-1-rotated.jpg |
 
 Other certificate files in the media library (July 2025), not confirmed as shown on this page:
 
 - https://sweillem.net/wp-content/uploads/2025/07/Sweillam.-ISO-9001-2015.jpg
 - https://sweillem.net/wp-content/uploads/2025/07/Sweil_Vitri_Bronz_CERT9605_2025-05-06_73535.jpg (file name suggests a Cradle to Cradle Bronze certificate, cert 9605, dated 2025-05-06; to confirm)
-- https://sweillem.net/wp-content/uploads/2025/07/SASO-2022-2025-ء.jpg
+- https://sweillem.net/wp-content/uploads/2025/07/SASO-2022-2025-١.jpg (media ID 2276, title "SASO 2022 – 2025-١")
 - https://sweillem.net/wp-content/uploads/2025/07/DIN-CERTCO31-05-2027-EN.pdf
