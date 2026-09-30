@@ -1,0 +1,42 @@
+# Run by hand from the Actions tab ("Run workflow") to copy photos, drawings
+# and certificate PDFs from sweillem.net into the repo. Commits the files to
+# the branch it was started on.
+name: Fetch live-site assets
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Download every file again, even ones already in the repo"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Download assets
+        # Keep going on partial failure so the files that did download are committed;
+        # failures are recorded in content/assets-manifest.json.
+        continue-on-error: true
+        run: node scripts/fetch-live-assets.mjs ${{ inputs.force && '--force' || '' }}
+      - name: Check content
+        run: node scripts/check-content.mjs
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public content/assets-manifest.json
+          if git diff --cached --quiet; then
+            echo "Nothing new to commit"
+          else
+            git commit -m "Fetch live-site assets into the repo"
+            git push
+          fi
