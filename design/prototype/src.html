@@ -529,6 +529,40 @@ table.mt{border-collapse:collapse;width:100%;font-size:13.5px;min-width:820px}
 .mt td:first-child{font:600 12px var(--font-data);color:var(--maroon);white-space:nowrap}
 .mt td code{font:500 12px var(--font-data)}
 .mt button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 10px;cursor:pointer;font-size:12px;white-space:nowrap}
+
+/* ---------- intro (M00) ---------- */
+#intro{position:absolute;inset:0;z-index:80;background:#140a08;color:#fff;display:grid;place-items:center;overflow:hidden;cursor:pointer;
+  clip-path:polygon(50% -70%,170% -10%,170% 110%,50% 170%,-70% 110%,-70% -10%);--px:0;--py:0}
+#intro[hidden]{display:none!important}
+#intro.out{clip-path:polygon(50% 50%,50% 50%,50% 50%,50% 50%,50% 50%,50% 50%);transition:clip-path .7s cubic-bezier(.65,0,.35,1)}
+#intro .ibg{position:absolute;inset:-4%;transform:translate(calc(var(--px)*-14px),calc(var(--py)*-14px));transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+#intro .ibg img{width:100%;height:100%;object-fit:cover;opacity:0;animation:ibgIn 2.6s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes ibgIn{0%{opacity:0;transform:scale(1.18)}35%{opacity:.62}100%{opacity:.62;transform:scale(1.03)}}
+#intro .ishade{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 48%,rgb(20 10 8/.25),rgb(20 10 8/.88) 70%),linear-gradient(to top,rgb(122 4 4/.55),transparent 55%)}
+#intro .glow{position:absolute;left:calc(50% + var(--px)*30%);top:calc(50% + var(--py)*30%);width:60vmax;height:60vmax;translate:-50% -50%;border-radius:50%;background:radial-gradient(circle,rgb(228 87 46/.28),transparent 60%);mix-blend-mode:screen;transition:left .5s,top .5s;pointer-events:none}
+#intro .ic{position:relative;display:grid;justify-items:center;gap:22px;transform:perspective(700px) rotateX(calc(var(--py)*-7deg)) rotateY(calc(var(--px)*9deg));transition:transform .5s cubic-bezier(.2,.8,.2,1);padding-inline:16px}
+#intro .hexo{position:absolute;width:min(300px,62cqi);top:50%;left:50%;translate:-50% -58%;overflow:visible}
+#intro .hexo path{fill:none;stroke:rgb(255 255 255/.5);stroke-width:1.2;stroke-dasharray:100;stroke-dashoffset:100;animation:hexDraw .8s cubic-bezier(.65,0,.35,1) forwards}
+#intro .hexo path.h2{stroke:rgb(228 87 46/.8);stroke-width:2;animation:hexDraw 1.9s cubic-bezier(.65,0,.35,1) .15s forwards,hexFade .5s 1.7s forwards}
+@keyframes hexDraw{to{stroke-dashoffset:0}}
+@keyframes hexFade{to{opacity:.25}}
+#intro .ilogo{width:min(360px,74cqi);height:auto;filter:brightness(0) invert(1) drop-shadow(0 6px 26px rgb(0 0 0/.5));clip-path:inset(0 100% 0 0);animation:logoIn .75s cubic-bezier(.2,.8,.2,1) .45s forwards;position:relative}
+[dir="rtl"] #intro .ilogo{clip-path:inset(0 0 0 100%)}
+@keyframes logoIn{to{clip-path:inset(0 0 0 0)}}
+#intro .itag{font:500 12px/1 var(--font-data);letter-spacing:.28em;text-transform:uppercase;display:flex;gap:10px;align-items:center;opacity:0;animation:introUp .6s cubic-bezier(.2,.8,.2,1) 1s forwards;white-space:nowrap}
+@keyframes introUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+#intro .itag b{font:600 13px var(--font-data);color:#ffb08a;font-variant-numeric:tabular-nums;letter-spacing:.1em}
+#intro .iprog{width:min(220px,50cqi);height:2px;background:rgb(255 255 255/.15);border-radius:1px;overflow:hidden;opacity:0;animation:introUp .4s .2s forwards}
+#intro .iprog i{display:block;height:100%;background:linear-gradient(90deg,#7a0404,#e4572e,#ffb08a);transform:scaleX(0);transform-origin:left;animation:fill 1.85s cubic-bezier(.65,0,.35,1) .1s forwards}
+[dir="rtl"] #intro .iprog i{transform-origin:right}
+#intro .skip{position:absolute;bottom:22px;inset-inline-end:22px;border:1px solid rgb(255 255 255/.3);background:rgb(0 0 0/.2);color:#fff;border-radius:999px;padding:7px 14px;font:500 12px var(--font-body);cursor:pointer;backdrop-filter:blur(4px);opacity:0;animation:introUp .4s .6s forwards}
+#intro .sparks{position:absolute;inset:0;pointer-events:none}
+#site[data-motion="reduced"] #intro .ilogo{clip-path:none}
+#site[data-motion="reduced"] #intro .ibg img{opacity:.62}
+#site[data-motion="reduced"] #intro .hexo path{stroke-dashoffset:0}
+#site[data-motion="reduced"] #intro :is(.itag,.iprog,.skip){opacity:1}
+#site[data-motion="reduced"] #intro.out{clip-path:none;opacity:0;transition:opacity .2s}
+
 .draft-banner{background:color-mix(in srgb,var(--warn) 14%,var(--surface));color:var(--ink);font-size:13px;padding-block:8px;text-align:center;border-block-end:1px solid color-mix(in srgb,var(--warn) 30%,transparent)}
 </style>
 
@@ -544,6 +578,7 @@ table.mt{border-collapse:collapse;width:100%;font-size:13.5px;min-width:820px}
   <span class="grp"><label>Language</label><span class="seg" id="lgSeg"><button data-l="en" aria-pressed="true">EN</button><button data-l="ar" aria-pressed="false">عربي</button></span></span>
   <span class="grp"><label>Motion</label><span class="seg" id="mtSeg"><button data-m="full" aria-pressed="true">Full</button><button data-m="reduced" aria-pressed="false">Reduced</button></span></span>
   <span class="sp"></span>
+  <button class="lang" id="replayIntro" style="color:var(--paper);border-color:color-mix(in srgb,var(--paper) 35%,transparent)">Play intro</button>
   <button class="lang" id="replay" style="color:var(--paper);border-color:color-mix(in srgb,var(--paper) 35%,transparent)">Replay screen</button>
 </div>
 
@@ -559,6 +594,7 @@ table.mt{border-collapse:collapse;width:100%;font-size:13.5px;min-width:820px}
     <div id="scrim"></div>
     <aside id="drawer" aria-label="Quote list" aria-hidden="true"></aside>
     <div id="lightbox" role="dialog" aria-modal="true" aria-hidden="true"></div>
+    <div id="intro" aria-hidden="true" hidden></div>
     <div id="toast" role="status" aria-live="polite"></div>
   </div>
 </div>
@@ -1043,6 +1079,7 @@ SCREENS.notfound = () => `<div class="wrap nf"><svg viewBox="0 0 420 200" aria-h
   <div class="ctas" style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center"><a class="btn btn-primary" data-go="home">${t('nf_home')}</a><a class="btn btn-ghost" data-go="products">${t('nf_prod')}</a></div></div>`;
 
 const MOTION = [
+ ['M00','Intro','First visit per session; skippable by tap or key','2000 ms + 700 ms exit','glaze / kiln','Glazed-pipe photo zooms in, hexagon outline draws, white logo wipes in, year counts 1900→1935, kiln-colour bar fills, embers rise; logo and photo tilt with the pointer; exits by collapsing into a hexagon','Logo and photo shown still for 0.9 s, then a 0.2 s fade','home'],
  ['M01','Page transition','Route change','320 ms','glaze','View rises 14 px and fades in; View Transitions API where supported','Instant swap','all'],
  ['M02','Header condense','Scroll > 24 px','320 ms','glaze','Logo 40→32 px, blurred ground and hairline appear','Same, no easing','home'],
  ['M03','Headline rise','Page load','900 ms, 55 ms stagger','glaze','Each word rises out of a mask','Static text','home'],
@@ -1276,6 +1313,49 @@ const fitBar = () => document.documentElement.style.setProperty('--barH', $('#ba
 new ResizeObserver(fitBar).observe($('#bar')); fitBar();
 site.dataset.motion = S.motion; $$('#mtSeg button').forEach(x=>x.setAttribute('aria-pressed', x.dataset.m===S.motion));
 if (innerWidth < 700) { $('#stage').classList.remove('mobile'); }
+
+/* ---------------- intro (M00): 2 s brand moment over a real product photo ---------------- */
+let introT = [];
+function playIntro(){
+  const el = $('#intro'); introT.forEach(clearTimeout); introT = [];
+  el.innerHTML = `<div class="ibg"><img src="${IMG.glazed}" alt=""></div><div class="ishade"></div><div class="glow"></div><canvas class="sparks"></canvas>
+    <div class="ic"><svg class="hexo" viewBox="0 0 100 115" aria-hidden="true"><path pathLength="100" d="M50 2l46 26.5v58L50 113 4 86.5v-58z"/><path class="h2" pathLength="100" d="M50 2l46 26.5v58L50 113 4 86.5v-58z"/></svg>
+    <img class="ilogo" src="${IMG.logo}" alt="SWEILLEM Vitrified Clay Pipes Co.">
+    <div class="itag"><span>${S.lang==='ar'?'منذ':'Since'}</span><b id="iyr">1900</b><span>·</span><span>${S.lang==='ar'?'القاهرة':'Cairo'}</span></div>
+    <div class="iprog"><i></i></div></div>
+    <button class="skip" id="introSkip">${S.lang==='ar'?'تخطي':'Skip intro'}</button>`;
+  el.classList.remove('out'); el.hidden = false; el.style.setProperty('--px',0); el.style.setProperty('--py',0);
+  if (reduced()) { $('#iyr').textContent = '1935'; introT.push(setTimeout(endIntro, 900)); return; }
+  // year counter 1900 → 1935, landing with the progress bar
+  const t0 = performance.now(), yr = $('#iyr');
+  const tick = now => { const p = Math.min(1, Math.max(0,(now - t0 - 900)/900)); yr.textContent = 1900 + Math.round(35*(1-Math.pow(1-p,3))); if (p < 1 && !el.hidden) requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
+  sparks($('.sparks', el));
+  introT.push(setTimeout(endIntro, 2000));
+}
+function endIntro(){
+  const el = $('#intro'); if (el.hidden || el.classList.contains('out')) return;
+  introT.forEach(clearTimeout); el.classList.add('out');
+  setTimeout(()=>{ el.hidden = true; el.innerHTML = ''; }, reduced() ? 220 : 720);
+  view.classList.remove('view-enter'); void view.offsetWidth; if (!reduced()) view.classList.add('view-enter');
+}
+function sparks(cv){ // kiln embers rising, drift with the pointer
+  const ctx = cv.getContext('2d'), r = cv.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio||1);
+  cv.width = r.width*dpr; cv.height = r.height*dpr; ctx.scale(dpr,dpr);
+  const P = Array.from({length:46}, () => ({ x: Math.random()*r.width, y: r.height + Math.random()*r.height*.6, v: .4+Math.random()*1.3, s: .6+Math.random()*1.8, a: .3+Math.random()*.6 }));
+  const loop = () => { if (!cv.isConnected) return; ctx.clearRect(0,0,r.width,r.height);
+    const px = +$('#intro').style.getPropertyValue('--px') || 0;
+    for (const p of P){ p.y -= p.v; p.x += px*.8 + Math.sin(p.y/40)*.3; if (p.y < -10){ p.y = r.height+10; p.x = Math.random()*r.width; }
+      ctx.fillStyle = `rgba(255,${120+Math.round(p.a*80)},70,${p.a*(p.y/r.height)})`; ctx.beginPath(); ctx.arc(p.x,p.y,p.s,0,7); ctx.fill(); }
+    requestAnimationFrame(loop); };
+  loop();
+}
+$('#intro').addEventListener('pointermove', e => { if (reduced()) return; const r = e.currentTarget.getBoundingClientRect();
+  e.currentTarget.style.setProperty('--px', ((e.clientX - r.left)/r.width - .5)*2); e.currentTarget.style.setProperty('--py', ((e.clientY - r.top)/r.height - .5)*2); });
+$('#intro').addEventListener('click', endIntro);
+document.addEventListener('keydown', e => { if (!$('#intro').hidden && (e.key==='Escape'||e.key==='Enter'||e.key===' ')) endIntro(); });
+$('#replayIntro').onclick = playIntro;
 const start = (location.hash||'').slice(1);
 go(SCREENS[start] ? start : 'home', {vt:false});
+playIntro();
 </script>

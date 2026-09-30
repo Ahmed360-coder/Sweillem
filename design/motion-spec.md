@@ -1,6 +1,6 @@
 # SWEILLEM motion spec
 
-Every animation in the redesign prototype. The same IDs appear on the prototype's **Motion spec** screen, where each one can be played.
+Every animation in the redesign prototype (M00 intro to M27). The same IDs appear on the prototype's **Motion spec** screen, where each one can be played.
 
 ## Principles
 
@@ -27,6 +27,7 @@ Every animation in the redesign prototype. The same IDs appear on the prototype'
 
 | ID | Name | Screen | Trigger | Duration | Easing | What moves | Reduced motion |
 |---|---|---|---|---|---|---|---|
+| M00 | Intro | home | First visit per session; skippable by tap or key | 2000 ms + 700 ms exit | glaze / kiln | Glazed-pipe photo zooms in, hexagon outline draws, white logo wipes in, year counts 1900→1935, kiln-colour bar fills, embers rise; logo and photo tilt with the pointer; exits by collapsing into a hexagon | Logo and photo shown still for 0.9 s, then a 0.2 s fade |
 | M01 | Page transition | all | Route change | 320 ms | glaze | View rises 14 px and fades in; View Transitions API where supported | Instant swap |
 | M02 | Header condense | home | Scroll > 24 px | 320 ms | glaze | Logo 40→32 px, blurred ground and hairline appear | Same, no easing |
 | M03 | Headline rise | home | Page load | 900 ms, 55 ms stagger | glaze | Each word rises out of a mask | Static text |
@@ -63,4 +64,5 @@ Every animation in the redesign prototype. The same IDs appear on the prototype'
 - M10 pipe tween: drive the SVG radii from the spec row with a Motion value and `animate()`; keep the drawing to true scale (one fixed px-per-mm for the whole range so size changes are visible).
 - M12 flight and M19 shared element: Motion `layoutId` handles both.
 - M14 scrollytelling and M16 timeline: `useScroll` + `useTransform`; step detection with IntersectionObserver.
+- M00 intro: full spec and build rules in `intro-spec.md`.
 - The manufacturing-to-installation film slot (Home and Process) is produced in a separate thread. It needs a poster frame, captions (EN + AR) and a still-image fallback for reduced motion.
