@@ -18,12 +18,15 @@ export function Header() {
   const burgerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // M02 header condense after 24 px of scroll.
+  // M02 header condense once the page has scrolled 24 px. A sentinel and an
+  // IntersectionObserver replace a scroll listener (design/taste-audit.md).
+  const sentinelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const onScroll = () => setStuck(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const el = sentinelRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([entry]) => setStuck(!entry.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
   }, []);
 
   const close = useCallback((returnFocus = true) => {
@@ -43,7 +46,7 @@ export function Header() {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") close();
     };
-    const mq = window.matchMedia("(min-width: 64rem)");
+    const mq = window.matchMedia("(min-width: 980px)");
     const onWide = () => mq.matches && close(false);
     document.addEventListener("keydown", onKey);
     mq.addEventListener("change", onWide);
@@ -58,20 +61,23 @@ export function Header() {
 
   return (
     <>
-      <header
-        data-stuck={stuck && !open ? "" : undefined}
-        className="group/hdr sticky top-0 z-40 py-[18px] transition-[background-color,box-shadow,padding] duration-300 ease-glaze data-stuck:bg-[color-mix(in_srgb,var(--paper)_86%,transparent)] data-stuck:py-2.5 data-stuck:shadow-[0_1px_0_var(--line)] data-stuck:backdrop-blur-md"
-      >
+      <div ref={sentinelRef} aria-hidden="true" className="pointer-events-none absolute top-6 left-0 h-px w-px" />
+      <header data-stuck={stuck && !open ? "" : undefined} className="group/hdr sticky top-0 z-40 py-3.5">
+        {/* Condensed ground: fades in, so only opacity animates. */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-[color-mix(in_srgb,var(--paper)_86%,transparent)] opacity-0 shadow-[0_1px_0_var(--line)] backdrop-blur-md transition-opacity duration-300 ease-glaze group-data-stuck/hdr:opacity-100"
+        />
         <div className="wrap flex items-center gap-5">
           <Link
             href="/"
             aria-label="SWEILLEM home"
-            className="relative z-50 block h-10 flex-none transition-[height] duration-300 ease-glaze group-data-stuck/hdr:h-8"
+            className="relative z-50 block h-10 flex-none origin-left transition-transform duration-300 ease-glaze group-data-stuck/hdr:scale-[.8] rtl:origin-right"
           >
-            <Logo priority white={open} />
+            <Logo title={null} className={open ? "[--logo-mark:#fff] [--logo-word:#fff]" : ""} />
           </Link>
 
-          <nav aria-label="Main" className="ms-auto hidden gap-1 lg:flex">
+          <nav aria-label="Main" className="ms-auto hidden gap-1 whitespace-nowrap min-[980px]:flex">
             {mainNav.map((item) => {
               const current = isCurrent(pathname, item.href);
               return (
@@ -79,7 +85,7 @@ export function Header() {
                   key={item.href}
                   href={item.href}
                   aria-current={current ? "page" : undefined}
-                  className="relative rounded-lg px-3 py-2 text-[14.5px] font-medium text-ink no-underline after:absolute after:inset-x-3 after:bottom-[3px] after:h-0.5 after:origin-left after:scale-x-0 after:bg-maroon after:transition-transform after:duration-300 after:ease-glaze hover:after:scale-x-100 aria-[current=page]:after:scale-x-100 rtl:after:origin-right"
+                  className="relative rounded-full px-3 py-2 text-[14.5px] font-medium text-ink no-underline after:absolute after:inset-x-3 after:bottom-[3px] after:h-0.5 after:origin-left after:scale-x-0 after:bg-maroon after:transition-transform after:duration-300 after:ease-glaze hover:after:scale-x-100 aria-[current=page]:after:scale-x-100 rtl:after:origin-right"
                 >
                   {item.label}
                 </Link>
@@ -87,18 +93,18 @@ export function Header() {
             })}
           </nav>
 
-          <div className="ms-auto flex items-center gap-2 lg:ms-0">
+          <div className="ms-auto flex items-center gap-2 min-[980px]:ms-0">
             <Link
               href="/quote"
               aria-label={`Quote list, ${quoteCount} ${quoteCount === 1 ? "item" : "items"}`}
-              className="relative z-50 inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-paper no-underline"
+              className="relative z-50 inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-paper no-underline transition-transform duration-100 active:translate-y-px"
             >
               <QuoteIcon />
-              <span className="hidden sm:inline">Quote list</span>
+              <span className="hidden whitespace-nowrap min-[1240px]:inline">Quote list</span>
               <span
                 aria-hidden="true"
                 data-quote-count
-                className="min-w-5 rounded-[10px] bg-maroon px-[5px] text-center font-mono text-[11px] leading-5 font-semibold text-on-maroon"
+                className="min-w-5 rounded-full bg-maroon px-[5px] text-center font-mono text-[11px] leading-5 font-semibold text-on-maroon"
               >
                 {quoteCount}
               </span>
@@ -110,14 +116,14 @@ export function Header() {
               aria-expanded={open}
               aria-controls="mobile-menu"
               onClick={() => setOpen((o) => !o)}
-              className="relative z-50 size-11 cursor-pointer rounded-lg lg:hidden"
+              className="relative z-50 size-11 cursor-pointer rounded-full min-[980px]:hidden"
             >
               {[14, 20, 26].map((top, i) => (
                 <span
                   key={top}
                   aria-hidden="true"
                   style={{ top: top + 1 }}
-                  className={`absolute inset-x-2.5 h-0.5 transition-[transform,opacity,background-color] duration-300 ease-glaze ${
+                  className={`absolute inset-x-2.5 h-0.5 transition-[transform,opacity] duration-300 ease-glaze ${
                     open ? "bg-on-maroon" : "bg-ink"
                   } ${
                     open
@@ -135,14 +141,19 @@ export function Header() {
         </div>
       </header>
 
-      {/* M26 menu iris: maroon panel opens as a circle from the burger. */}
+      {/* M26 menu iris: a maroon disc scales up from the burger (transform only). */}
       <div
         id="mobile-menu"
         ref={menuRef}
         inert={!open}
         data-open={open ? "" : undefined}
-        className="fixed inset-0 z-30 flex flex-col gap-1.5 overflow-y-auto bg-maroon px-6 pt-24 pb-8 text-on-maroon [clip-path:circle(0_at_calc(100%-40px)_40px)] transition-[clip-path] duration-[560ms] ease-kiln data-open:[clip-path:circle(150%_at_calc(100%-40px)_40px)] lg:hidden rtl:[clip-path:circle(0_at_40px_40px)] rtl:data-open:[clip-path:circle(150%_at_40px_40px)]"
+        className="group/menu pointer-events-none fixed inset-0 z-30 overflow-hidden text-on-maroon data-open:pointer-events-auto min-[980px]:hidden"
       >
+        <div
+          aria-hidden="true"
+          className="absolute top-10 right-10 size-[300vmax] translate-x-1/2 -translate-y-1/2 scale-0 rounded-full bg-maroon transition-transform duration-[560ms] ease-kiln group-data-open/menu:scale-100 rtl:right-auto rtl:left-10 rtl:-translate-x-1/2"
+        />
+        <div className="relative h-full overflow-y-auto px-6 pt-24 pb-8">
         <nav aria-label="Menu" className="flex flex-col">
           {mainNav.map((item, i) => (
             <Link
@@ -158,6 +169,7 @@ export function Header() {
             </Link>
           ))}
         </nav>
+        </div>
       </div>
     </>
   );

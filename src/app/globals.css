@@ -22,8 +22,10 @@
   --ok: #1d6b43;
   --warn: #a15c00;
   --err: #b3261e;
-  --shadow: 0 1px 2px rgb(28 24 24 / 0.06), 0 8px 24px -8px rgb(28 24 24 / 0.18);
-  --logo-filter: none;
+  /* Shadows are tinted to the page colour, never pure black. */
+  --shadow: 0 1px 2px rgb(58 50 44 / 0.07), 0 10px 26px -10px rgb(58 50 44 / 0.22);
+  --logo-mark: #7f8285;
+  --logo-word: #7a0404;
 
   --font-display: var(--font-jost), system-ui, sans-serif;
   --font-body: var(--font-plex-sans), system-ui, sans-serif;
@@ -48,7 +50,7 @@
 /* Dark theme: follows the device unless a page sets data-theme. The redesign
    thread's "dark kiln" theme plugs in here by overriding these tokens. */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root:not([data-theme="light"]):not([data-theme="kiln"]) {
     --paper: #141011;
     --surface: #1d1718;
     --sunk: #261f1f;
@@ -67,8 +69,9 @@
     --ok: #5cc28c;
     --warn: #e5a24a;
     --err: #ff8a80;
-    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 10px 30px -10px rgb(0 0 0 / 0.7);
-    --logo-filter: brightness(0) invert(0.94);
+    --shadow: 0 1px 2px rgb(10 5 5 / 0.45), 0 10px 30px -10px rgb(10 5 5 / 0.75);
+    --logo-mark: #f1ebe8;
+    --logo-word: #f1ebe8;
     color-scheme: dark;
   }
 }
@@ -91,8 +94,35 @@
   --ok: #5cc28c;
   --warn: #e5a24a;
   --err: #ff8a80;
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 10px 30px -10px rgb(0 0 0 / 0.7);
-  --logo-filter: brightness(0) invert(0.94);
+  --shadow: 0 1px 2px rgb(10 5 5 / 0.45), 0 10px 30px -10px rgb(10 5 5 / 0.75);
+  --logo-mark: #f1ebe8;
+  --logo-word: #f1ebe8;
+  color-scheme: dark;
+}
+
+/* Kiln theme (M35, owned by the redesign): dark ember palette via data-theme="kiln". */
+:root[data-theme="kiln"] {
+  --paper: #0f0908;
+  --surface: #1b120f;
+  --sunk: #241713;
+  --ink: #f6ebe4;
+  --muted: #bba295;
+  --line: #3d2820;
+  --maroon: #ff6a3d;
+  --maroon-hi: #ff8f63;
+  --on-maroon: #1a0706;
+  --slate: #a8958c;
+  --glaze: #5a3325;
+  --glaze-hi: #8a5238;
+  --clay: #d08a58;
+  --fire: #ff7a45;
+  --bore: #0b0706;
+  --ok: #6fd49c;
+  --warn: #ffb454;
+  --err: #ff8a80;
+  --shadow: 0 1px 2px rgb(10 5 5 / 0.5), 0 12px 34px -12px rgb(255 90 40 / 0.25);
+  --logo-mark: #f6ebe4;
+  --logo-word: #f6ebe4;
   color-scheme: dark;
 }
 
@@ -120,10 +150,11 @@
   --font-sans: var(--font-body);
   --font-mono: var(--font-data);
 
-  --radius-chip: 999px;
-  --radius-control: 10px;
-  --radius-card: 16px;
-  --radius-panel: 20px;
+  /* One radius scale (design/taste-audit.md): cards 22, inner 14, inputs 10, controls pill. */
+  --radius-pill: 999px;
+  --radius-input: 10px;
+  --radius-inner: 14px;
+  --radius-card: 22px;
 
   --shadow-card: var(--shadow);
 
@@ -197,20 +228,31 @@
     font-size: clamp(17px, 1.6vw, 19px);
     color: var(--muted);
     max-width: 62ch;
+    text-wrap: pretty;
   }
   .link {
+    position: relative;
     color: var(--maroon);
     font-weight: 600;
     text-decoration: none;
-    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1.5px no-repeat;
-    transition: background-size var(--t-base) var(--ease-glaze);
   }
-  .link:hover,
-  .link:focus-visible {
-    background-size: 100% 1.5px;
+  .link::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: -1px;
+    height: 1.5px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--t-base) var(--ease-glaze);
   }
-  [dir="rtl"] .link {
-    background-position: 100% 100%;
+  [dir="rtl"] .link::after {
+    transform-origin: right;
+  }
+  .link:hover::after,
+  .link:focus-visible::after {
+    transform: scaleX(1);
   }
   .skip-link {
     position: absolute;

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { jointSeats, pipesFrame } from "@/lib/intro-pipes";
+import { Logo } from "./Logo";
 
 /**
  * M00 intro: a 3-second brand moment on the first visit per session
@@ -104,8 +105,9 @@ export function Intro() {
             <path pathLength={100} d="M50 2l46 26.5v58L50 113 4 86.5v-58z" />
             <path className="h2" pathLength={100} d="M50 2l46 26.5v58L50 113 4 86.5v-58z" />
           </svg>
-          {/* eslint-disable-next-line @next/next/no-img-element -- white-filtered overlay copy of the logo */}
-          <img className="intro-logo" src="/images/brand/sweillem-logo.webp" alt="" width={640} height={217} />
+          <div className="intro-logo">
+            <Logo title={null} />
+          </div>
           <p className="intro-tag">
             <span>Since</span>
             <b ref={yearRef}>1935</b>

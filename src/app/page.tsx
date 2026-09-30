@@ -20,7 +20,7 @@ const stats = [
 function RisingHeadline({ text, emphasis }: { text: string; emphasis: string }) {
   const words = text.split(" ");
   return (
-    <h1 className="text-[clamp(36px,5.4vw,68px)] tracking-[-.01em]">
+    <h1 className="text-[clamp(34px,4vw,54px)] tracking-[-.01em]">
       {words.map((word, i) => (
         <span key={i}>
           <span className="rise-word">
@@ -40,7 +40,7 @@ const organizationJsonLd = {
   name: site.legalName,
   alternateName: site.name,
   url: siteUrl,
-  logo: `${siteUrl}/images/brand/sweillem-logo.webp`,
+  logo: `${siteUrl}/images/brand/sweillem-logo.png`,
   foundingDate: String(site.founded),
   foundingLocation: "Cairo, Egypt",
   slogan: site.slogan,
@@ -52,7 +52,7 @@ export default function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
 
       <section aria-label="Introduction" className="overflow-x-clip pt-[clamp(20px,4vw,56px)] pb-[clamp(48px,6vw,80px)]">
-        <div className="wrap grid items-center gap-[clamp(24px,4vw,64px)] md:grid-cols-[1.05fr_1fr]">
+        <div className="wrap grid items-center gap-[clamp(24px,4vw,64px)] md:grid-cols-[1.25fr_1fr]">
           <div className="grid min-w-0 gap-[22px]">
             <p className="eyebrow fade-up" style={{ "--dl": "60ms" } as CSSProperties}>
               Vitrified clay pipes · Cairo, since 1935
@@ -60,7 +60,6 @@ export default function HomePage() {
             <RisingHeadline text="Daring to be the first, working hard for a world-class level" emphasis="world-class" />
             <p className="lede fade-up" style={{ "--dl": "620ms" } as CSSProperties}>
               Glazed vitrified clay pipes and fittings for sewer and drainage networks, made from Aswan clay and fired at up to 1200 °C.
-              Normal class DN 125 to 600, High class DN 200 to 1000.
             </p>
             <div className="fade-up flex flex-wrap gap-3" style={{ "--dl": "760ms" } as CSSProperties}>
               <ButtonLink href="/products" arrow>
@@ -95,7 +94,7 @@ export default function HomePage() {
               <span className="font-mono text-[10px] font-medium tracking-[.14em] uppercase">Since</span>
               <b className="font-display text-[22px] leading-none font-bold md:text-[30px]">1935</b>
             </div>
-            <p className="absolute start-3 bottom-3 z-10 grid gap-0.5 rounded-[14px] bg-surface px-4 py-3 shadow-card md:-start-[4%] md:bottom-[10%] md:min-w-[200px]">
+            <p className="absolute start-3 bottom-3 z-10 grid gap-0.5 rounded-inner bg-surface px-4 py-3 shadow-card md:-start-[4%] md:bottom-[10%] md:min-w-[200px]">
               <small className="font-mono text-[11px] font-medium tracking-[.1em] text-muted uppercase">On site</small>
               <strong className="font-display text-base font-semibold">Germany · Euro Sweillem</strong>
             </p>
@@ -119,7 +118,6 @@ export default function HomePage() {
 
       <Section
         id="families"
-        eyebrow="Products"
         title="Ten product families"
         lede="Pipes, bends, junctions and the fittings that complete a sewer or drainage line."
         action={

@@ -9,7 +9,7 @@ export function Footer() {
       <div className="wrap grid grid-cols-2 gap-7 md:grid-cols-[1.4fr_repeat(4,1fr)]">
         <div className="col-span-2 md:col-span-1">
           <Link href="/" aria-label="SWEILLEM home" className="mb-3.5 block h-9 w-fit">
-            <Logo />
+            <Logo title={null} />
           </Link>
           <p className="max-w-[34ch] text-muted">
             Vitrified clay pipes and fittings for sewer and drainage networks. Cairo, since {site.founded}.
@@ -25,7 +25,7 @@ export function Footer() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="inline-block py-1 text-ink no-underline transition-colors duration-200 hover:text-maroon"
+                    className="inline-block py-1 text-ink no-underline hover:text-maroon"
                   >
                     {item.label}
                   </Link>

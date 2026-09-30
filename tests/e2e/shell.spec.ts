@@ -82,3 +82,33 @@ test.describe("intro", () => {
     await ctx.close();
   });
 });
+
+test.describe("layout rules (design/taste-audit.md)", () => {
+  test.beforeEach(async ({ page, isMobile }) => {
+    test.skip(isMobile, "desktop widths");
+    await skipIntro(page);
+  });
+
+  test("hero headline takes at most three lines at 1280 px", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto("/");
+    const lines = await page.locator("h1").evaluate((h) => {
+      const lh = parseFloat(getComputedStyle(h).lineHeight);
+      return Math.round(h.getBoundingClientRect().height / lh);
+    });
+    expect(lines).toBeLessThanOrEqual(3);
+  });
+
+  for (const width of [980, 1100, 1280, 1440]) {
+    test(`navigation stays on one line at ${width} px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 800 });
+      await page.goto("/");
+      const nav = page.getByRole("navigation", { name: "Main" });
+      await expect(nav).toBeVisible();
+      const tops = await nav.getByRole("link").evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().top)));
+      expect(new Set(tops).size).toBe(1);
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+      expect(overflow).toBeLessThanOrEqual(0);
+    });
+  }
+});

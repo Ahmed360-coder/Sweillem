@@ -138,8 +138,10 @@ html[data-intro="play"] .intro[data-state="out"] {
 .intro-logo {
   position: relative;
   width: min(360px, 74vw);
-  height: auto;
-  filter: brightness(0) invert(1) drop-shadow(0 6px 26px rgb(0 0 0 / 0.5));
+  aspect-ratio: 642 / 217;
+  --logo-mark: #fff;
+  --logo-word: #fff;
+  filter: drop-shadow(0 6px 26px rgb(20 10 8 / 0.5));
   clip-path: inset(0 100% 0 0);
   animation: intro-logo 0.65s var(--ease-glaze) 1.35s forwards;
 }

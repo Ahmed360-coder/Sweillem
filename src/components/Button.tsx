@@ -5,7 +5,7 @@ import { ArrowIcon } from "./icons";
 type Variant = "primary" | "ghost";
 
 const base =
-  "group inline-flex min-h-11 items-center justify-center gap-2.5 whitespace-nowrap rounded-full border px-5 py-3 font-semibold no-underline transition-[background-color,box-shadow,border-color,transform] duration-200 ease-glaze active:scale-[.97]";
+  "group inline-flex min-h-11 items-center justify-center gap-2.5 whitespace-nowrap rounded-full border px-5 py-3 font-semibold no-underline transition-transform duration-200 ease-glaze active:translate-y-px";
 const variants: Record<Variant, string> = {
   primary:
     "border-transparent bg-maroon text-on-maroon hover:bg-maroon-hi hover:shadow-[0_8px_20px_-8px_color-mix(in_srgb,var(--maroon)_70%,transparent)]",
