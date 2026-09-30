@@ -49,3 +49,15 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
 }
+
+/* Kiln theme (M35): dark ember palette, switched with data-theme="kiln" */
+[data-theme="kiln"]{
+  --paper:#0f0908; --surface:#1b120f; --sunk:#241713;
+  --ink:#f6ebe4; --muted:#bba295; --line:#3d2820;
+  --maroon:#ff6a3d; --maroon-hi:#ff8f63; --on-maroon:#1a0706;
+  --slate:#a8958c; --glaze:#5a3325; --glaze-hi:#8a5238; --clay:#d08a58; --fire:#ff7a45;
+  --bore:#0b0706; --ok:#6fd49c; --warn:#ffb454; --err:#ff8a80;
+  --shadow:0 1px 2px rgb(0 0 0/.5),0 12px 34px -12px rgb(255 90 40/.25);
+  --logo-filter:brightness(0) invert(.94);
+  color-scheme:dark;
+}
