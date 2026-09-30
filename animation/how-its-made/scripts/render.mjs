@@ -67,9 +67,8 @@ if (stills) {
   }
   ff.stdin.end();
   await done;
-  // Poster: the finished pipe at the end of the firing chapter.
-  const fire = CHAPTERS.find((c) => c.id === 'fire');
-  await writeFile(join(outDir, 'sweillem-how-its-made-poster.png'), await shot(fire.end - 0.8));
+  // Poster: the title card.
+  await writeFile(join(outDir, 'sweillem-how-its-made-poster.png'), await shot(CHAPTERS[0].end - 0.6));
   // Captions.
   const ts = (s) => new Date(s * 1000).toISOString().slice(11, 23);
   const vtt = ['WEBVTT', '', ...CHAPTERS.flatMap((c, i) => [String(i + 1), `${ts(c.start)} --> ${ts(c.end)}`, `${c.n ? `${c.n}. ` : ''}${c.title}: ${c.caption}`, ''])].join('\n');

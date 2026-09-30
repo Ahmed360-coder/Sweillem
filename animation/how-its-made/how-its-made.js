@@ -271,7 +271,7 @@ function sceneMould(lt) {
     const y = ey - 260 + k * 250;
     if (lt < 6) s += `<rect x="${f(x)}" y="${f(y)}" width="${f(16 + rnd(i) * 14)}" height="${f(14 + rnd(i + 5) * 12)}" rx="5" fill="${C.clayWet}" opacity="${f((1 - k * 0.3) * 100) / 100}"/>`;
   }
-  s += text(ex + 220, ey - 170, 'Wet clay', { size: 22, weight: 600, fill: C.muted, anchor: 'middle', op: 1 - seg(lt, 5.5, 6.5) });
+  s += text(ex + 410, ey - 90, 'Wet clay', { size: 24, weight: 600, fill: C.muted, op: 1 - seg(lt, 5.5, 6.5) });
   // Pipe emerges from the die, is cut, then carried away.
   const dieX = ex + ew + 60, py = ey + eh / 2, dia = 110, full = 760;
   const grow = ease(seg(lt, 1.0, 5.2));
@@ -410,16 +410,16 @@ function sceneFire(lt) {
   const kin = seg(lt, 3.4, 4.2);
   if (kin > 0) {
     const kx = 640, ky = 200, kw = 700, kh = gy - ky;
-    const heat = ease(seg(lt, 6.2, 9.2)) * (1 - ease(seg(lt, 9.6, 10.8)));
-    const doorClosed = ease(seg(lt, 5.6, 6.1)) * (1 - ease(seg(lt, 9.4, 9.9)));
+    const heat = ease(seg(lt, 5.8, 8.2)) * (1 - ease(seg(lt, 8.4, 9.6)));
+    const doorClosed = ease(seg(lt, 5.4, 5.9)) * (1 - ease(seg(lt, 8.3, 8.8)));
     let k = `<rect x="${kx}" y="${ky}" width="${kw}" height="${kh}" rx="16" fill="${C.grey}"/>`;
     k += `<rect x="${kx + 40}" y="${ky + 90}" width="${kw - 80}" height="${kh - 90}" fill="${mix('#3a2d27', C.glow, heat * 0.85)}"/>`;
     k += text(kx + kw / 2, ky + 60, 'SHUTTLE KILN', { size: 28, weight: 700, fill: '#fff', anchor: 'middle', ls: 3 });
     // Kiln car with three pipes; rolls in, then out fired.
-    const inP = ease(seg(lt, 4.0, 5.6));
-    const outP = ease(seg(lt, 9.9, 11));
+    const inP = ease(seg(lt, 4.0, 5.4));
+    const outP = ease(seg(lt, 8.8, 10.0));
     const carX = lerp(-640, kx + 70, inP) - outP * 620;
-    const firedP = seg(lt, 7.0, 9.4);
+    const firedP = seg(lt, 6.6, 8.4);
     const pc = mix(C.glazeWet, C.fired, firedP);
     const hot = heat * 0.7;
     let car = `<rect x="0" y="${gy - 60}" width="560" height="26" rx="6" fill="${C.steelDark}"/>` + wheel(70, gy - 20, 20, carX / 40) + wheel(490, gy - 20, 20, carX / 40);
@@ -430,11 +430,13 @@ function sceneFire(lt) {
     if (doorClosed > 0.9) k += `<rect x="${kx + 40}" y="${ky + 90}" width="${kw - 80}" height="${kh - 90}" fill="${C.glow}" opacity="${f(heat * 0.25 * 100) / 100}"/>`;
     // Thermometer and firing curve.
     const tx = 1450, ty = 190;
-    const temp = Math.round(1200 * ease(seg(lt, 6.2, 9.2)) * (1 - ease(seg(lt, 9.8, 10.8)) * 0.85) / 10) * 10;
+    const temp = Math.round(1200 * ease(seg(lt, 5.8, 8.2)) * (1 - ease(seg(lt, 8.8, 9.8)) * 0.85) / 10) * 10;
+    const card = seg(lt, 5.3, 5.8);
+    k += `<g opacity="${f(card * 100) / 100}">`;
     k += `<rect x="${tx}" y="${ty}" width="400" height="430" rx="18" fill="${C.white}" stroke="${C.line}" stroke-width="3"/>`;
     k += text(tx + 32, ty + 52, 'KILN TEMPERATURE', { size: 20, weight: 700, fill: C.muted, ls: 2 });
     k += text(tx + 32, ty + 132, `${temp.toLocaleString('en-US')} °C`, { size: 70, weight: 700, font: 'head', fill: temp >= 1200 ? C.maroon : C.ink });
-    const cp = seg(lt, 6.2, 10.8), pts = [];
+    const cp = seg(lt, 5.8, 9.8), pts = [];
     for (let i = 0; i <= 50; i++) {
       const u = i / 50; if (u > cp) break;
       const tv = u < 0.65 ? ease(u / 0.65) : 1 - ease((u - 0.65) / 0.35) * 0.85;
@@ -444,6 +446,7 @@ function sceneFire(lt) {
     k += `<line x1="${tx + 32}" y1="${ty + 190}" x2="${tx + 368}" y2="${ty + 190}" stroke="${C.line}" stroke-width="2" stroke-dasharray="8 8"/>`;
     if (pts.length > 1) k += `<polyline points="${pts.join(' ')}" fill="none" stroke="${C.glow}" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>`;
     k += text(tx + 32, ty + 404, 'Firing curve over 2–4 days', { size: 22, weight: 600, fill: C.ink });
+    k += '</g>';
     s += `<g opacity="${f(eOut(kin) * 100) / 100}">${k}</g>`;
   }
   return s;
@@ -588,7 +591,7 @@ const SCENES = { intro: sceneIntro, raw: sceneRaw, qc: sceneQC, mould: sceneMoul
 function chrome(t, ch) {
   const lt = t - ch.start;
   let s = '';
-  if (ch.n) {
+  if (ch.n && ch.id !== 'install') {
     s += `<image href="${ASSET_BASE}logo.png" x="1580" y="40" width="290" height="98"/>`;
   }
   s += `<rect x="0" y="810" width="${W}" height="${H - 810}" fill="${C.band}"/>`;
@@ -614,7 +617,7 @@ function chrome(t, ch) {
 }
 
 function compactChrome(ch) {
-  return ch.n ? `<image href="${ASSET_BASE}logo.png" x="1520" y="40" width="350" height="118"/>` : '';
+  return ch.n && ch.id !== 'install' ? `<image href="${ASSET_BASE}logo.png" x="1520" y="40" width="350" height="118"/>` : '';
 }
 
 const DEFS = `<defs><linearGradient id="hm-shade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".42" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".32"/></linearGradient></defs>`;
