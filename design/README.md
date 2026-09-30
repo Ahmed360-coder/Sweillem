@@ -14,9 +14,9 @@ Clickable prototype of the new sweillem.net, used to agree the look and the inte
 | Screen | What it shows |
 |---|---|
 | Intro | 3-second brand moment: three glazed pipes fly in and snap together, then hexagon draw, white logo wipe, 1900→1935 counter, embers, pointer tilt, hexagon exit; skippable |
-| Home | Word-by-word slogan, hexagon photo iris, 1935 badge, count-up stats, standards marquee, 10 product families with redrawing icons, film slot, projects with tilt, tools band (3D viewer and calculator), pipe-joint section dividers, Euro Sweillem band |
+| Home | Word-by-word slogan, hexagon photo iris, 1935 badge, count-up stats, standards marquee, 10 product families with redrawing icons, film card (a live frame of the film; opens the player in a pop-up), projects with tilt, tools band (3D viewer and calculator), pipe-joint section dividers, Euro Sweillem band |
 | Product explorer | Class pill (N/H), DN chips and slider, true-scale SVG cross-section that tweens, compare-classes overlay, live spec card, add-to-quote flight, full table (stacked cards on phones), empty state for families whose tables are not imported yet |
-| Process journey | Film slot, then sticky scrollytelling through the six steps plus delivery, hex-iris photo changes, progress rail, kiln dial to 1200 °C |
+| Process journey | The How it's made film player at the top (autoplays when in view, nine chapter buttons, Arabic version on the Arabic page), then sticky scrollytelling through the six steps plus delivery, hex-iris photo changes, progress rail, kiln dial to 1200 °C |
 | About and history | Stats, then a pinned heritage track from 1935 to today: milestone cards slide sideways with scroll, a big year counts between dated milestones, market chips (Egypt, Saudi Arabia with TAAS, GCC and Europe, Germany with Euro Sweillem) light up as the business grows, carbon baseline and ISO cards; undated milestones read "year to confirm" |
 | 3D pipe viewer | A three.js pipe built from the chosen row of the spec table: drag to spin, zoom, glaze close-up, seal ring, cut section, and a joint that assembles itself |
 | Size calculator | Flow, slope, Manning's n and design depth give a suggested DN from the published tables (Manning partial-flow, guidance only), velocity and self-cleansing check, a log-scale capacity chart, and add to quote |
@@ -41,4 +41,4 @@ The 3D viewer loads three.js r128 from cdnjs. Without WebGL it shows a message a
 - 3D model: pipe length is shortened for viewing, and the socket outer shape and ring width are approximate until SWEILLEM sends drawings. Diameters come from the table.
 - Calculator: standard Manning equation, n = 0.013 by default (0.010 to 0.011 for new glazed pipe), 0.6–3 m/s self-cleansing band. Guidance only; it does not replace a design check. Sizes and classes come from the published N and H tables.
 - Heritage milestones come only from sweillem.net, the 2024 report, the certificate files and the deck; each card names its source.
-- The manufacturing-to-installation film is produced in a separate thread; the prototype reserves its slot on Home and Process.
+- The How it's made film comes from animation/how-its-made (branch claude/project-thread-n5u898). It is bundled into the prototype with its photos, and its logo is swapped for the vector logo.
