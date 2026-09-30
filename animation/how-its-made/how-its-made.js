@@ -319,7 +319,7 @@ function sceneIntro(lt) {
   const b = eOut(seg(lt, 0.9, 2.1));
   const p = ease(seg(lt, 1.2, 3.6));
   const title = (I18N[LANG] || I18N.en).chapters.intro[0];
-  let s = `<image href="${ASSET_BASE}logo.png" x="${f(W / 2 - 330)}" y="${f(150 - 30 * (1 - a))}" width="660" height="224" opacity="${o(a)}"/>`;
+  let s = `<image href="${ASSET_BASE}logo.svg" x="${f(W / 2 - 330)}" y="${f(150 - 30 * (1 - a))}" width="660" height="224" opacity="${o(a)}"/>`;
   s += text(W / 2, 500, title, { size: 64, weight: 600, font: 'head', anchor: 'middle', op: b });
   s += text(W / 2, 562, L().subtitle, { size: 32, weight: 400, fill: C.muted, anchor: 'middle', op: b });
   if (p > 0) s += pipe(lerp(-900, W / 2 - 450, p), 700, 900, 90, C.fired, { gloss: 1, ring: 1 });
@@ -714,7 +714,7 @@ function sceneOutro(lt) {
     s += `<g transform="translate(${x} ${f(160 + 40 * (1 - a))})" opacity="${o(a)}">${c}</g>`;
   });
   const lg = eOut(seg(lt, 2.2, 3.2));
-  s += `<image href="${ASSET_BASE}logo.png" x="${W / 2 - 280}" y="${f(480 + 20 * (1 - lg))}" width="560" height="190" opacity="${o(lg)}"/>`;
+  s += `<image href="${ASSET_BASE}logo.svg" x="${W / 2 - 280}" y="${f(480 + 20 * (1 - lg))}" width="560" height="190" opacity="${o(lg)}"/>`;
   s += text(W / 2, 740, L().since, { size: 30, weight: 500, fill: C.ink, anchor: 'middle', op: seg(lt, 2.8, 3.6) });
   return s;
 }
@@ -736,7 +736,7 @@ function chrome(t, ch) {
   cap += text(x0, 878, ch.title, { size: 44, weight: 600, font: 'head', anchor });
   wrap(ch.caption, R ? 104 : 96).slice(0, 2).forEach((l, i) => { cap += text(x0, 930 + i * 40, l, { size: 28, weight: 400, fill: C.muted, anchor }); });
   s += `<g transform="translate(0 ${f(16 * (1 - a))})" opacity="${o(op)}">${cap}</g>`;
-  s += `<image href="${ASSET_BASE}mark.png" x="${R ? 90 : W - 90 - 44}" y="846" width="44" height="64" opacity=".85"/>`;
+  s += `<image href="${ASSET_BASE}mark.svg" x="${R ? 90 : W - 90 - 44}" y="846" width="44" height="64" opacity=".85"/>`;
   // Progress: one segment per numbered chapter, in reading order.
   const list = getChapters(LANG).filter((c) => c.n);
   const gap = 10, x = 90, w = W - 180, sw = (w - gap * (list.length - 1)) / list.length;
@@ -752,7 +752,7 @@ function chrome(t, ch) {
 let ASSET_BASE = new URL('./assets/', import.meta.url).href;
 export function setAssetBase(url) { ASSET_BASE = url.endsWith('/') ? url : url + '/'; }
 export const PHOTOS = TIMES.filter((c) => c.photo).map((c) => c.photo);
-export const assetUrls = () => ['logo.png', 'mark.png', ...PHOTOS.map((p) => `photos/${p}.webp`)].map((p) => ASSET_BASE + p);
+export const assetUrls = () => ['logo.svg', 'mark.svg', ...PHOTOS.map((p) => `photos/${p}.webp`)].map((p) => ASSET_BASE + p);
 
 // One complete frame as SVG markup (without the outer <svg>).
 //   compact: drop the caption band (narrow screens, where the player shows the caption as HTML).
@@ -778,7 +778,8 @@ export function frameSVG(t, { compact = false, lang = 'en', uid = 'hm' } = {}) {
 }
 
 // ---------- player ----------
-const reducedMotion = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+// A host page can force reduced motion with window.__hmReduced (e.g. its own motion switch).
+const reducedMotion = () => (typeof window !== 'undefined' && window.__hmReduced === true) || (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches);
 const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 let instances = 0;
 

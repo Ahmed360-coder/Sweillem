@@ -47,6 +47,8 @@ In Arabic the captions, labels and chapter buttons are Arabic, the page runs rig
 
 On screens narrower than 720 px the player drops the caption band from the picture and shows the caption as text below it, so it stays readable on a phone.
 
+A host page can force the reduced-motion behaviour by setting `window.__hmReduced = true` before mounting (for example from its own motion switch).
+
 Accessibility: the SVG has a text label, the current chapter's caption is announced in a polite live region, every control is a real button with a 44 px target, and with `prefers-reduced-motion` it does not autoplay; chapter buttons jump to each step's finished state instead.
 
 In a React/Next.js page, call `mount` in a `useEffect` on a ref and `destroy()` in its cleanup.
@@ -67,6 +69,6 @@ A full render at 1920×1080, 30 fps takes about five minutes per language.
 
 ## Assets
 
-- `assets/logo.png`, `assets/mark.png`: the SWEILLEM logo and S mark from the company deck, with transparent backgrounds.
+- `assets/logo.svg`, `assets/mark.svg`: the vector SWEILLEM logo and S mark from the redesign (`design/logo/`).
 - `assets/photos/*.webp`: step photos cropped from the company deck (1000×778). The deck's Pexels stock photos are not used.
 - `assets/fonts/`: Jost, IBM Plex Sans, IBM Plex Mono and IBM Plex Sans Arabic (all SIL Open Font License), Latin and Arabic subsets.
