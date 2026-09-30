@@ -546,7 +546,7 @@ table.mt{border-collapse:collapse;width:100%;font-size:13.5px;min-width:820px}
 #intro .hexo path.h2{stroke:rgb(228 87 46/.8);stroke-width:2;animation:hexDraw 1.3s cubic-bezier(.65,0,.35,1) 1.35s forwards,hexFade .5s 2.6s forwards}
 @keyframes hexDraw{to{stroke-dashoffset:0}}
 @keyframes hexFade{to{opacity:.25}}
-#intro .ilogo{width:min(360px,74cqi);height:auto;filter:brightness(0) invert(1) drop-shadow(0 6px 26px rgb(0 0 0/.5));clip-path:inset(0 100% 0 0);animation:logoIn .65s cubic-bezier(.2,.8,.2,1) 1.35s forwards;position:relative}
+#intro .ilogo{width:min(360px,74cqi);height:auto;clip-path:inset(0 100% 0 0);animation:logoIn .65s cubic-bezier(.2,.8,.2,1) 1.35s forwards;position:relative}
 [dir="rtl"] #intro .ilogo{clip-path:inset(0 0 0 100%)}
 @keyframes logoIn{to{clip-path:inset(0 0 0 0)}}
 #intro .itag{font:500 12px/1 var(--font-data);letter-spacing:.28em;text-transform:uppercase;display:flex;gap:10px;align-items:center;opacity:0;animation:introUp .5s cubic-bezier(.2,.8,.2,1) 1.85s forwards;white-space:nowrap}
@@ -1468,7 +1468,7 @@ function playIntro(){
   const el = $('#intro'); introT.forEach(clearTimeout); introT = [];
   el.innerHTML = `<div class="ibg"><img src="${IMG.glazed}" alt=""></div><div class="ishade"></div><div class="glow"></div><canvas class="sparks"></canvas>
     <div class="ic"><svg class="hexo" viewBox="0 0 100 115" aria-hidden="true"><path pathLength="100" d="M50 2l46 26.5v58L50 113 4 86.5v-58z"/><path class="h2" pathLength="100" d="M50 2l46 26.5v58L50 113 4 86.5v-58z"/></svg>
-    <img class="ilogo" src="${IMG.logo}" alt="SWEILLEM Vitrified Clay Pipes Co.">
+    <img class="ilogo" src="${IMG.logoWhite}" alt="SWEILLEM Vitrified Clay Pipes Co.">
     <div class="itag"><span>${S.lang==='ar'?'منذ':'Since'}</span><b id="iyr">1900</b><span>·</span><span>${S.lang==='ar'?'القاهرة':'Cairo'}</span></div>
     <div class="islot"><svg class="ipipes" id="ipipes" viewBox="0 0 1200 160" aria-hidden="true"></svg></div></div>
     <button class="skip" id="introSkip">${S.lang==='ar'?'تخطي':'Skip intro'}</button>`;
