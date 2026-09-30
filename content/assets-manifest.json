@@ -574,37 +574,34 @@
       "contentType": "image/jpeg"
     },
     {
-      "url": "https://sweillem.net/wp-content/uploads/2025/07/SASO-2022-2025-ء_Page1_Image1.jpg",
+      "url": "https://sweillem.net/wp-content/uploads/2025/07/SASO-2022-2025-١_Page1_Image1.jpg",
       "path": "public/images/certificates/saso-page-1.jpg",
       "kind": "certificate-scan",
       "usedOn": [
         "/certificates/"
       ],
-      "status": "failed",
-      "publish": "yes",
-      "error": "HTTP 404"
+      "status": "pending-download",
+      "publish": "yes"
     },
     {
-      "url": "https://sweillem.net/wp-content/uploads/2025/07/SASO-2022-2025-ء-1-rotated.jpg",
+      "url": "https://sweillem.net/wp-content/uploads/2025/07/SASO-2022-2025-١-1-rotated.jpg",
       "path": "public/images/certificates/saso.jpg",
       "kind": "certificate-scan",
       "usedOn": [
         "/certificates/"
       ],
-      "status": "failed",
-      "publish": "yes",
-      "error": "HTTP 404"
+      "status": "pending-download",
+      "publish": "yes"
     },
     {
-      "url": "https://sweillem.net/wp-content/uploads/2025/07/SASO-2022-2025-ء.jpg",
+      "url": "https://sweillem.net/wp-content/uploads/2025/07/SASO-2022-2025-١.jpg",
       "path": "public/images/certificates/saso-unrotated.jpg",
       "kind": "certificate-scan",
       "usedOn": [
         "media library"
       ],
-      "status": "failed",
-      "publish": "yes",
-      "error": "HTTP 404"
+      "status": "pending-download",
+      "publish": "yes"
     },
     {
       "url": "https://sweillem.net/wp-content/uploads/2025/07/Sweillam.-ISO-9001-2015.jpg",
