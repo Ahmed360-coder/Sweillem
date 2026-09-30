@@ -1,0 +1,13 @@
+{
+  "name": "sweillem",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "content:build": "node scripts/build-specs.mjs",
+    "content:check": "node scripts/check-content.mjs && tsc --noEmit -p tsconfig.json",
+    "content:fetch-assets": "node scripts/fetch-live-assets.mjs"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
+}
