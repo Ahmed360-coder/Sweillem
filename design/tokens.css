@@ -1,0 +1,51 @@
+/* SWEILLEM design tokens (from the redesign prototype).
+   Colours: maroon and grey are sampled from the logo PNG in SWEILLEM's deck (#7a0404 wordmark, #7f8285 S mark).
+   They still need SWEILLEM's confirmation (plan section 7). */
+:root {
+  /* colour, light */
+  --paper: #f2f2ef;   /* page ground: stone grey with the S-mark's cool bias */
+  --surface: #ffffff; /* cards, panels, inputs */
+  --sunk: #e8e7e3;    /* wells, tracks, pill background */
+  --ink: #1c1818;     /* text */
+  --muted: #5d5f62;   /* secondary text */
+  --line: #d6d4cf;    /* hairlines, borders */
+  --maroon: #7a0404;  /* brand accent: wordmark maroon */
+  --maroon-hi: #9c1010;
+  --on-maroon: #ffffff;
+  --slate: #7f8285;   /* brand grey: S mark */
+  --glaze: #3b2119;   /* pipe glaze brown (product colour) */
+  --glaze-hi: #6b3a26;
+  --clay: #c07a4a;    /* fired clay body, used in cross-sections */
+  --fire: #e4572e;    /* kiln heat, used only for firing moments */
+  --bore: #f7f1ea;    /* pipe bore in drawings */
+  --ok: #1d6b43; --warn: #a15c00; --err: #b3261e;
+
+  /* type */
+  --font-display: "Jost", "IBM Plex Sans Arabic", system-ui, sans-serif;   /* geometric, close to the wordmark */
+  --font-body: "IBM Plex Sans", "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, monospace;                   /* spec values, DN, tolerances */
+  /* Arabic: IBM Plex Sans Arabic for both display (700) and body */
+
+  /* motion */
+  --t-instant: 120ms; --t-quick: 200ms; --t-base: 320ms; --t-slow: 560ms; --t-story: 900ms;
+  --ease-glaze: cubic-bezier(.2,.8,.2,1);
+  --ease-kiln: cubic-bezier(.65,0,.35,1);
+  --ease-set: cubic-bezier(.34,1.56,.64,1);
+
+  /* shape */
+  --radius-chip: 999px; --radius-control: 10px; --radius-card: 16px; --radius-panel: 20px;
+  --hex: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);          /* from the S mark */
+  --frame-cut: polygon(0 0,82% 0,100% 18%,100% 100%,18% 100%,0 82%);     /* hero photo frame */
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #141011; --surface: #1d1718; --sunk: #261f1f;
+    --ink: #f1ebe8; --muted: #aaa19d; --line: #382e2d;
+    --maroon: #e0524a; --maroon-hi: #f07068; --on-maroon: #1a0706;
+    --slate: #9a9da0; --glaze: #5a3325; --glaze-hi: #8a5238; --clay: #d08a58; --fire: #ff7a45;
+    --bore: #0f0b0b; --ok: #5cc28c; --warn: #e5a24a; --err: #ff8a80;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
+}
