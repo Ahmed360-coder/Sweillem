@@ -27,7 +27,7 @@ Every animation in the redesign prototype (M00 intro to M27). The same IDs appea
 
 | ID | Name | Screen | Trigger | Duration | Easing | What moves | Reduced motion |
 |---|---|---|---|---|---|---|---|
-| M00 | Intro | home | First visit per session; skippable by tap or key | 2000 ms + 700 ms exit | glaze / kiln | Glazed-pipe photo zooms in, hexagon outline draws, white logo wipes in, year counts 1900→1935, kiln-colour bar fills, embers rise; logo and photo tilt with the pointer; exits by collapsing into a hexagon | Logo and photo shown still for 0.9 s, then a 0.2 s fade |
+| M00 | Intro | home | First visit per session; skippable by tap or key | 3000 ms + 700 ms exit | back-out / glaze / kiln | 0–1.2 s: three glazed pipes fly in (left, above, right) and snap spigot-into-socket with a spark burst and a small shake; the joined line settles under the logo. 1.3–2 s: hexagon draws, white logo wipes in. 1.9–2.6 s: Since 1900→1935 · Cairo. Glaze highlight sweeps the pipe line; embers rise; logo and photo tilt with the pointer. Exits by collapsing into a hexagon | Joined pipes, logo and photo shown still for 0.9 s, then a 0.2 s fade |
 | M01 | Page transition | all | Route change | 320 ms | glaze | View rises 14 px and fades in; View Transitions API where supported | Instant swap |
 | M02 | Header condense | home | Scroll > 24 px | 320 ms | glaze | Logo 40→32 px, blurred ground and hairline appear | Same, no easing |
 | M03 | Headline rise | home | Page load | 900 ms, 55 ms stagger | glaze | Each word rises out of a mask | Static text |

@@ -5,14 +5,14 @@ Clickable prototype of the new sweillem.net, used to agree the look and the inte
 - `prototype/sweillem-prototype.html` – the whole prototype in one file (images embedded). Open it in a browser.
 - `prototype/src.html`, `prototype/assets/`, `prototype/build.py` – editable source; run `python3 build.py` to rebuild the single file.
 - `tokens.css` – colour, type, motion and shape tokens.
-- `intro-spec.md` – the 2-second intro screen (M00): sequence, reactive behaviour and build rules.
+- `intro-spec.md` – the 3-second intro screen (M00): sequence, reactive behaviour and build rules.
 - `motion-spec.md` – every animation with trigger, timing, easing and reduced-motion fallback.
 
 ## Screens
 
 | Screen | What it shows |
 |---|---|
-| Intro | 2-second brand moment: glazed-pipe photo, hexagon draw, white logo wipe, 1900→1935 counter, embers, pointer tilt, hexagon exit; skippable |
+| Intro | 3-second brand moment: three glazed pipes fly in and snap together, then hexagon draw, white logo wipe, 1900→1935 counter, embers, pointer tilt, hexagon exit; skippable |
 | Home | Word-by-word slogan, hexagon photo iris, 1935 badge, count-up stats, standards marquee, 10 product families with redrawing icons, film slot, projects, Euro Sweillem band |
 | Product explorer | Class pill (N/H), DN chips and slider, true-scale SVG cross-section that tweens, compare-classes overlay, live spec card, add-to-quote flight, full table (stacked cards on phones), empty state for families whose tables are not imported yet |
 | Process journey | Film slot, then sticky scrollytelling through the six steps plus delivery, hex-iris photo changes, progress rail, kiln dial to 1200 °C |
