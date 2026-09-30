@@ -1,26 +1,22 @@
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url(assets/inter.woff2) format('woff2');
-}
-@font-face {
-  font-family: 'Space Grotesk';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url(assets/space-grotesk.woff2) format('woff2');
-}
+/* Fonts from the redesign tokens (Jost, IBM Plex Sans / Sans Arabic / Mono; all SIL OFL), self-hosted. */
+@font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url(assets/fonts/ibm-plex-mono-latin-400.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 500; font-display: swap; src: url(assets/fonts/ibm-plex-mono-latin-500.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'IBM Plex Sans'; font-style: normal; font-weight: 400 600; font-display: swap; src: url(assets/fonts/ibm-plex-sans-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'IBM Plex Sans Arabic'; font-style: normal; font-weight: 400; font-display: swap; src: url(assets/fonts/ibm-plex-sans-arabic-arabic-400.woff2) format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1; }
+@font-face { font-family: 'IBM Plex Sans Arabic'; font-style: normal; font-weight: 500; font-display: swap; src: url(assets/fonts/ibm-plex-sans-arabic-arabic-500.woff2) format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1; }
+@font-face { font-family: 'IBM Plex Sans Arabic'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/ibm-plex-sans-arabic-arabic-600.woff2) format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1; }
+@font-face { font-family: 'IBM Plex Sans Arabic'; font-style: normal; font-weight: 700; font-display: swap; src: url(assets/fonts/ibm-plex-sans-arabic-arabic-700.woff2) format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1; }
+@font-face { font-family: 'Jost'; font-style: normal; font-weight: 400 700; font-display: swap; src: url(assets/fonts/jost-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 
 .hm {
-  --hm-maroon: #7a0404;
-  --hm-ink: #3b3530;
-  --hm-muted: #6d625a;
-  --hm-line: #d8c9ba;
-  --hm-bg: #f6efe7;
-  --hm-surface: #fffdfb;
-  font-family: Inter, 'Helvetica Neue', Arial, sans-serif;
+  /* Defaults match design/tokens.css; a page that defines the tokens overrides them. */
+  --hm-maroon: var(--maroon, #7a0404);
+  --hm-ink: var(--ink, #1c1818);
+  --hm-muted: var(--muted, #5d5f62);
+  --hm-line: var(--line, #d6d4cf);
+  --hm-bg: #f2f2ef; /* the film itself stays on the light paper colour, like a video */
+  --hm-surface: var(--surface, #ffffff);
+  font-family: 'IBM Plex Sans', 'IBM Plex Sans Arabic', system-ui, sans-serif;
   color: var(--hm-ink);
   display: grid;
   gap: 12px;
@@ -28,16 +24,16 @@
 .hm-stage {
   position: relative;
   aspect-ratio: 16 / 9;
-  border-radius: 16px;
+  border-radius: 20px;
   overflow: hidden;
   background: var(--hm-bg);
   box-shadow: 0 1px 0 var(--hm-line), 0 12px 40px -18px rgba(59, 53, 48, 0.35);
 }
 .hm-svg { display: block; width: 100%; height: 100%; }
 .hm-caption { display: none; margin: 0; font-size: 15px; line-height: 1.5; color: var(--hm-muted); }
-.hm-caption b { font-family: 'Space Grotesk', Inter, sans-serif; color: var(--hm-maroon); margin-inline-end: 8px; }
+.hm-caption b { font-family: 'IBM Plex Mono', monospace; color: var(--hm-maroon); margin-inline-end: 8px; }
 .hm-caption b:empty { display: none; }
-.hm-caption strong { display: inline; color: var(--hm-ink); font-family: 'Space Grotesk', Inter, sans-serif; font-size: 18px; }
+.hm-caption strong { display: inline; color: var(--hm-ink); font-family: Jost, 'IBM Plex Sans Arabic', sans-serif; font-size: 18px; font-weight: 600; }
 .hm-caption span { display: block; margin-top: 4px; min-height: 4.5em; }
 .hm-compact .hm-stage { aspect-ratio: 1920 / 810; border-radius: 12px; }
 .hm-compact .hm-caption { display: block; }
@@ -53,7 +49,7 @@
 }
 .hm-play svg { width: 22px; height: 22px; fill: currentColor; }
 .hm-seek { flex: 1; min-width: 0; accent-color: var(--hm-maroon); height: 44px; }
-.hm-time { font-variant-numeric: tabular-nums; font-size: 14px; color: var(--hm-muted); min-width: 88px; text-align: end; }
+.hm-time { font-family: 'IBM Plex Mono', monospace; font-variant-numeric: tabular-nums; font-size: 14px; color: var(--hm-muted); min-width: 88px; text-align: end; }
 .hm-chapters {
   list-style: none; margin: 0; padding: 0;
   display: flex; gap: 8px; overflow-x: auto; scrollbar-width: thin;
@@ -67,7 +63,7 @@
   display: inline-flex; align-items: center; gap: 8px;
   transition: background-color 0.2s, border-color 0.2s, color 0.2s;
 }
-.hm-chapters button span { color: var(--hm-maroon); font-family: 'Space Grotesk', Inter, sans-serif; }
+.hm-chapters button span { color: var(--hm-maroon); font-family: 'IBM Plex Mono', monospace; font-weight: 500; }
 .hm-chapters button:hover { border-color: var(--hm-maroon); }
 .hm-chapters button[aria-current] { background: var(--hm-maroon); border-color: var(--hm-maroon); color: #fff; }
 .hm-chapters button[aria-current] span { color: #fff; }

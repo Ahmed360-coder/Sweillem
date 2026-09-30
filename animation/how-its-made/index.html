@@ -7,32 +7,42 @@
   <meta name="description" content="Animated walkthrough of how SWEILLEM vitrified clay pipes are made, from Aswan clay to an installed sewer line.">
   <link rel="stylesheet" href="how-its-made.css">
   <style>
-    body { margin: 0; background: #fffdfb; }
+    body { margin: 0; background: #f2f2ef; color: #1c1818; font-family: 'IBM Plex Sans', 'IBM Plex Sans Arabic', system-ui, sans-serif; }
     main { max-width: 1200px; margin: 0 auto; padding: 32px 16px 48px; }
-    h1 { font-family: 'Space Grotesk', Inter, sans-serif; font-size: clamp(28px, 4vw, 44px); margin: 0 0 8px; color: #3b3530; }
-    p.lede { font-family: Inter, sans-serif; color: #6d625a; margin: 0 0 24px; max-width: 60ch; }
+    .eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #7a0404; margin: 0 0 8px; }
+    [lang="ar"] .eyebrow { font-family: 'IBM Plex Sans Arabic', sans-serif; letter-spacing: 0; font-weight: 600; }
+    h1 { font-family: Jost, 'IBM Plex Sans Arabic', sans-serif; font-weight: 600; font-size: clamp(28px, 4vw, 44px); line-height: 1.08; margin: 0 0 8px; }
+    p.lede { color: #5d5f62; margin: 0 0 24px; max-width: 60ch; }
     body.render main { max-width: none; padding: 0; }
-    body.render h1, body.render p.lede { display: none; }
+    body.render header { display: none; }
     body.render .hm-stage { border-radius: 0; box-shadow: none; width: 1920px; height: 1080px; }
   </style>
 </head>
 <body>
   <main>
-    <h1>How a SWEILLEM clay pipe is made</h1>
-    <p class="lede">From clay at the Aswan quarry to a watertight sewer line underground. Pick a step to jump to it.</p>
+    <header>
+      <p class="eyebrow" data-en="The film" data-ar="الفيلم">The film</p>
+      <h1 data-en="How a SWEILLEM clay pipe is made" data-ar="كيف تُصنع ماسورة سويلم من الفخار المزجج">How a SWEILLEM clay pipe is made</h1>
+      <p class="lede" data-en="From clay at the Aswan quarry to a watertight sewer line underground. Pick a step to jump to it." data-ar="من طين محجر أسوان إلى خط صرف محكم تحت الأرض. اختر مرحلة للانتقال إليها.">From clay at the Aswan quarry to a watertight sewer line underground. Pick a step to jump to it.</p>
+    </header>
     <div id="how-its-made"></div>
   </main>
   <script type="module">
-    import { mount, frameSVG } from './how-its-made.js';
+    import { mount } from './how-its-made.js';
     const params = new URLSearchParams(location.search);
+    const lang = params.get('lang') === 'ar' ? 'ar' : 'en';
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.querySelectorAll('[data-en]').forEach((n) => { n.textContent = n.dataset[lang]; });
+    if (lang === 'ar') document.title = document.querySelector('h1').textContent;
     const el = document.getElementById('how-its-made');
     if (params.has('render')) {
       // Frame-exact mode used by scripts/render.mjs.
       document.body.classList.add('render');
-      const player = mount(el, { autoplay: false, controls: false });
+      const player = mount(el, { autoplay: false, controls: false, lang });
       window.__hm = { seek: (t) => player.seek(t) };
     } else {
-      window.__hm = mount(el, { autoplay: true });
+      window.__hm = mount(el, { autoplay: true, lang });
     }
   </script>
 </body>

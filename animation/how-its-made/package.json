@@ -2,11 +2,13 @@
   "name": "sweillem-how-its-made",
   "private": true,
   "type": "module",
-  "description": "Animated walkthrough of how SWEILLEM vitrified clay pipes are made, playable on the site and renderable to MP4.",
+  "description": "Animated film of how SWEILLEM vitrified clay pipes are made, in English and Arabic, playable on the site and renderable to MP4.",
   "scripts": {
-    "render": "node scripts/render.mjs out",
+    "render": "node scripts/render.mjs out --lang en",
+    "render:ar": "node scripts/render.mjs out --lang ar",
     "check": "node scripts/check.mjs",
-    "stills": "node scripts/render.mjs out/stills --stills 3,9,12,16,19,24,27.5,33,36,40,43,44.5,47,52,55,59,61.5,66,72,76,80,86"
+    "stills": "node scripts/render.mjs out/stills --lang en --stills 3,6.5,11,14,18,24,28,32,35,40,45,50,55,59,62,65,69,72,75,79,84,88,92,95.5,100",
+    "stills:ar": "node scripts/render.mjs out/stills --lang ar --stills 3,6.5,11,14,18,24,28,32,35,40,45,50,55,59,62,65,69,72,75,79,84,88,92,95.5,100"
   },
   "devDependencies": {
     "playwright": "1.56.1"
