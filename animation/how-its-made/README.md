@@ -1,6 +1,6 @@
 # How a SWEILLEM clay pipe is made
 
-A 103-second animated film of how SWEILLEM vitrified clay pipes are made, from clay at the Aswan quarry to a watertight sewer line underground, in English and Arabic. It runs in two ways:
+A 105-second animated film of how SWEILLEM vitrified clay pipes are made, from clay at the Aswan quarry to a watertight sewer line underground, in English and Arabic. It runs in two ways:
 
 - **On the site**, as an interactive player: play/pause, a seek bar, and nine chapter buttons. It starts playing when it scrolls into view and pauses when it leaves.
 - **As a video file**: `scripts/render.mjs` renders it frame by frame to MP4, along with a poster image and WebVTT captions, for either language.
@@ -20,8 +20,8 @@ Seven steps open with a two-second card showing SWEILLEM's own photo of that ste
 | 5 | 0:43 | Glazing: QC, full immersion, glaze inside and out | deck image8 | Deck process slides |
 | 6 | 0:53 | Final firing: pre-heating, shuttle kilns, up to 1200 °C over 2–4 days | deck image9 | Deck process slides |
 | 7 | 1:06 | Joints: factory-applied polyurethane joints, watertight at 0.5, 1 and 2.4 bar internal or external, keep roots out | | sweillem.net Joint Performance page |
-| 8 | 1:13 | Delivery: from the factory or SWEILLEM's warehouses abroad to Egypt, Saudi Arabia, Germany | deck image11 | Deck market presence slides, "Germany warehouses" |
-| 9 | 1:22 | Installation: spigot into socket, continuous watertight line | deck image16 | Illustrative; see below |
+| 8 | 1:15 | Delivery: from the factory or SWEILLEM's warehouses abroad to Egypt, Saudi Arabia, Germany | deck image11 | Deck market presence slides, "Germany warehouses" |
+| 9 | 1:24 | Installation: spigot into socket, continuous watertight line | deck image16 | Illustrative; see below |
 
 The closing card uses the report's benefits list (100+ year life expectancy, rigid, corrosion resistant, low maintenance).
 

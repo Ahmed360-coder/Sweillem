@@ -133,7 +133,7 @@ const PLAN = [
   { id: 'dry', d: 8, photo: 'dry' },
   { id: 'glaze', d: 8, photo: 'glaze' },
   { id: 'fire', d: 11, photo: 'fire' },
-  { id: 'joint', d: 7 },
+  { id: 'joint', d: 9 },
   { id: 'deliver', d: 7, photo: 'deliver' },
   { id: 'install', d: 12, photo: 'install' },
   { id: 'outro', d: 7 },
@@ -614,10 +614,10 @@ function sceneJoint(lt) {
   if (push > 0) s += `<path d="M ${f(aX + 250)} ${y} l 120 0 m -24 -18 l 26 18 l -26 18" stroke="#fff" stroke-width="10" fill="none" stroke-linecap="round" opacity="${o(push)}"/>`;
   // Watertight, then the pressures from the live site's Joint Performance page.
   const ok = seg(lt, 4.3, 4.9);
-  if (ok > 0) s += checkBadge(W / 2 - 150, 150, back(ok), ok) + text(W / 2 - 110, 163, L().watertight, { size: 40, weight: 600, font: 'head', fill: C.maroon, op: ok });
+  if (ok > 0) s += checkBadge(side(W / 2 - 150, W / 2 + 150), 150, back(ok), ok) + text(side(W / 2 - 110, W / 2 + 110), 163, L().watertight, { size: 40, weight: 600, font: 'head', fill: C.maroon, anchor: lead(), op: ok });
   ['0.5', '1', '2.4'].forEach((v, i) => {
     const a = seg(lt, 5.0 + i * 0.3, 5.4 + i * 0.3);
-    if (a > 0) s += chip(W / 2 - 300 + i * 300, 255, L().bar(v), a, { fill: C.fired, color: '#fff', stroke: C.fired, size: 26 });
+    if (a > 0) s += chip(W / 2 - 300 + (rtl() ? 2 - i : i) * 300, 255, L().bar(v), a, { fill: C.fired, color: '#fff', stroke: C.fired, size: 26 });
   });
   const pr = seg(lt, 5.9, 6.4);
   if (pr > 0) s += text(W / 2, 640, L().pressure, { size: 24, weight: 500, fill: C.muted, anchor: 'middle', op: pr }) + chip(W / 2, 730, L().roots, pr, { dot: true, size: 24 });
