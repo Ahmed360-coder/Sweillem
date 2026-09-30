@@ -7,6 +7,7 @@ Clickable prototype of the new sweillem.net, used to agree the look and the inte
 - `logo/` – the SWEILLEM logo redrawn as clean vectors: `sweillem-logo.svg` (full colour: grey #7f8285 mark and tagline, maroon #7a0404 wordmark), `sweillem-logo-white.svg` (dark backgrounds), `sweillem-logo-maroon.svg` (one colour), and the hexagon S mark alone in the same three colours. It is a faithful redraw of the logo on sweillem.net, not a redesign. The mark and the straight letters were fitted to the original with exact geometry, and the S was traced and smoothed. The tagline is set in Jost (a Futura-style open font) matched to the original letter positions. If SWEILLEM has the original vector file (AI, EPS or PDF), use it instead.
 - `tokens.css` – colour, type, motion and shape tokens.
 - `intro-spec.md` – the 3-second intro screen (M00): sequence, reactive behaviour and build rules.
+- `taste-audit.md` – the taste-skill pass: what changed, what was kept on purpose, and rules for the build.
 - `motion-spec.md` – every animation with trigger, timing, easing and reduced-motion fallback.
 
 ## Screens

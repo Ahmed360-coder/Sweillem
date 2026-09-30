@@ -1,4 +1,5 @@
 <title>Sweillem Redesign Prototype</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNDggMjE3IiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IlNXRUlMTEVNIj48dGl0bGU+U1dFSUxMRU08L3RpdGxlPjxwYXRoIGZpbGw9IiM3YTA0MDQiIGQ9Ik03My44OSAzMC42NkwxMjEuODEgNjAuNzVMMTIxLjgxIDkzLjI4TDczLjg5IDYzLjE5TDUwLjMzIDc3Ljk4TDEyMS41MCAxMjIuNjhMMTQwLjA3IDExMS4wMkwxNDYuODYgMTA2Ljc1TDE0Ni44NiA0Ni45MEw3My44OSAxLjA3TDAuOTIgNDYuOTBMMC45MiA3OC4xOUwwLjkyIDEwNy43OEwyNS45OCAxMjMuNTFMNzMuODkgMTUzLjYwTDk3LjQ1IDEzOC44MUwyNS45OCA5My45M0wyNS45OCA2MC43NVpNNzMuODkgMTg1Ljk3TDAuOTIgMTQwLjE0TDAuOTIgMTY5LjczTDczLjg5IDIxNS41NkwxNDYuODYgMTY5LjczTDE0Ni44NiAxNDAuMTRMMTIxLjgxIDE1NS44OEwxMjEuODEgMTU1Ljg4TDczLjg5IDE4NS45N1oiLz48L3N2Zz4K">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -569,7 +570,7 @@ table.mt{border-collapse:collapse;width:100%;font-size:13.5px;min-width:820px}
 #site[data-motion="reduced"] #intro.out{clip-path:none;opacity:0;transition:opacity .2s}
 
 
-/* ---------- micro-interactions (M37–M39) ---------- */
+/* ---------- micro-interactions (M37-M39) ---------- */
 .btn{position:relative;overflow:hidden;isolation:isolate}
 .btn::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(105deg,transparent 30%,rgb(255 255 255/.42) 48%,rgb(255 255 255/.1) 55%,transparent 68%);transform:translateX(-130%);pointer-events:none}
 .btn-primary::after{z-index:0}
@@ -594,7 +595,7 @@ table.mt{border-collapse:collapse;width:100%;font-size:13.5px;min-width:820px}
 .tool .art{width:96px;height:96px}
 @container site (max-width:760px){.tools{grid-template-columns:1fr}.tool .art{width:72px;height:72px}}
 
-/* ---------- 3D viewer (M28–M30) ---------- */
+/* ---------- 3D viewer (M28-M30) ---------- */
 .v3{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,.8fr);gap:clamp(18px,3cqi,32px);align-items:start}
 .v3-stage{position:relative;border-radius:22px;overflow:hidden;background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--glaze) 22%,var(--surface)),var(--sunk));border:1px solid var(--line);aspect-ratio:4/3;max-width:100%;touch-action:none;cursor:grab}
 .v3-stage:active{cursor:grabbing}
@@ -611,7 +612,7 @@ table.mt{border-collapse:collapse;width:100%;font-size:13.5px;min-width:820px}
 .views button[aria-pressed="true"]{border-color:var(--maroon);background:color-mix(in srgb,var(--maroon) 9%,var(--surface))}
 @container site (max-width:900px){.v3{grid-template-columns:1fr}.v3-stage{aspect-ratio:1/1}}
 
-/* ---------- heritage (M31–M33) ---------- */
+/* ---------- heritage (M31-M33) ---------- */
 .her{position:relative}
 .her-pin{position:sticky;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr;gap:18px;padding-block:18px}
 .her-top{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:end;justify-content:space-between}
@@ -667,7 +668,7 @@ table.mt{border-collapse:collapse;width:100%;font-size:13.5px;min-width:820px}
 .cchart .req{stroke:var(--ink);stroke-width:1.5;stroke-dasharray:4 3;transition:x1 .5s var(--ease-glaze),x2 .5s var(--ease-glaze)}
 @container site (max-width:900px){.calc{grid-template-columns:1fr}.kv{grid-template-columns:1fr 1fr}.kv div:last-child:nth-child(odd){grid-column:1/-1}}
 
-/* ---------- kiln theme (M35–M36) ---------- */
+/* ---------- kiln theme (M35-M36) ---------- */
 #site.kiln{--paper:#0f0908;--surface:#1b120f;--sunk:#241713;--ink:#f6ebe4;--muted:#bba295;--line:#3d2820;
   --maroon:#ff6a3d;--maroon-hi:#ff8f63;--on-maroon:#1a0706;--slate:#a8958c;--glaze:#5a3325;--glaze-hi:#8a5238;--clay:#d08a58;--fire:#ff7a45;
   --bore:#0b0706;--ok:#6fd49c;--warn:#ffb454;--err:#ff8a80;--logo-filter:brightness(0) invert(.94);
@@ -764,6 +765,37 @@ html.kiln-vt::view-transition-new(root){animation:kilnReveal .75s cubic-bezier(.
 #lightbox .filmfig .hm{--hm-surface:#fff;--hm-ink:#1c1818;--hm-muted:#5d5f62;--hm-line:#d6d4cf;color:#1c1818;background:#fff;border-radius:16px;padding:10px;max-height:86cqh;overflow:auto}
 .proc-film{min-height:120px}
 
+
+/* ---------- taste pass ---------- */
+.hero .wrap{grid-template-columns:1.2fr .9fr}
+.hero h1{font-size:clamp(30px,3.9cqi,52px);letter-spacing:-.015em;line-height:1.02}
+#site[lang="ar"] .hero h1{line-height:1.25}
+.lede,.sec-head p,.page-head p{max-width:62ch}
+p{text-wrap:pretty}
+.sec-head{margin-block-end:28px}
+/* project cards: region moves under the photo, no pill on the image; home grid becomes a featured trio */
+.pcard .ph::after{display:none}
+.pcard .reg{font:500 12px var(--font-data);letter-spacing:.04em;color:var(--muted);text-transform:uppercase}
+#site[lang="ar"] .pcard .reg{font-family:var(--font-body);letter-spacing:0;text-transform:none}
+.pgrid{grid-template-columns:1.35fr 1fr;align-items:stretch;gap:22px}
+.pgrid .pcard:first-child{grid-row:span 2;grid-template-rows:minmax(0,1fr) auto}
+.pgrid .pcard:first-child .ph{aspect-ratio:auto;height:100%;min-height:320px}
+.pgrid .pcard:not(:first-child) .ph{aspect-ratio:16/9}
+@container site (max-width:760px){.pgrid{grid-template-columns:1fr}.pgrid .pcard:first-child{grid-row:auto}.pgrid .pcard:first-child .ph{aspect-ratio:4/3;height:auto;min-height:0}}
+/* tactile press on every control */
+:where(.tool,.fam button,.dns button,.views button,.fams button,.pill button,.chip,.lang,.qbtn,.themebtn,.pcard,.film):active{transform:translateY(1px) scale(.985)}
+/* one-line navigation at every desktop width */
+.nav a,.qbtn,.lang{white-space:nowrap}
+#site[lang="ar"] .nav a{padding-inline:9px}
+@container site (max-width:1240px){.qbtn .qlabel{display:none}.nav a{padding-inline:8px;font-size:14px}}
+@container site (max-width:980px){.nav{display:none}.burger{display:block}.hdr-actions{margin-inline-start:auto}}
+/* skip link */
+.skip{position:absolute;inset-inline-start:12px;top:-60px;z-index:30;background:var(--ink);color:var(--paper);padding:10px 14px;border-radius:10px;font-weight:600;text-decoration:none;transition:top var(--t-quick)}
+.skip:focus{top:12px}
+/* paper grain: one fixed layer above the page, never on the scroller */
+#site::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;opacity:.05;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+#site.kiln::after{mix-blend-mode:screen;opacity:.035}
+
 .draft-banner{background:color-mix(in srgb,var(--warn) 14%,var(--surface));color:var(--ink);font-size:13px;padding-block:8px;text-align:center;border-block-end:1px solid color-mix(in srgb,var(--warn) 30%,transparent)}
 </style>
 
@@ -789,8 +821,9 @@ html.kiln-vt::view-transition-new(root){animation:kilnReveal .75s cubic-bezier(.
     <canvas id="embers" aria-hidden="true"></canvas>
     <div id="scroller">
       <div id="draftBanner" class="draft-banner" hidden></div>
+      <a class="skip" href="#view" id="skipLink">Skip to content</a>
       <header class="hdr" id="hdr"></header>
-      <main id="view"></main>
+      <main id="view" tabindex="-1"></main>
       <footer class="foot" id="foot"></footer>
     </div>
     <nav id="mmenu" aria-label="Menu"></nav>
@@ -879,7 +912,7 @@ const I18N = {
       dryer: 'Dryer · computer controlled', moisture: 'Moisture', lingl: 'Built under Lingl supervision',
       tank: 'Glaze tank', qcPassed: 'QC passed', glazeOut: 'Glaze outside', glazeIn: 'Glaze inside',
       preheat: 'Pre-heating', noHumidity: 'No humidity left', kiln: 'Shuttle kiln', kilnTemp: 'Kiln temperature',
-      curve: 'Firing curve over 2–4 days', deg: '°C',
+      curve: 'Firing curve over 2-4 days', deg: '°C',
       jointSpigot: 'Polyurethane joint on the spigot', jointSocket: 'Polyurethane joint in the socket', watertight: 'Watertight',
       bar: (v) => `${v} bar`, pressure: 'Internal or external pressure', roots: 'Keeps roots out',
       egypt: 'Egypt', ksa: 'Saudi Arabia', germany: 'Germany',
@@ -917,7 +950,7 @@ const I18N = {
       dryer: 'مجفف · تحكم بالحاسب', moisture: 'الرطوبة', lingl: 'أُنشئ بإشراف لينجل',
       tank: 'حوض التزجيج', qcPassed: 'اجتاز الفحص', glazeOut: 'تزجيج خارجي', glazeIn: 'تزجيج داخلي',
       preheat: 'التسخين المبدئي', noHumidity: 'لا رطوبة متبقية', kiln: 'فرن مكوكي', kilnTemp: 'حرارة الفرن',
-      curve: 'منحنى الحرق على مدى 2–4 أيام', deg: '°م',
+      curve: 'منحنى الحرق على مدى 2-4 أيام', deg: '°م',
       jointSpigot: 'وصلة بولي يوريثان على الذيل', jointSocket: 'وصلة بولي يوريثان داخل الجرس', watertight: 'محكمة ضد التسرب',
       bar: (v) => `${v} بار`, pressure: 'ضغط داخلي أو خارجي', roots: 'تمنع تسلل الجذور',
       egypt: 'مصر', ksa: 'السعودية', germany: 'ألمانيا',
@@ -1722,8 +1755,8 @@ const saveQ = () => { try { localStorage.setItem('sw-quote', JSON.stringify(S.qu
 // Pipe tables transcribed from sweillem.net/pipes/ (verify every row in M1)
 // [DN, joint, TKL, FN kN/m, d1, ±, d3, ±, wall, d4, d7, BMR, lengths]
 const PIPES = {
-  N: [[125,'F','–','34',126,4,159,2,17,null,null,'3.5','1.25'],[150,'F','–','34',151,5,186,2,18,null,null,'4','1, 1.25, 1.5'],
-      [200,'F','200 / 160','40 / 32',200,5,242,3,21,null,null,'7.4','1, 1.5, 1.75, 2'],[200,'C','200 / 160','40 / 32',200,5,242,5,21,260.0,'263.0–263.5','7.4','1.5, 2'],
+  N: [[125,'F','-','34',126,4,159,2,17,null,null,'3.5','1.25'],[150,'F','-','34',151,5,186,2,18,null,null,'4','1, 1.25, 1.5'],
+      [200,'F','200 / 160','40 / 32',200,5,242,3,21,null,null,'7.4','1, 1.5, 1.75, 2'],[200,'C','200 / 160','40 / 32',200,5,242,5,21,260.0,'263.0-263.5','7.4','1.5, 2'],
       [250,'C','160','40',250,6,299,6,23,317.5,'320.5',null,'2'],[300,'C','160','48',300,7,355,7,25,371.5,'374.5',null,'2.0, 2.5'],
       [350,'C','160','56',348,7,417,7,27,433.5,'436.5',null,'2.0, 2.5'],[400,'C','160','64',398,8,486,8,43,507.5,'510.5',null,'2.0, 2.5'],
       [500,'C','120','60',496,9,581,9,40.5,605.0,'608.0',null,'2.0, 2.5'],[600,'C','95','57',597,12,687,12,43.5,720.0,'723.2',null,'2.0, 2.5']],
@@ -1775,14 +1808,14 @@ en:{
  quote:'Quote list', lang:'عربي', menu:'Menu',
  h_eyebrow:'Vitrified clay pipes · Cairo, since 1935',
  h_title:'Daring to be the first, working hard for a *world-class* level',
- h_lede:'Glazed vitrified clay pipes and fittings for sewer and drainage networks, made from Aswan clay and fired at up to 1200 °C. Normal class DN 125 to 600, High class DN 200 to 1000.',
+ h_lede:'Glazed vitrified clay pipes and fittings for sewer and drainage networks, made from Aswan clay and fired at up to 1200 °C.',
  h_cta1:'Explore the pipes', h_cta2:'How it’s made',
  cap_kicker:'On site', slides:['Germany · Euro Sweillem site','Makkah project, Saudi Arabia','Germany warehouses','Glazed pipes, Cairo plant'],
  since:'Since',
  st:[['1935','Founded in Cairo'],['1987','New plant, modern lines'],['1200','°C peak firing'],['100+','Years design life'],['10','Product families']],
  fam_h:'Ten product families', fam_p:'Every family gets a proper page: what it is for, a drawing, the full table, and an add-to-quote button on each size.', fam_all:'Open the explorer',
  fam:{pipes:'Pipes',bends:'Bends',junctions:'Junctions',jointing:'Jointing systems',short:'Short pieces',plugs:'Input clutch & end plugs',perforated:'Perforated pipe',utrap:'U-trap',reducer:'Enlarger & reducer',half:'Half channels'},
- fam_sub:{pipes:'DN 125–1000 · N and H',bends:'Fittings',junctions:'Fittings',jointing:'Joints',short:'Fittings',plugs:'Fittings',perforated:'Drainage',utrap:'Fittings',reducer:'Fittings',half:'Channels'},
+ fam_sub:{pipes:'DN 125-1000 · N and H',bends:'Fittings',junctions:'Fittings',jointing:'Joints',short:'Fittings',plugs:'Fittings',perforated:'Drainage',utrap:'Fittings',reducer:'Fittings',half:'Channels'},
  film_eyebrow:'The film', film_h:'From Aswan clay to the trench', film_p:'A short animated film follows one pipe from the quarry through the kiln to installation on site.', film_pending:'In production',
  film_steps:['Raw material','Moulding','Drying','Glazing','Firing','Jointing','Installation'],
  film_modal:'The manufacturing-to-installation film is being produced in its own thread. It will play here, with captions, a poster frame and a still-image fallback for reduced motion.',
@@ -1795,7 +1828,7 @@ en:{
  f_links:{quality:'Quality',certs:'Certificates',joint:'Joint performance',sust:'Sustainability',services:'Services',news:'News',privacy:'Privacy',terms:'Terms'},
  f_base:'© SWEILLEM Vitrified Clay Pipes Co.', f_proto:'Prototype for review. Not the live site.',
  x_eyebrow:'Product explorer', x_h:'Find the exact pipe', x_p:'Choose a class and a nominal size. The cross-section is drawn to scale from the published table and every value updates with it.',
- x_family:'Product', x_class:'Strength class', x_N:'N · Normal', x_H:'H · Extra strength', x_Nsub:'DN 125–600', x_Hsub:'DN 200–1000',
+ x_family:'Product', x_class:'Strength class', x_N:'N · Normal', x_H:'H · Extra strength', x_Nsub:'DN 125-600', x_Hsub:'DN 200-1000',
  x_dn:'Nominal size (DN)', x_compare:'Compare with the other class', x_add:'Add to quote', x_qty:'Quantity',
  x_joint:{F:'F joint',C:'C joint'},
  x_spec:['Crushing strength FN','Strength class','Inner ø d1','Outer ø d3','Wall thickness','Socket inner ø d4','Spigot outer ø d7','Bending moment BMR','Lengths'],
@@ -1812,7 +1845,7 @@ en:{
   ['Moulding','The prepared clay is extruded into pipe form, socket and all.',['Extrusion']],
   ['Drying','Control of the dryers, built under the supervision of the German company Lingl, is fully computerised.',['Lingl, Germany','Computer controlled']],
   ['Glazing','Each pipe is fully dipped in glaze, inside and out.',['Inside and out']],
-  ['Firing','Pre-heated, then fired in shuttle kilns until the maximum temperature of 1200 °C is reached, over 2 to 4 days.',['Up to 1200 °C','2–4 days','Shuttle kilns']],
+  ['Firing','Pre-heated, then fired in shuttle kilns until the maximum temperature of 1200 °C is reached, over 2 to 4 days.',['Up to 1200 °C','2-4 days','Shuttle kilns']],
   ['Jointing','Joints are fitted and tested for watertightness at 0.5, 1 and 2.4 bar, with angular deflection to EN 295-3:2012.',['0.5 · 1 · 2.4 bar','EN 295-3:2012']],
   ['Delivery and installation','Pipes leave the plant for sites in Egypt, the GCC and Europe. The film shows the laying and jointing in the trench.',['Egypt','Saudi Arabia','Germany']]],
  dial:'Kiln temperature', step:'Step',
@@ -1851,14 +1884,14 @@ ar:{
  quote:'قائمة عرض السعر', lang:'EN', menu:'القائمة',
  h_eyebrow:'مواسير الفخار المزجج · القاهرة منذ 1935',
  h_title:'الأكفأ *والأكثر خبرة*',
- h_lede:'مواسير ووصلات من الفخار المزجج لشبكات الصرف الصحي والصرف، مصنوعة من طين أسوان ومحروقة حتى 1200 درجة مئوية. الفئة العادية من قطر 125 إلى 600، والفئة عالية التحمل من 200 إلى 1000.',
+ h_lede:'مواسير ووصلات من الفخار المزجج لشبكات الصرف الصحي والصرف، مصنوعة من طين أسوان ومحروقة حتى 1200 درجة مئوية.',
  h_cta1:'استكشف المواسير', h_cta2:'مراحل التصنيع',
  cap_kicker:'في الموقع', slides:['ألمانيا · موقع يورو سويلم','مشروع مكة المكرمة، السعودية','مخازن ألمانيا','مواسير مزججة، مصنع القاهرة'],
  since:'منذ',
  st:[['1935','التأسيس في القاهرة'],['1987','مصنع جديد بخطوط حديثة'],['1200','درجة حرق قصوى °م'],['100+','سنة عمر تصميمي'],['10','عائلات منتجات']],
  fam_h:'عشر عائلات منتجات', fam_p:'لكل عائلة صفحة كاملة: الاستخدام، رسم فني، الجدول الكامل، وزر إضافة لعرض السعر لكل مقاس.', fam_all:'افتح مستكشف المنتجات',
  fam:{pipes:'المواسير',bends:'الأكواع',junctions:'وصلات التفرع',jointing:'أنظمة الوصلات',short:'القطع القصيرة',plugs:'وصلات الدخول والسدادات',perforated:'مواسير مثقبة',utrap:'سيفون U',reducer:'مكبرات ومصغرات',half:'أنصاف قنوات'},
- fam_sub:{pipes:'قطر 125–1000 · N و H',bends:'قطع',junctions:'قطع',jointing:'وصلات',short:'قطع',plugs:'قطع',perforated:'صرف',utrap:'قطع',reducer:'قطع',half:'قنوات'},
+ fam_sub:{pipes:'قطر 125-1000 · N و H',bends:'قطع',junctions:'قطع',jointing:'وصلات',short:'قطع',plugs:'قطع',perforated:'صرف',utrap:'قطع',reducer:'قطع',half:'قنوات'},
  film_eyebrow:'الفيلم', film_h:'من طين أسوان إلى الخندق', film_p:'فيلم رسوم متحركة قصير يتبع ماسورة واحدة من المحجر مرورًا بالفرن حتى التركيب في الموقع.', film_pending:'قيد الإنتاج',
  film_steps:['المواد الخام','التشكيل','التجفيف','التزجيج','الحرق','الوصلات','التركيب'],
  film_modal:'يتم إنتاج فيلم التصنيع حتى التركيب في مسار عمل مستقل، وسيُعرض هنا مع ترجمة وصورة غلاف وبديل ثابت لمن يفضلون تقليل الحركة.',
@@ -1871,7 +1904,7 @@ ar:{
  f_links:{quality:'الجودة',certs:'الشهادات',joint:'أداء الوصلات',sust:'الاستدامة',services:'الخدمات',news:'الأخبار',privacy:'الخصوصية',terms:'الشروط'},
  f_base:'© سويلم للمواسير الفخارية المزججة', f_proto:'نموذج أولي للمراجعة، وليس الموقع الفعلي.',
  x_eyebrow:'مستكشف المنتجات', x_h:'اعثر على الماسورة المناسبة', x_p:'اختر الفئة والقطر الاسمي. المقطع مرسوم بمقياس دقيق من الجدول المنشور وتتحدث كل القيم معه.',
- x_family:'المنتج', x_class:'فئة التحمل', x_N:'N · عادية', x_H:'H · عالية التحمل', x_Nsub:'قطر 125–600', x_Hsub:'قطر 200–1000',
+ x_family:'المنتج', x_class:'فئة التحمل', x_N:'N · عادية', x_H:'H · عالية التحمل', x_Nsub:'قطر 125-600', x_Hsub:'قطر 200-1000',
  x_dn:'القطر الاسمي (DN)', x_compare:'قارن بالفئة الأخرى', x_add:'أضف لعرض السعر', x_qty:'الكمية',
  x_joint:{F:'وصلة F',C:'وصلة C'},
  x_spec:['مقاومة الكسر FN','فئة التحمل','القطر الداخلي d1','القطر الخارجي d3','سمك الجدار','قطر الجرس الداخلي d4','قطر الذيل الخارجي d7','عزم الانحناء BMR','الأطوال'],
@@ -1888,7 +1921,7 @@ ar:{
   ['التشكيل','يُبثق الطين المجهز في شكل ماسورة كاملة بالجرس.',['البثق']],
   ['التجفيف','التحكم في المجففات التي أُنشئت تحت إشراف شركة لينجل الألمانية محوسب بالكامل.',['لينجل، ألمانيا','تحكم بالحاسب']],
   ['التزجيج','تُغمس كل ماسورة بالكامل في مادة التزجيج من الداخل والخارج.',['من الداخل والخارج']],
-  ['الحرق','تسخين مبدئي ثم الحرق في أفران مكوكية حتى 1200 درجة مئوية على مدى 2 إلى 4 أيام.',['حتى 1200 °م','2–4 أيام','أفران مكوكية']],
+  ['الحرق','تسخين مبدئي ثم الحرق في أفران مكوكية حتى 1200 درجة مئوية على مدى 2 إلى 4 أيام.',['حتى 1200 °م','2-4 أيام','أفران مكوكية']],
   ['الوصلات','تُركب الوصلات وتُختبر لمنع التسرب عند 0.5 و1 و2.4 بار، مع الانحراف الزاوي وفق EN 295-3:2012.',['0.5 · 1 · 2.4 بار','EN 295-3:2012']],
   ['التوريد والتركيب','تخرج المواسير من المصنع إلى مواقع في مصر والخليج وأوروبا. يعرض الفيلم المد والتوصيل في الخندق.',['مصر','السعودية','ألمانيا']]],
  dial:'حرارة الفرن', step:'مرحلة',
@@ -1977,16 +2010,16 @@ SCREENS.home = () => {
   <div class="wrap"><div class="stats">${t('st').map(([n,l])=>`<div class="stat"><b data-count="${n}">${n.replace('1200','1200<small>°C</small>')}</b><span>${l}</span></div>`).join('')}</div></div>
   <div class="marquee" aria-label="Standards"><div class="track">${[0,1].map(()=>`<span>EN 295</span><span>GSO EN 295</span><span>ASTM C700</span><span>ES 56/2005</span><span>ZPWN 295:2016</span><span>ISO 9001:2015</span><span>ISO 14001:2015</span><span>DIN CERTCO</span><span>SASO</span>`).join('')}</div></div>
   <section><div class="wrap">
-    <div class="sec-head rv"><div><div class="eyebrow">${t('nav_products')}</div><h2>${t('fam_h')}</h2><p class="muted">${t('fam_p')}</p></div><a class="link" data-go="products">${t('fam_all')}</a></div>
+    <div class="sec-head rv"><div><h2>${t('fam_h')}</h2><p class="muted">${t('fam_p')}</p></div><a class="link" data-go="products">${t('fam_all')}</a></div>
     <div class="fam">${FAMS.map((f,i)=>`<button class="rv" style="--d:${i%5}" data-go="products" data-fam="${f}">${famSvg(f)}<svg class="arr flip" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg><div><h3>${t('fam')[f]}</h3><small>${t('fam_sub')[f]}</small></div></button>`).join('')}</div>
   </div></section>
   ${jdiv()}
   <section style="padding-block-start:0"><div class="wrap">
-    <div class="sec-head rv"><div><div class="eyebrow">${t('film_eyebrow')}</div><h2>${t('film_h')}</h2></div></div>
+    <div class="sec-head rv"><div><h2>${t('film_h')}</h2><p class="muted">${t('film_p')}</p></div></div>
     ${filmSlot()}
   </div></section>
   <section style="padding-block-start:0"><div class="wrap">
-    <div class="sec-head rv"><div><div class="eyebrow">${t('nav_projects')}</div><h2>${t('pr_h')}</h2><p class="muted">${t('pr_p')}</p></div><a class="link" data-go="projects">${t('pr_all')}</a></div>
+    <div class="sec-head rv"><div><h2>${t('pr_h')}</h2><p class="muted">${t('pr_p')}</p></div><a class="link" data-go="projects">${t('pr_all')}</a></div>
     <div class="pgrid">${PROJECTS.map((p,i)=>projCard(p,i)).join('')}</div>
   </div></section>
   ${toolsBand()}
@@ -1996,8 +2029,8 @@ SCREENS.home = () => {
   </div></section>`;
 };
 const filmSlot = () => `<button class="film rv" id="filmBtn" aria-label="${esc(t('film_h'))}"><svg class="fr" aria-hidden="true" viewBox="0 0 ${HowItsMade.W} ${HowItsMade.COMPACT_H}" preserveAspectRatio="xMidYMin meet">${HowItsMade.frameSVG(72,{compact:true,lang:S.lang,uid:'card'})}</svg><span class="dur" dir="ltr">1:45</span>
-  <span class="inner onposter"><span class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span><h3>${t('film_h')}</h3><p>${t('film_p')}</p><span class="steps">${HowItsMade.getChapters(S.lang).filter(c=>c.n).map(c=>`<span>${String(c.n).padStart(2,'0')} ${c.title}</span>`).join('')}</span></span></span></button>`;
-const projCard = (p,i) => { const [h,d] = t('proj')[p.id]; return `<button class="pcard rv" style="--d:${i}" data-proj="${p.id}" data-region-k="${p.region}"><span class="ph" data-region="${t('reg')[p.region]}"><img src="${IMG[p.img]}" alt="${esc(h)}"></span><span><h3>${h}</h3><p>${d}</p></span></button>`; };
+  <span class="inner onposter"><span class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span><span class="steps">${HowItsMade.getChapters(S.lang).filter(c=>c.n).map(c=>`<span>${String(c.n).padStart(2,'0')} ${c.title}</span>`).join('')}</span></span></span></button>`;
+const projCard = (p,i) => { const [h,d] = t('proj')[p.id]; return `<button class="pcard rv" style="--d:${i}" data-proj="${p.id}" data-region-k="${p.region}"><span class="ph" data-region="${t('reg')[p.region]}"><img src="${IMG[p.img]}" alt="${esc(h)}"></span><span style="display:grid;gap:6px"><small class="reg">${t('reg')[p.region]}</small><h3>${h}</h3><p>${d}</p></span></button>`; };
 
 SCREENS.products = () => {
   const L = t('x_spec');
@@ -2024,7 +2057,7 @@ function renderExplorer(){
         <div class="dns" id="dnChips">${rows.map((r,i)=>`<button data-i="${i}" aria-pressed="${i===S.row}">${r[0]}${rows.filter(x=>x[0]===r[0]).length>1?`<sup>${r[1]}</sup>`:''}</button>`).join('')}</div>
         <input type="range" class="range" id="dnRange" min="0" max="${rows.length-1}" value="${S.row}" aria-label="${t('x_dn')}"></div>
       <label class="toggle"><input type="checkbox" id="cmp" ${S.compare?'checked':''}> ${t('x_compare')}</label>
-      <dl class="spec" id="spec">${L.map((l,i)=>`<div><dt>${l}</dt><dd data-k="${i}">–</dd></div>`).join('')}</dl>
+      <dl class="spec" id="spec">${L.map((l,i)=>`<div><dt>${l}</dt><dd data-k="${i}">-</dd></div>`).join('')}</dl>
       <div class="addrow"><div class="qty"><button id="qm" aria-label="-">−</button><input id="qv" value="1" inputmode="numeric" aria-label="${t('x_qty')}"><button id="qp" aria-label="+">+</button></div>
       <button class="btn btn-primary" id="addQ">${t('x_add')} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></div>
     </div>
@@ -2039,11 +2072,11 @@ function renderExplorer(){
       <g id="dim1" stroke="var(--ink)" stroke-width="3" fill="var(--ink)"><line id="d1l"/><path id="d1a"/><text id="d1t" text-anchor="middle" font-size="34" font-family="IBM Plex Mono" stroke="var(--bore)" stroke-width="10" paint-order="stroke"></text></g>
       <g id="dimW" stroke="var(--maroon)" stroke-width="3" fill="var(--maroon)"><line id="wl"/><text id="wt" font-size="30" font-family="IBM Plex Mono" stroke="var(--surface)" stroke-width="10" paint-order="stroke"></text></g>
     </svg>
-    <div class="readout"><span>DN</span><b id="dnOut" class="mono">–</b></div>
+    <div class="readout"><span>DN</span><b id="dnOut" class="mono">-</b></div>
     <div class="legend"><span><i style="background:var(--clay)"></i>${t('x_leg')[0]}</span><span><i style="background:var(--bore);border:1px solid var(--line)"></i>${t('x_leg')[1]}</span><span><i style="border:2px dashed var(--slate)"></i>${t('x_leg')[2]}</span><span id="legG" hidden><i style="border:2px dashed var(--maroon)"></i>${t('x_leg')[3]}</span></div></div>
   </div>
   <div style="margin-block-start:40px;display:grid;gap:12px"><div class="sec-head" style="margin:0"><div><h3>${t('x_table')} · ${S.cls==='N'?t('x_N'):t('x_H')}</h3><p class="note">${t('x_tbl_note')}</p></div></div>
-  <div class="tbl-wrap"><table class="st"><thead><tr>${t('x_hdr').map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody id="stBody">${rows.map((r,i)=>`<tr data-i="${i}"><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]} ± ${r[5]}</td><td>${r[6]} ± ${r[7]}</td><td>${r[8]}</td><td>${r[9]?r[9].toFixed(1)+' ± 0.5':'–'}</td><td>${r[10]?r[10]+' ± 0.5':'–'}</td><td>${r[11]??'–'}</td><td>${r[12]}</td></tr>`).join('')}</tbody></table></div>
+  <div class="tbl-wrap"><table class="st"><thead><tr>${t('x_hdr').map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody id="stBody">${rows.map((r,i)=>`<tr data-i="${i}"><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]} ± ${r[5]}</td><td>${r[6]} ± ${r[7]}</td><td>${r[8]}</td><td>${r[9]?r[9].toFixed(1)+' ± 0.5':'-'}</td><td>${r[10]?r[10]+' ± 0.5':'-'}</td><td>${r[11]??'-'}</td><td>${r[12]}</td></tr>`).join('')}</tbody></table></div>
   <div class="cards-st" id="stCards">${rows.map((r,i)=>`<button data-i="${i}"><b>${r[0]}</b><span>${r[1]} · FN ${r[3]}</span><span>d1 ${r[4]} · d3 ${r[6]}</span><span>${t('x_units').m}: ${r[12]}</span></button>`).join('')}</div></div>`;
   placePill(false); updatePipe(false);
 }
@@ -2057,7 +2090,7 @@ function updatePipe(anim = true){
   $('#dnRange').value = S.row;
   $('#dnOut').textContent = r[0] + (rows.filter(x=>x[0]===r[0]).length>1?' '+r[1]:'');
   const u = t('x_units');
-  const vals = [`${r[3]} ${u.kn}`, r[2], `${r[4]} ± ${r[5]}`, `${r[6]} ± ${r[7]}`, `${r[8]} ${u.mm}`, r[9]?`${r[9].toFixed(1)} ± 0.5`:'–', r[10]?`${r[10]} ± 0.5`:'–', r[11]?`${r[11]} ${u.kn}`:'–', `${r[12]} ${u.m}`];
+  const vals = [`${r[3]} ${u.kn}`, r[2], `${r[4]} ± ${r[5]}`, `${r[6]} ± ${r[7]}`, `${r[8]} ${u.mm}`, r[9]?`${r[9].toFixed(1)} ± 0.5`:'-', r[10]?`${r[10]} ± 0.5`:'-', r[11]?`${r[11]} ${u.kn}`:'-', `${r[12]} ${u.m}`];
   $$('#spec dd').forEach((dd,i)=>{ if (dd.textContent !== String(vals[i])){ dd.textContent = vals[i]; if(anim){dd.classList.remove('flash'); void dd.offsetWidth; dd.classList.add('flash');} } });
   // ghost (other class, same DN)
   const other = PIPES[S.cls==='N'?'H':'N'].find(x=>x[0]===r[0]);
@@ -2194,7 +2227,7 @@ SCREENS.notfound = () => `<div class="wrap nf"><svg viewBox="0 0 420 200" aria-h
   <div class="ctas" style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center"><a class="btn btn-primary" data-go="home">${t('nf_home')}</a><a class="btn btn-ghost" data-go="products">${t('nf_prod')}</a></div></div>`;
 
 const MOTION = [
- ['M00','Intro','First visit per session; skippable by tap or key','3000 ms + 700 ms exit','back-out / glaze / kiln','0–1.2 s: three glazed pipes fly in (left, above, right) and snap spigot-into-socket with a spark burst and a small shake; the joined line settles under the logo. 1.3–2 s: hexagon draws, white logo wipes in. 1.9–2.6 s: Since 1900→1935 · Cairo. Glaze highlight sweeps the pipe line; embers rise; logo and photo tilt with the pointer. Exits by collapsing into a hexagon','Joined pipes, logo and photo shown still for 0.9 s, then a 0.2 s fade','home'],
+ ['M00','Intro','First visit per session; skippable by tap or key','3000 ms + 700 ms exit','back-out / glaze / kiln','0-1.2 s: three glazed pipes fly in (left, above, right) and snap spigot-into-socket with a spark burst and a small shake; the joined line settles under the logo. 1.3-2 s: hexagon draws, white logo wipes in. 1.9-2.6 s: Since 1900→1935 · Cairo. Glaze highlight sweeps the pipe line; embers rise; logo and photo tilt with the pointer. Exits by collapsing into a hexagon','Joined pipes, logo and photo shown still for 0.9 s, then a 0.2 s fade','home'],
  ['M01','Page transition','Route change','320 ms','glaze','View rises 14 px and fades in; View Transitions API where supported','Instant swap','all'],
  ['M02','Header condense','Scroll > 24 px','320 ms','glaze','Logo 40→32 px, blurred ground and hairline appear','Same, no easing','home'],
  ['M03','Headline rise','Page load','900 ms, 55 ms stagger','glaze','Each word rises out of a mask','Static text','home'],
@@ -2466,7 +2499,7 @@ function playIntro(){
   introT.push(setTimeout(endIntro, 3000));
 }
 
-/* Pipe assembly (M00, 0–1.2 s): three glazed pipes fly in and snap spigot-into-socket.
+/* Pipe assembly (M00, 0-1.2 s): three glazed pipes fly in and snap spigot-into-socket.
    Drawing style matches the How-it's-made film (fired glaze #4a2a1c, compression ring #cf4a2f). */
 const PC = { fired:'#4a2a1c', edge:'#301b12', ring:'#cf4a2f', hot:'#ffb08a' };
 const PL = 420, PD = 70, BL = PD*.9, BH = PD*1.3, OV = 52, PY = 80;
@@ -2573,9 +2606,9 @@ Object.assign(T.en, {
   her_today:'Today', her_tbc:'Year to confirm', her_src:'Source', her_reach:['Egypt','Saudi Arabia','GCC & Europe','Germany'], her_scope:['Scope 1','Scope 2','Renewable'],
   c_eyebrow:'Size calculator', c_h:'Which pipe size do I need?', c_p:'A first estimate for gravity sewers using the Manning equation. Use it to start a conversation, not to sign off a design.',
   c_q:'Design flow', c_s:'Slope', c_n:'Manning’s n', c_fill:'Design depth (y/D)', c_nopts:[['0.013','0.013 · conservative'],['0.011','0.011'],['0.010','0.010 · new glazed pipe']],
-  c_res:'Suggested size', c_cap:'Capacity at design depth', c_v:'Velocity at your flow', c_depth:'Depth at your flow', c_cls:'Made in class', c_add:'Add to quote', c_self:'Self-cleansing', c_vlow:'Below 0.6 m/s: may silt up', c_vhigh:'Above 3 m/s: check scour', c_vok:'Within 0.6–3 m/s',
+  c_res:'Suggested size', c_cap:'Capacity at design depth', c_v:'Velocity at your flow', c_depth:'Depth at your flow', c_cls:'Made in class', c_add:'Add to quote', c_self:'Self-cleansing', c_vlow:'Below 0.6 m/s: may silt up', c_vhigh:'Above 3 m/s: check scour', c_vok:'Within 0.6-3 m/s',
   c_none_h:'Larger than DN 1000 at this slope', c_none_p:'Split the flow, increase the slope, or talk to SWEILLEM about the project.',
-  c_chart:'Capacity of each size at your slope and design depth (log scale)', c_note:'Inner diameters are from SWEILLEM’s table. Manning’s n and the 0.6–3 m/s velocity band are common design guidance; check your local standard. Strength class depends on cover depth and loads, not on flow: confirm it with SWEILLEM.',
+  c_chart:'Capacity of each size at your slope and design depth (log scale)', c_note:'Inner diameters are from SWEILLEM’s table. Manning’s n and the 0.6-3 m/s velocity band are common design guidance; check your local standard. Strength class depends on cover depth and loads, not on flow: confirm it with SWEILLEM.',
   kiln_on:'Kiln theme', kiln_off:'Stone theme'
 });
 Object.assign(T.ar, {
@@ -2599,9 +2632,9 @@ Object.assign(T.ar, {
   her_today:'اليوم', her_tbc:'السنة بانتظار التأكيد', her_src:'المصدر', her_reach:['مصر','السعودية','الخليج وأوروبا','ألمانيا'], her_scope:['النطاق 1','النطاق 2','متجددة'],
   c_eyebrow:'حاسبة القطر', c_h:'ما قطر الماسورة المناسب؟', c_p:'تقدير أولي لخطوط الصرف بالجاذبية باستخدام معادلة ماننج، لبدء النقاش وليس لاعتماد التصميم.',
   c_q:'التدفق التصميمي', c_s:'الميل', c_n:'معامل ماننج n', c_fill:'عمق التصميم (y/D)', c_nopts:[['0.013','0.013 · متحفظ'],['0.011','0.011'],['0.010','0.010 · ماسورة مزججة جديدة']],
-  c_res:'القطر المقترح', c_cap:'السعة عند عمق التصميم', c_v:'السرعة عند تدفقك', c_depth:'العمق عند تدفقك', c_cls:'متوفر في فئة', c_add:'أضف لعرض السعر', c_self:'التنظيف الذاتي', c_vlow:'أقل من 0.6 م/ث: قد يترسب', c_vhigh:'أعلى من 3 م/ث: راجع النحر', c_vok:'ضمن 0.6–3 م/ث',
+  c_res:'القطر المقترح', c_cap:'السعة عند عمق التصميم', c_v:'السرعة عند تدفقك', c_depth:'العمق عند تدفقك', c_cls:'متوفر في فئة', c_add:'أضف لعرض السعر', c_self:'التنظيف الذاتي', c_vlow:'أقل من 0.6 م/ث: قد يترسب', c_vhigh:'أعلى من 3 م/ث: راجع النحر', c_vok:'ضمن 0.6-3 م/ث',
   c_none_h:'أكبر من قطر 1000 عند هذا الميل', c_none_p:'قسّم التدفق أو زد الميل أو تواصل مع سويلم بشأن المشروع.',
-  c_chart:'سعة كل قطر عند ميلك وعمق التصميم (مقياس لوغاريتمي)', c_note:'الأقطار الداخلية من جدول سويلم. معامل ماننج ونطاق السرعة 0.6–3 م/ث إرشادات تصميم شائعة؛ راجع المواصفة المحلية. فئة التحمل تعتمد على عمق الردم والأحمال وليس التدفق: أكدها مع سويلم.',
+  c_chart:'سعة كل قطر عند ميلك وعمق التصميم (مقياس لوغاريتمي)', c_note:'الأقطار الداخلية من جدول سويلم. معامل ماننج ونطاق السرعة 0.6-3 م/ث إرشادات تصميم شائعة؛ راجع المواصفة المحلية. فئة التحمل تعتمد على عمق الردم والأحمال وليس التدفق: أكدها مع سويلم.',
   kiln_on:'سمة الفرن', kiln_off:'سمة الحجر'
 });
 
@@ -2625,7 +2658,7 @@ site.addEventListener('pointermove', e => { if (reduced()) return; const ph = e.
 site.addEventListener('pointerout', e => { const ph = e.target.closest?.('.pgrid .pcard .ph'); if (ph && !ph.contains(e.relatedTarget)) ph.style.transform = ''; });
 
 const toolsBand = () => `<section style="padding-block-start:0"><div class="wrap">
-  <div class="sec-head rv"><div><div class="eyebrow">${t('tools_h')}</div><h2>${t('tools_p')}</h2></div></div>
+  <div class="sec-head rv"><div><h2>${t('tools_h')}</h2><p class="muted">${t('tools_p')}</p></div></div>
   <div class="tools">
     <button class="tool rv" data-go="viewer"><span><h3>${t('tool3d_h')}</h3><p>${t('tool3d_p')}</p></span>
       <svg class="art" viewBox="0 0 96 96" aria-hidden="true"><ellipse cx="48" cy="48" rx="36" ry="36" fill="var(--glaze)"/><ellipse cx="48" cy="48" rx="24" ry="24" fill="var(--bore)"/><path d="M12 48a36 36 0 0 1 72 0" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="3"/><path d="M8 70c20 14 60 14 80 0" fill="none" stroke="var(--maroon)" stroke-width="3" stroke-linecap="round"/><path d="M80 64l8 6-9 4" fill="none" stroke="var(--maroon)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -2653,7 +2686,7 @@ SCREENS.viewer = () => {
 };
 let V3 = null;
 function v3Spec(){ const r = PIPES[S.v.cls][S.v.row], L = t('x_spec');
-  $('#v3spec').innerHTML = [[L[2],`${r[4]} ± ${r[5]}`],[L[3],`${r[6]} ± ${r[7]}`],[L[4],`${r[8]} mm`],[L[5],r[9]?r[9].toFixed(1):'–'],[L[6],r[10]||'–'],[L[0],`${r[3]} kN/m`]].map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+  $('#v3spec').innerHTML = [[L[2],`${r[4]} ± ${r[5]}`],[L[3],`${r[6]} ± ${r[7]}`],[L[4],`${r[8]} mm`],[L[5],r[9]?r[9].toFixed(1):'-'],[L[6],r[10]||'-'],[L[0],`${r[3]} kN/m`]].map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
   $('#v3dn').textContent = `${r[0]} ${S.v.cls}`;
   $$('#v3dns button').forEach(b=>b.setAttribute('aria-pressed', +b.dataset.i===S.v.row));
   const pill = $('#v3cls'), b = $(`button[data-c="${S.v.cls}"]`, pill), ind = $('.ind', pill), pr = pill.getBoundingClientRect(), br = b.getBoundingClientRect();
@@ -2892,6 +2925,7 @@ if (S.kiln){ site.classList.add('kiln'); $$('#thSeg button').forEach(b => b.setA
 AFTER.viewer = setupViewer;
 
 window.__hmReduced = () => reduced();
+$('#skipLink').addEventListener('click', e => { e.preventDefault(); view.focus({ preventScroll:true }); scroller.scrollTo({ top: $('#hdr').offsetHeight > 0 ? view.offsetTop - $('#hdr').offsetHeight : 0, behavior: reduced() ? 'instant' : 'smooth' }); });
 const start = (location.hash||'').slice(1);
 go(SCREENS[start] ? start : 'home', {vt:false});
 playIntro();
