@@ -532,7 +532,7 @@ html[data-intro="play"] :is(.rise-word > span, .fade-up, .rings circle, .badge-1
 
 /* Scroll journey caption on phones: fades in when the step changes. */
 .journey-caption {
-  animation: journey-caption 0.4s var(--ease-glaze, ease-out) both;
+  animation: journey-caption 0.6s var(--ease-glaze, ease-out) both;
 }
 @keyframes journey-caption {
   from { opacity: 0; transform: translateY(6px); }

@@ -5,7 +5,6 @@ export const COMPACT_H: number;
 /** Length of the whole journey in timeline seconds. */
 export const DURATION: number;
 export const LANGS: string[];
-export const PHOTOS: string[];
 
 export interface Chapter {
   id: string;
@@ -14,7 +13,8 @@ export interface Chapter {
   start: number;
   end: number;
   lead: number;
-  photo?: string;
+  /** The drawn picture the step opens on: a moment of its scene, cropped and scaled. */
+  picture?: { at: number; x: number; y: number; z: number };
   title: string;
   caption: string;
 }

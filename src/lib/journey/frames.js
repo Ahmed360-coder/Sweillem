@@ -6,8 +6,8 @@
  * Process page can drive it from the scroll position: scrolling moves the journey
  * forward or back, and it stops when the visitor stops scrolling.
  *
- * Changes from the original: fonts use the site's next/font variables, and the logo,
- * mark and step photos load from /images.
+ * Changes from the original: fonts use the site's next/font variables, the logo and
+ * mark load from /images, and each step opens on a drawn picture instead of a photo.
  */
 // How a SWEILLEM vitrified clay pipe is made: from Aswan clay to an installed sewer line.
 //
@@ -70,7 +70,6 @@ const I18N = {
     },
     l: {
       subtitle: 'From Aswan clay to an installed sewer line',
-      photo: 'SWEILLEM photo',
       stepOf: (n, total) => `Step ${String(n).padStart(2, '0')} of ${String(total).padStart(2, '0')}`,
       quarry: 'Aswan quarry', factory: 'Factory', brand: 'SWEILLEM', stored: 'Inspected & stored',
       aswan: 'Aswan', cairo: 'Greater Cairo',
@@ -108,7 +107,6 @@ const I18N = {
     },
     l: {
       subtitle: 'من طين أسوان إلى خط صرف مُركّب',
-      photo: 'صورة من سويلم',
       stepOf: (n, total) => `المرحلة ${n} من ${total}`,
       quarry: 'محجر أسوان', factory: 'المصنع', brand: 'سويلم', stored: 'فحص وتخزين',
       aswan: 'أسوان', cairo: 'القاهرة الكبرى',
@@ -134,25 +132,29 @@ const I18N = {
 export const LANGS = Object.keys(I18N);
 
 // ---------- timeline ----------
-// Chapters with a SWEILLEM photo open on that photo for PHOTO_LEAD seconds before the diagram.
-const PHOTO_LEAD = 2;
+// Chapters with a picture open on it for PICTURE_LEAD seconds before the diagram builds.
+// The picture is drawn from the chapter's own scene: the moment `at` (a fraction of the
+// scene), centred on x, y (scene units) and scaled by z.
+const PICTURE_LEAD = 2;
+/** How long a chapter takes to fade in or out, in timeline seconds. */
+const FADE = 0.7;
 const PLAN = [
   { id: 'intro', d: 5 },
-  { id: 'raw', d: 8, photo: 'raw' },
+  { id: 'raw', d: 8, picture: { at: 0.3, x: 540, y: 470, z: 0.95 } },
   { id: 'qc', d: 7 },
-  { id: 'mould', d: 9, photo: 'mould' },
-  { id: 'dry', d: 8, photo: 'dry' },
-  { id: 'glaze', d: 8, photo: 'glaze' },
-  { id: 'fire', d: 11, photo: 'fire' },
+  { id: 'mould', d: 9, picture: { at: 0.5, x: 700, y: 470, z: 0.8 } },
+  { id: 'dry', d: 8, picture: { at: 0.5, x: 790, y: 520, z: 0.85 } },
+  { id: 'glaze', d: 8, picture: { at: 0.85, x: 1240, y: 420, z: 0.78 } },
+  { id: 'fire', d: 11, picture: { at: 0.7, x: 1240, y: 470, z: 0.76 } },
   { id: 'joint', d: 9 },
-  { id: 'deliver', d: 7, photo: 'deliver' },
-  { id: 'install', d: 12, photo: 'install' },
+  { id: 'deliver', d: 7, picture: { at: 0.5, x: 1000, y: 480, z: 0.9 } },
+  { id: 'install', d: 12, picture: { at: 0.3, x: 1080, y: 470, z: 0.9 } },
   { id: 'outro', d: 7 },
 ];
 const TIMES = (() => {
   let t = 0, n = 0;
   return PLAN.map((p) => {
-    const lead = p.photo ? PHOTO_LEAD : 0;
+    const lead = p.picture ? PICTURE_LEAD : 0;
     const c = { ...p, lead, start: t, end: t + p.d + lead, n: p.id === 'intro' || p.id === 'outro' ? undefined : ++n };
     t = c.end;
     return c;
@@ -290,9 +292,9 @@ function ground(y, fill = C.ground) {
   return `<rect x="0" y="${y}" width="${W}" height="${BAND - y}" fill="${fill}"/><line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="${C.line}" stroke-width="3"/>`;
 }
 
-// ---------- photo intro ----------
-// The chapter opens on SWEILLEM's own photo of that step, revealed through a hexagon (the S mark's shape).
-function photoCard(ch, lt) {
+// ---------- picture intro ----------
+// The chapter opens on a drawn close-up of the step, revealed through a hexagon (the S mark's shape).
+function pictureCard(ch, lt) {
   const R = rtl();
   const fw = 940, fh = 731, fy = 40;
   const fx = R ? 100 : W - 100 - fw;
@@ -304,12 +306,14 @@ function photoCard(ch, lt) {
   const kb = 1.1 - 0.1 * ease(seg(lt, 0, ch.lead));
   let s = `<rect width="${W}" height="${BAND}" fill="${C.bg}"/>`;
   s += `<defs><clipPath id="${UID}-cut"><polygon points="${cut}"/></clipPath><clipPath id="${UID}-hex"><polygon points="${hexPts}"/></clipPath></defs>`;
-  s += `<g clip-path="url(#${UID}-cut)"><g clip-path="url(#${UID}-hex)"><rect x="${fx}" y="${fy}" width="${fw}" height="${fh}" fill="${C.fired}"/>`;
-  s += `<image href="${photoUrl(ch.photo)}" x="${fx}" y="${fy}" width="${fw}" height="${fh}" preserveAspectRatio="xMidYMid slice" transform="translate(${f(cx)} ${f(cy)}) scale(${f(kb * 1000) / 1000}) translate(${f(-cx)} ${f(-cy)})"/></g></g>`;
-  // Tag so viewers know this frame is a real photo and what follows is a diagram.
-  const tagW = rtl() ? 170 : 236;
-  const tagX = fx + fw - 28 - tagW;
-  s += `<g opacity="${o(seg(lt, 0.5, 0.9))}"><rect x="${f(tagX)}" y="${fy + fh - 74}" width="${tagW}" height="42" rx="21" fill="#1c1818" opacity=".72"/>${text(tagX + tagW / 2, fy + fh - 46, L().photo, { size: 17, weight: 500, font: 'data', fill: '#fff', anchor: 'middle', ls: 1.6, caps: true })}</g>`;
+  s += `<g clip-path="url(#${UID}-cut)"><g clip-path="url(#${UID}-hex)">`;
+  // The picture: a moment from the step's own scene, cropped to the card and drifting slowly out.
+  const { at, x, y, z } = ch.picture;
+  const sd = ch.end - ch.start - ch.lead;
+  const vw = fw / z, vh = fh / z;
+  const vx = clamp(x - vw / 2, 0, W - vw), vy = clamp(y - vh / 2, 0, BAND - vh);
+  s += `<rect x="${fx}" y="${fy}" width="${fw}" height="${fh}" fill="#fff"/>`;
+  s += `<g transform="translate(${f(cx)} ${f(cy)}) scale(${f(kb * 1000) / 1000}) translate(${f(-cx)} ${f(-cy)}) translate(${fx} ${fy}) scale(${z}) translate(${f(-vx)} ${f(-vy)})">${SCENES[ch.id](at * sd, sd)}</g></g></g>`;
   // Step number and title.
   const a = eOut(seg(lt, 0.1, 0.7));
   const tx = R ? W - 120 : 120;
@@ -762,9 +766,7 @@ function chrome(t, ch) {
 
 const LOGO = '/images/brand/sweillem-logo.svg';
 const MARK = '/images/brand/sweillem-mark.svg';
-const photoUrl = (id) => `/images/journey/${id}.webp`;
-export const PHOTOS = TIMES.filter((c) => c.photo).map((c) => c.photo);
-export const assetUrls = () => [LOGO, MARK, ...PHOTOS.map(photoUrl)];
+export const assetUrls = () => [LOGO, MARK];
 
 // One complete frame as SVG markup (without the outer <svg>).
 //   compact: drop the caption band (narrow screens, where the player shows the caption as HTML).
@@ -777,13 +779,13 @@ export function frameSVG(t, { compact = false, lang = 'en', uid = 'hm' } = {}) {
   const ch = chapterAt(tt, LANG);
   const lt = tt - ch.start;
   const d = ch.end - ch.start;
-  const fadeIn = ch.id === 'intro' ? 1 : seg(lt, 0, 0.45);
-  const fadeOut = ch.id === 'outro' ? 1 : 1 - seg(lt, d - 0.45, d);
+  const fadeIn = ch.id === 'intro' ? 1 : seg(lt, 0, FADE);
+  const fadeOut = ch.id === 'outro' ? 1 : 1 - seg(lt, d - FADE, d);
   const slt = Math.max(0, lt - ch.lead);
   let art = SCENES[ch.id](slt, d - ch.lead);
-  if (ch.photo) {
+  if (ch.picture) {
     const po = 1 - seg(lt, ch.lead - 0.5, ch.lead);
-    if (po > 0) art += `<g opacity="${o(po)}">${photoCard(ch, lt)}</g>`;
+    if (po > 0) art += `<g opacity="${o(po)}">${pictureCard(ch, lt)}</g>`;
   }
   const defs = `<defs><linearGradient id="${UID}-shade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".26"/><stop offset=".42" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".32"/></linearGradient></defs>`;
   return `${defs}<rect width="${W}" height="${H}" fill="${C.bg}"/><g opacity="${o(Math.min(fadeIn, fadeOut))}">${art}</g>${compact ? '' : chrome(tt, ch)}`;

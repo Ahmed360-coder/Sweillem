@@ -6,7 +6,7 @@ import { assetUrls, chapterAt, COMPACT_H, DURATION, frameSVG, getChapters, W } f
 
 const pad = (n: number) => String(n).padStart(2, "0");
 /** Scroll length per second of the journey's timeline, in vh. */
-const VH_PER_SECOND = 8;
+const VH_PER_SECOND = 10;
 /** The journey starts once the intro title has drawn in, so the first screen is never blank. */
 const T0 = 1.8;
 const SCROLL_VH = Math.round((DURATION - T0) * VH_PER_SECOND);
@@ -24,8 +24,8 @@ const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 
  * under half the scene wide that pans left to right through each step as the
  * visitor scrolls, so the drawing fills the screen at more than twice the size.
  * The scenes read left to right (quarry to factory, extruder to dryer, kiln to
- * truck), so the pan follows the action. Photo cards pan from the step title to
- * the photo, then swing back to the start of the drawing as the photo fades.
+ * truck), so the pan follows the action. Picture cards pan from the step title to
+ * the picture, then swing back to the start of the drawing as the picture fades.
  *
  * Extra height is open sky above the scene, where the explanation sits, so the
  * ground stays at the bottom of the screen.
@@ -82,7 +82,7 @@ export function ScrollJourney() {
 
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
   // A light spring smooths wheel steps; it settles within a moment of the last scroll.
-  const progress = useSpring(scrollYProgress, { stiffness: 220, damping: 40, restDelta: 0.0005 });
+  const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 32, restDelta: 0.0005 });
 
   const draw = (p: number) => {
     const svg = svgRef.current;
@@ -103,7 +103,7 @@ export function ScrollJourney() {
   });
   useEffect(() => () => void delete document.documentElement.dataset.journey, []);
 
-  // Match the camera to the stage's shape, and warm the photo cache.
+  // Match the camera to the stage's shape, and warm the image cache.
   useEffect(() => {
     assetUrls().forEach((src) => {
       const img = new Image();
@@ -135,7 +135,7 @@ export function ScrollJourney() {
     if (!el) return;
     const travel = el.offsetHeight - window.innerHeight;
     const top = el.getBoundingClientRect().top + window.scrollY;
-    // Land just past the photo card, where the step's drawing begins.
+    // Land just past the picture card, where the step's drawing begins.
     const t = Math.min(c.start + c.lead + 0.5, c.end - 0.1);
     window.scrollTo({ top: top + ((t - T0) / (DURATION - T0)) * travel, behavior: reduce ? "auto" : "smooth" });
   };
