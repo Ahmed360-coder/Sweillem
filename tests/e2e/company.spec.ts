@@ -84,16 +84,40 @@ test.describe("company pages (Milestone 3)", () => {
     const map = page.locator("#reach-map");
     await map.scrollIntoViewIfNeeded();
     await expect(map).toHaveAttribute("data-play", "");
-    await expect(map.locator("path.reach-country")).toHaveCount(14);
+    // The 14 markets named on About Us and the 8 more SWEILLEM's own map fills red.
+    await expect(map.locator(".reach-country")).toHaveCount(22);
+    await expect(map.locator(".reach-name")).toHaveCount(22);
 
-    // Picking a name pins its country, route and label until it is picked again.
+    // Picking a name pins its country, route and name until it is picked again.
     const chip = page.getByRole("button", { name: "Hong Kong" });
     await chip.click();
     await expect(chip).toHaveAttribute("aria-pressed", "true");
     await expect(map.locator('path.reach-arc[data-id="344"]')).toHaveAttribute("data-on", "");
-    await expect(map.locator('.reach-label[data-id="344"]')).toHaveCSS("opacity", "1");
+    await expect(map.locator('.reach-country[data-id="344"]')).toHaveAttribute("data-on", "");
+    await expect(map.locator('.reach-name[data-id="344"]')).toHaveAttribute("data-on", "");
     await chip.click();
     await expect(chip).toHaveAttribute("aria-pressed", "false");
+  });
+
+  test("export map switches between the night and day views", async ({ page }) => {
+    await page.goto("/about");
+    const map = page.locator("#reach-map");
+    const views = map.getByRole("group", { name: "Map view" });
+    const night = views.getByRole("button", { name: "Night" });
+    const day = views.getByRole("button", { name: "Day" });
+    await map.scrollIntoViewIfNeeded();
+    await expect(map).toHaveAttribute("data-mode", "night");
+    await expect(night).toHaveAttribute("aria-pressed", "true");
+
+    await day.click();
+    await expect(map).toHaveAttribute("data-mode", "day");
+    await expect(day).toHaveAttribute("aria-pressed", "true");
+    await expect(night).toHaveAttribute("aria-pressed", "false");
+    await expect(map.locator(".reach-photo-day")).toHaveCSS("opacity", "1");
+
+    // The choice is kept for the next visit.
+    await page.reload();
+    await expect(page.locator("#reach-map")).toHaveAttribute("data-mode", "day");
   });
 
   test("every certificate file and image opens", async ({ page, request }) => {
