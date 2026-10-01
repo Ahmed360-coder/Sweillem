@@ -55,7 +55,7 @@ test("roof tile viewer switches colour and view", async ({ page }) => {
   await expect(page.getByRole("img", { name: /roof tile in blue/ })).toBeVisible();
   await page.getByText("On a roof").click();
   await expect(page.getByRole("img", { name: /roof laid with blue/ })).toBeVisible();
-  await expect(page.getByText("Step 6 of 6")).toBeAttached();
+  await expect(page.getByText("Step 01 of 09")).toBeAttached();
 });
 
 test("printing a product page hides the site chrome", async ({ page }) => {
