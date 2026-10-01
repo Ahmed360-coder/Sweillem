@@ -57,10 +57,17 @@ export function HeritageTrack({ milestones, reach }: { milestones: Milestone[]; 
   const x = useTransform(scrollYProgress, [0, 1], [0, -overflow]);
   const fill = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
+  const fromProgress = (p: number) => Math.min(milestones.length - 1, Math.max(0, Math.round(p * (milestones.length - 1))));
   useMotionValueEvent(scrollYProgress, "change", (p) => {
-    if (!pinned) return;
-    setActive(Math.min(milestones.length - 1, Math.max(0, Math.round(p * (milestones.length - 1)))));
+    if (pinned) setActive(fromProgress(p));
   });
+  // The page can already be scrolled when the track pins (a reload or a slow
+  // hydration), and no scroll event follows: start from where the visitor is.
+  useEffect(() => {
+    if (!pinned) return;
+    const id = requestAnimationFrame(() => setActive(fromProgress(scrollYProgress.get())));
+    return () => cancelAnimationFrame(id);
+  }, [pinned, overflow]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Phones: the milestone nearest the middle of the screen is the current one.
   useEffect(() => {

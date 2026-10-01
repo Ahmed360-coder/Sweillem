@@ -79,6 +79,23 @@ test.describe("company pages (Milestone 3)", () => {
     await expect(page.locator("#journey")).toBeVisible();
   });
 
+  test("export map draws the routes and picks out a country", async ({ page }) => {
+    await page.goto("/about");
+    const map = page.locator("#reach-map");
+    await map.scrollIntoViewIfNeeded();
+    await expect(map).toHaveAttribute("data-play", "");
+    await expect(map.locator("path.reach-country")).toHaveCount(14);
+
+    // Picking a name pins its country, route and label until it is picked again.
+    const chip = page.getByRole("button", { name: "Hong Kong" });
+    await chip.click();
+    await expect(chip).toHaveAttribute("aria-pressed", "true");
+    await expect(map.locator('path.reach-arc[data-id="344"]')).toHaveAttribute("data-on", "");
+    await expect(map.locator('.reach-label[data-id="344"]')).toHaveCSS("opacity", "1");
+    await chip.click();
+    await expect(chip).toHaveAttribute("aria-pressed", "false");
+  });
+
   test("every certificate file and image opens", async ({ page, request }) => {
     await page.goto("/certificates");
     const hrefs = await page
@@ -99,6 +116,11 @@ test.describe("company pages (Milestone 3)", () => {
     // The journey is not pinned: every step shows its finished drawing.
     await page.goto("/process");
     await expect(page.locator("#journey li > svg")).toHaveCount(9);
+
+    // The export map is drawn in full, with no shipments moving.
+    await page.goto("/about");
+    await expect(page.locator(".reach-arc").first()).toHaveCSS("stroke-dashoffset", "0px");
+    await expect(page.locator(".reach-ships")).toBeHidden();
     await ctx.close();
   });
 });
