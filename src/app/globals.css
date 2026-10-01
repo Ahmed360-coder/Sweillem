@@ -634,3 +634,178 @@ html[data-intro="exit"] .hero-progress {
     transform: scaleX(1);
   }
 }
+
+/* ---------- export map on About (ReachMap) ---------- */
+.reach-land {
+  fill: #1a2640;
+}
+.reach-borders {
+  fill: none;
+  stroke: #33435f;
+  stroke-width: 0.6;
+}
+.reach-egypt {
+  fill: #3a2f33;
+}
+.reach-country {
+  fill: #b3130b;
+  opacity: 0;
+  transition:
+    opacity 0.6s var(--ease-glaze),
+    fill 0.3s;
+  transition-delay: calc(var(--i) * 70ms);
+}
+.reach-arc {
+  fill: none;
+  stroke: #f5b041;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0.75;
+  transition:
+    stroke-dashoffset 1.4s var(--ease-glaze),
+    opacity 0.3s,
+    stroke-width 0.3s;
+  transition-delay: calc(300ms + var(--i) * 90ms), 0s, 0s;
+}
+.reach-ship {
+  fill: #ffe2a8;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.reach-pin {
+  opacity: 0;
+  transition: opacity 0.4s;
+  transition-delay: calc(900ms + var(--i) * 90ms);
+  cursor: pointer;
+}
+.reach-pin-dot {
+  fill: #fff;
+}
+.reach-pin-ring {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1.2;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.reach-origin-ring {
+  fill: none;
+  stroke: #f5b041;
+  stroke-width: 1.5;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: reach-pulse 2.4s var(--ease-glaze) infinite;
+}
+.reach-origin-dot {
+  fill: #f5b041;
+}
+.reach-origin-text {
+  fill: #f5d9a8;
+  font: 600 22px var(--font-jost), sans-serif;
+  letter-spacing: 0.04em;
+}
+.reach-label {
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 0.25s,
+    transform 0.25s var(--ease-glaze);
+  pointer-events: none;
+}
+.reach-label rect {
+  fill: #fff;
+}
+.reach-label text {
+  fill: #1c1818;
+  font: 600 21px var(--font-plex-sans), sans-serif;
+}
+
+/* Playing: the countries light up, the routes draw out, the shipments start. */
+.reach[data-play] .reach-country {
+  opacity: 0.9;
+}
+.reach[data-play] .reach-arc {
+  stroke-dashoffset: 0;
+}
+.reach[data-play] .reach-ship,
+.reach[data-play] .reach-pin {
+  opacity: 1;
+}
+.reach[data-play] .reach-ship {
+  transition-delay: 1.8s;
+}
+
+/* Focus: one country picked out, the rest step back. */
+.reach[data-focus] .reach-country {
+  opacity: 0.6;
+  transition-delay: 0s;
+}
+.reach[data-focus] .reach-arc,
+.reach[data-focus] .reach-ship {
+  opacity: 0.3;
+  transition-delay: 0s;
+}
+.reach[data-focus] .reach-country[data-on] {
+  opacity: 1;
+  fill: #e0362b;
+}
+.reach[data-focus] .reach-arc[data-on] {
+  opacity: 1;
+  stroke-width: 2.4;
+}
+.reach[data-focus] .reach-ship[data-on] {
+  opacity: 1;
+}
+.reach-pin[data-on] .reach-pin-ring {
+  animation: reach-pulse 1.6s var(--ease-glaze) infinite;
+}
+.reach-label[data-on] {
+  opacity: 1;
+  transform: none;
+}
+.reach-chip[data-on] {
+  border-color: var(--maroon);
+  color: var(--maroon);
+}
+.reach-chip[aria-pressed="true"] {
+  border-color: var(--maroon);
+  background: var(--maroon);
+  color: var(--on-maroon);
+}
+@keyframes reach-pulse {
+  from {
+    opacity: 0.9;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reach-country,
+  .reach-arc,
+  .reach-pin,
+  .reach-label {
+    transition: none;
+  }
+  .reach .reach-country {
+    opacity: 0.9;
+  }
+  .reach .reach-arc {
+    stroke-dashoffset: 0;
+  }
+  .reach .reach-pin {
+    opacity: 1;
+  }
+  .reach-ships {
+    display: none;
+  }
+  .reach-origin-ring,
+  .reach-pin[data-on] .reach-pin-ring {
+    animation: none;
+  }
+}
