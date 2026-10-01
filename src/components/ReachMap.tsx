@@ -181,10 +181,10 @@ export function ReachMap() {
           role="group"
           aria-label="Map view"
         >
-          <button type="button" data-mode="night" aria-pressed="true" className="reach-mode min-h-9 rounded-full px-3.5">
+          <button type="button" data-mode="night" aria-pressed="true" className="reach-mode min-h-11 rounded-full px-4 md:min-h-9 md:px-3.5">
             Night
           </button>
-          <button type="button" data-mode="day" aria-pressed="false" className="reach-mode min-h-9 rounded-full px-3.5">
+          <button type="button" data-mode="day" aria-pressed="false" className="reach-mode min-h-11 rounded-full px-4 md:min-h-9 md:px-3.5">
             Day
           </button>
         </div>
