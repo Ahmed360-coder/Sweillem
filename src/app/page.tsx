@@ -141,7 +141,7 @@ export default function HomePage() {
             </svg>
             <HeroSlideshow slides={heroSlides} />
             <div
-              className="badge-1935 hex absolute end-2 top-[6%] z-10 grid h-24 w-[84px] place-content-center bg-maroon text-center text-on-maroon md:-end-[3%] md:h-32 md:w-28"
+              className="badge-1935 hex pointer-events-none absolute end-2 top-[6%] z-10 grid h-24 w-[84px] place-content-center bg-maroon text-center text-on-maroon md:-end-[3%] md:h-32 md:w-28"
               aria-hidden="true"
             >
               <span className="font-mono text-[10px] font-medium tracking-[.14em] uppercase">Since</span>
