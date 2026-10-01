@@ -181,6 +181,12 @@ const locations = [
     source: "Contact Us, sweillem.net, and the Cradle to Cradle certificate",
   },
   {
+    kind: "Registered address",
+    name: "Cairo",
+    address: "6 El-Saad Street, Shoubra Gardens, Khalafawi Square, Cairo, Egypt",
+    source: "ISO 9001, 14001 and 45001 certificates",
+  },
+  {
     kind: "Factory",
     name: "Saryaqos",
     address: "Cairo Ismailia Agricultural Road, Saryaqos, Qalyubia, Egypt",

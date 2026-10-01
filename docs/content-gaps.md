@@ -100,7 +100,7 @@ These are copied exactly as published. They look like typing errors, but we will
 
 | # | What we have | What we need |
 |---|---|---|
-| 7.1 | The ISO certificates give the head office as 6 El Saad Street, Cairo. Contact Us and the Cradle to Cradle certificate say Osman Towers, Kornish El Neil. The site uses Osman Towers. | Which address is the head office today. |
+| 7.1 | ~~The ISO certificates give the head office as 6 El Saad Street, Cairo. Contact Us and the Cradle to Cradle certificate say Osman Towers, Kornish El Neil.~~ | **Answered 1 October 2026 (Ahmed):** show both. Osman Towers is the office and 6 El-Saad Street the registered address. |
 | 7.2 | Joint Performance says water loss in the line test must stay below "0.04 liter/ml". The unit cannot be read as written, so the page says "within the limit set by the European Standards" and leaves the number out. | The limit and its unit (for example litres per m² of wetted surface). |
 | 7.3 | The SASO licence (expires 29 June 2025) and the OSS copies of ISO 9001, 14001 and 45001 (expire 12 May 2026) have passed their printed dates. The Certificates page says so under each one. | The renewed SASO licence and the current OSS certificates, or agreement to drop the expired copies. |
 | 7.4 | Euro Sweillem shows Stiegstraße 60, 41379 Brüggen as "Address listed on sweillem.net" (follows 1.3 and 1.7). | Whether Brüggen is the Euro Sweillem warehouse, an office, or something else. |
