@@ -3,8 +3,9 @@
 // Only the countries SWEILLEM names on its About page are highlighted.
 import { readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
-import { geoAzimuthalEqualArea, geoPath, geoInterpolate, geoCentroid } from "d3-geo";
+import { geoPath, geoInterpolate, geoCentroid } from "d3-geo";
 import { feature, mesh, merge } from "topojson-client";
+import { H, ORIGIN, W, makeProjection } from "./map-projection.mjs";
 
 const require = createRequire(import.meta.url);
 const load = (f) => JSON.parse(readFileSync(require.resolve(`world-atlas/${f}`), "utf8"));
@@ -12,11 +13,6 @@ const load = (f) => JSON.parse(readFileSync(require.resolve(`world-atlas/${f}`),
 // the small ones (Singapore, Hong Kong, Brunei).
 const coarse = load("countries-110m.json");
 const world = load("countries-50m.json");
-
-const W = 1000;
-const H = 620;
-/** Cairo, where the pipes leave from. */
-const ORIGIN = [31.24, 30.04];
 
 // Order of the list on sweillem.net/about-us. ids are ISO 3166 numeric.
 export const MARKETS = [
@@ -40,19 +36,7 @@ const all = feature(world, world.objects.countries).features;
 const byId = new Map(all.map((f) => [String(f.id).padStart(3, "0"), f]));
 for (const m of MARKETS) if (!byId.has(m.id)) throw new Error(`No shape for ${m.name}`);
 
-// Equal-area view centred near Egypt, fitted so Europe and the Far East both fit.
-const projection = geoAzimuthalEqualArea().rotate([-52, -34]);
-projection.fitExtent(
-  [
-    [24, 24],
-    [W - 24, H - 24],
-  ],
-  { type: "MultiPoint", coordinates: [[-9.5, 56], [24, 58], [118, 23], [104, 0.5], [116, 3.5], [5, 37], [52, 15]] },
-);
-projection.clipExtent([
-  [0, 0],
-  [W, H],
-]);
+const projection = makeProjection();
 const path = geoPath(projection).digits(1);
 const r1 = (n) => Math.round(n * 10) / 10;
 

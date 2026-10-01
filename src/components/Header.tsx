@@ -3,11 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { loadMapGeo } from "@/lib/map-geo";
+import type { MapData } from "@/lib/projects-map";
 import { mainNav } from "@/lib/site";
 import { useQuoteCount } from "@/lib/quote";
 import { Logo } from "./Logo";
+import { MapPanel } from "./MapPanel";
 import { SiteMenu } from "./SiteMenu";
-import { QuoteIcon } from "./icons";
+import { MapIcon, QuoteIcon } from "./icons";
 
 /** Pages that sit under a main nav item without being inside its path. */
 const sectionOf: Record<string, string> = {
@@ -23,12 +26,17 @@ const sectionOf: Record<string, string> = {
 const currentFor = (pathname: string, href: string) =>
   pathname === href || pathname.startsWith(`${href}/`) ? "page" : sectionOf[pathname] === href ? "true" : undefined;
 
-export function Header() {
+/** Warms the map shapes when the Map button is pointed at or focused, before it is pressed. */
+const preloadMap = () => void loadMapGeo().catch(() => {});
+
+export function Header({ mapData }: { mapData: MapData }) {
   const pathname = usePathname();
   const quoteCount = useQuoteCount();
   const [stuck, setStuck] = useState(false);
   const [open, setOpen] = useState(false);
+  const [mapOpen, setMapOpen] = useState(false);
   const burgerRef = useRef<HTMLButtonElement>(null);
+  const mapButtonRef = useRef<HTMLButtonElement>(null);
 
   // M02 header condense once the page has scrolled 24 px. A sentinel and an
   // IntersectionObserver replace a scroll listener (design/taste-audit.md).
@@ -46,18 +54,30 @@ export function Header() {
     // The header is inert while the menu is open; focus the burger once it is not.
     requestAnimationFrame(() => burgerRef.current?.focus());
   }, []);
+  const closeMap = useCallback(() => {
+    setMapOpen(false);
+    requestAnimationFrame(() => mapButtonRef.current?.focus());
+  }, []);
+  const openMapFromMenu = useCallback(() => {
+    setOpen(false);
+    setMapOpen(true);
+  }, []);
 
-  // Close the menu after navigating (adjusting state during render, not in an effect).
+  // Close the menu and the map after navigating (adjusting state during render, not in an effect).
   const [lastPath, setLastPath] = useState(pathname);
   if (pathname !== lastPath) {
     setLastPath(pathname);
     setOpen(false);
+    setMapOpen(false);
   }
 
+  const overlay = open || mapOpen;
   useEffect(() => {
-    if (!open) return;
+    if (!overlay) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
+      if (e.key !== "Escape") return;
+      if (mapOpen) closeMap();
+      else close();
     };
     document.addEventListener("keydown", onKey);
     document.documentElement.style.overflow = "hidden";
@@ -65,18 +85,18 @@ export function Header() {
       document.removeEventListener("keydown", onKey);
       document.documentElement.style.overflow = "";
     };
-  }, [open, close]);
+  }, [overlay, mapOpen, close, closeMap]);
 
   return (
     <>
       <div ref={sentinelRef} aria-hidden="true" className="pointer-events-none absolute top-6 left-0 h-px w-px" />
-      <header data-stuck={stuck && !open ? "" : undefined} className="site-header group/hdr sticky top-0 z-40 py-3.5">
+      <header data-stuck={stuck && !overlay ? "" : undefined} className="site-header group/hdr sticky top-0 z-40 py-3.5">
         {/* Condensed ground: fades in, so only opacity animates. */}
         <div
           aria-hidden="true"
           className="absolute inset-0 -z-10 bg-[color-mix(in_srgb,var(--paper)_86%,transparent)] opacity-0 shadow-[0_1px_0_var(--line)] backdrop-blur-md transition-opacity duration-300 ease-glaze group-data-stuck/hdr:opacity-100"
         />
-        <div className="wrap flex items-center gap-3 min-[980px]:gap-5">
+        <div className="wrap flex items-center gap-3 min-[1100px]:gap-5">
           <button
             ref={burgerRef}
             type="button"
@@ -104,15 +124,30 @@ export function Header() {
           >
             <Logo title={null} />
           </Link>
+          <button
+            ref={mapButtonRef}
+            type="button"
+            aria-haspopup="dialog"
+            aria-expanded={mapOpen}
+            aria-controls="map-panel"
+            onClick={() => setMapOpen(true)}
+            onPointerEnter={preloadMap}
+            onFocus={preloadMap}
+            className="group/mapbtn relative z-50 inline-flex size-11 flex-none cursor-pointer items-center justify-center gap-2 rounded-full border border-line text-[14px] font-semibold text-ink transition-[background-color,transform] duration-100 hover:bg-sunk active:translate-y-px min-[640px]:w-auto min-[640px]:px-3.5 min-[980px]:w-11 min-[980px]:px-0 min-[1240px]:w-auto min-[1240px]:px-3.5"
+          >
+            <MapIcon className="text-maroon transition-transform duration-500 ease-glaze group-hover/mapbtn:rotate-[20deg]" />
+            <span className="sr-only min-[640px]:not-sr-only min-[980px]:sr-only min-[1240px]:not-sr-only">Map</span>
+          </button>
 
-          <nav aria-label="Main" className="ms-auto hidden gap-1 whitespace-nowrap min-[980px]:flex">
+          {/* 980 to 1100 px is tight: the map button drops its label and the links pad less. */}
+          <nav aria-label="Main" className="ms-auto hidden gap-0.5 whitespace-nowrap min-[980px]:flex min-[1100px]:gap-1">
             {mainNav.map((item) => {
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   aria-current={currentFor(pathname, item.href)}
-                  className="relative rounded-full px-3 py-2 text-[14.5px] font-medium text-ink no-underline after:absolute after:inset-x-3 after:bottom-[3px] after:h-0.5 after:origin-left after:scale-x-0 after:bg-maroon after:transition-transform after:duration-300 after:ease-glaze hover:after:scale-x-100 [&[aria-current]]:after:scale-x-100 rtl:after:origin-right"
+                  className="relative rounded-full px-2 py-2 text-[14.5px] font-medium text-ink no-underline after:absolute after:inset-x-2 after:bottom-[3px] min-[1100px]:px-3 min-[1100px]:after:inset-x-3 after:h-0.5 after:origin-left after:scale-x-0 after:bg-maroon after:transition-transform after:duration-300 after:ease-glaze hover:after:scale-x-100 [&[aria-current]]:after:scale-x-100 rtl:after:origin-right"
                 >
                   {item.label}
                 </Link>
@@ -141,7 +176,8 @@ export function Header() {
         </div>
       </header>
 
-      <SiteMenu open={open} pathname={pathname} onClose={close} />
+      <SiteMenu open={open} pathname={pathname} onClose={close} onOpenMap={openMapFromMenu} />
+      <MapPanel open={mapOpen} data={mapData} onClose={closeMap} />
     </>
   );
 }

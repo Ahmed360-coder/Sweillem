@@ -3,13 +3,24 @@
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { siteMap } from "@/lib/site";
+import { MapIcon } from "./icons";
 
 /**
  * Side menu listing every page of the site, grouped by section. It slides in
  * from the start edge, beside the menu button over a dimmed page; only transform and opacity animate.
  * Closed, it is inert so nothing inside can be focused or read.
  */
-export function SiteMenu({ open, pathname, onClose }: { open: boolean; pathname: string; onClose: () => void }) {
+export function SiteMenu({
+  open,
+  pathname,
+  onClose,
+  onOpenMap,
+}: {
+  open: boolean;
+  pathname: string;
+  onClose: () => void;
+  onOpenMap: () => void;
+}) {
   const panelRef = useRef<HTMLDivElement>(null);
 
   // While open, the page behind is inert so focus and screen readers stay in the menu.
@@ -55,6 +66,17 @@ export function SiteMenu({ open, pathname, onClose }: { open: boolean; pathname:
           </button>
         </div>
         <nav aria-label="Site menu" className="flex-1 overflow-y-auto overscroll-contain px-6 pt-2 pb-10">
+          <button
+            type="button"
+            onClick={onOpenMap}
+            className="mt-3 flex min-h-11 w-full cursor-pointer items-center gap-3 rounded-inner border border-line bg-paper px-3 py-2 text-start text-[16px] font-medium text-ink transition-[background-color,transform] duration-100 hover:bg-sunk active:translate-y-px"
+          >
+            <MapIcon className="text-maroon" />
+            <span className="grid">
+              Map of projects and distribution
+              <span className="text-[13px] font-normal text-muted">Where SWEILLEM pipes go</span>
+            </span>
+          </button>
           {siteMap.map((group) => (
             <section key={group.title} className="border-b border-line py-4 last:border-b-0">
               <h2 className="mb-1.5 font-mono text-[12px] font-medium tracking-[.12em] text-maroon uppercase">{group.title}</h2>

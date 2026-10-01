@@ -107,3 +107,4 @@ These are copied exactly as published. They look like typing errors, but we will
 | 7.5 | ~~Services is built only from facts SWEILLEM states elsewhere, each with its source (follows 2.8).~~ | **Answered 1 October 2026:** SWEILLEM approves this list (via Ahmed). |
 | 7.6 | The heritage timeline shows the Saudi, GCC, Arab world and Europe markets without years, and Euro Sweillem as "Newest launch" (follows 2.9). | The year of each step. |
 | 7.7 | The film's installation scenes are marked as illustrative on the Process page. | Whether SWEILLEM has real installation footage to replace them. |
+| 7.8 | The projects map in the header pins Makkah (Haram central area), Sharurah and New Alamein City at their city centres, and the site in Germany at the middle of Germany because no town is given. Brüggen and Jeddah are the footer addresses (follows 1.3, 4.1 and 4.2). | The town of the German site, and any other projects or depots SWEILLEM wants on the map. |
