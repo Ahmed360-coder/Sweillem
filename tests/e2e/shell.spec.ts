@@ -11,8 +11,12 @@ test.describe("header", () => {
     await expect(nav.getByRole("link", { name: "About" })).toHaveAttribute("aria-current", "page");
     const header = page.locator("header").first();
     await expect(header).not.toHaveAttribute("data-stuck");
-    await page.mouse.wheel(0, 400);
-    await expect(header).toHaveAttribute("data-stuck", "");
+    // A wheel event sent before the page can scroll is dropped (seen on slow CI
+    // runners), so scroll again until the header condenses.
+    await expect(async () => {
+      await page.mouse.wheel(0, 400);
+      await expect(header).toHaveAttribute("data-stuck", "", { timeout: 1000 });
+    }).toPass();
   });
 
   test("every page lights up a main nav item", async ({ page, isMobile }) => {
