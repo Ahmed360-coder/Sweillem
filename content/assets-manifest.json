@@ -495,6 +495,22 @@
       "status": "in-repo"
     },
     {
+      "path": "public/images/company/export-map-night.webp",
+      "source": "generated",
+      "origin": "NASA “Earth at night”, as shipped in the three-globe package (scripts/assets/earth-night.jpg)",
+      "notes": "Night satellite background of the export map on About, 1400x820 WebP. Reprojected by scripts/build-export-map.mjs to the map projection, with a Far East inset top right.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/company/export-map-day.webp",
+      "source": "generated",
+      "origin": "NASA “Blue Marble”, as shipped in the three-globe package (scripts/assets/earth-day.jpg)",
+      "notes": "Day satellite background of the export map on About, 1400x820 WebP. Reprojected by scripts/build-export-map.mjs, same projection and inset as the night version.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
       "path": "public/images/site/hero-makkah.webp",
       "source": "live-site",
       "notes": "Home hero slideshow: public/images/projects/saudi-arabia/haram-central-area-700mm-1.jpg cropped to 1227x920 WebP.",
