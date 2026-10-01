@@ -4,7 +4,8 @@
 .intro {
   display: none;
 }
-html[data-intro="play"] .intro {
+html[data-intro="play"] .intro,
+html[data-intro="exit"] .intro {
   position: fixed;
   inset: 0;
   z-index: 80;
@@ -16,22 +17,53 @@ html[data-intro="play"] .intro {
   color: #fff;
   --px: 0;
   --py: 0;
-  clip-path: polygon(50% -70%, 170% -10%, 170% 110%, 50% 170%, -70% 110%, -70% -10%);
-  animation: intro-exit 0.7s var(--ease-kiln) 3s forwards;
 }
-html[data-intro="play"] .intro[data-state="out"] {
-  animation: intro-exit 0.7s var(--ease-kiln) forwards;
+
+/* Hand-off to the page (html[data-intro="exit"], set at 3 s or on skip).
+   The intro moves toward the viewer and dissolves while the page settles
+   into place and the hero starts its entrance underneath. Only transform
+   and opacity animate. */
+html[data-intro="exit"] .intro {
+  pointer-events: none;
+  animation: intro-dissolve 0.7s var(--ease-glaze) 0.2s both;
 }
-@keyframes intro-exit {
-  99% {
-    visibility: visible;
-  }
+@keyframes intro-dissolve {
   to {
-    clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%);
+    opacity: 0;
     visibility: hidden;
-    pointer-events: none;
   }
 }
+html[data-intro="exit"] .intro-center {
+  animation: intro-lift 0.5s var(--ease-kiln) both;
+}
+@keyframes intro-lift {
+  to {
+    opacity: 0;
+    translate: 0 -20px;
+    scale: 0.94;
+  }
+}
+html[data-intro="exit"] .intro-bg {
+  animation: intro-push 0.9s var(--ease-glaze) both;
+}
+@keyframes intro-push {
+  to {
+    scale: 1.1;
+  }
+}
+html[data-intro="exit"] .intro-skip {
+  visibility: hidden;
+}
+html[data-intro="exit"] main {
+  animation: page-settle 0.9s var(--ease-glaze) both;
+}
+@keyframes page-settle {
+  from {
+    opacity: 0.4;
+    scale: 1.035;
+  }
+}
+
 .intro-art {
   position: absolute;
   inset: 0;
@@ -216,12 +248,11 @@ html[data-intro="play"] .intro:not([data-live]) .intro-pipes {
 
 /* Reduced motion: joined pipes, logo, photo and year shown still for 0.9 s, then a 0.2 s fade. */
 @media (prefers-reduced-motion: reduce) {
-  html[data-intro="play"] .intro,
-  html[data-intro="play"] .intro[data-state="out"] {
-    animation: intro-fade 0.2s linear 0.9s forwards !important;
+  html[data-intro="exit"] .intro {
+    animation: intro-dissolve 0.2s linear both !important;
   }
-  html[data-intro="play"] .intro[data-state="out"] {
-    animation-delay: 0s !important;
+  html[data-intro="exit"] :is(.intro-center, .intro-bg, main) {
+    animation: none !important;
   }
   .intro-photo {
     animation: none !important;
@@ -242,12 +273,5 @@ html[data-intro="play"] .intro:not([data-live]) .intro-pipes {
   html[data-intro] .intro .intro-pipes {
     opacity: 1;
     transform: none;
-  }
-}
-@keyframes intro-fade {
-  to {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
   }
 }

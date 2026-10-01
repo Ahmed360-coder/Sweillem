@@ -14,6 +14,11 @@ import { Logo } from "./Logo";
  * (introGateScript), which sets <html data-intro="play"> only when the landing
  * page is "/" and the intro has not played in this session.
  */
+const HOLD_MS = 3000;
+const HOLD_REDUCED_MS = 900;
+const EXIT_MS = 920;
+const EXIT_REDUCED_MS = 220;
+
 export function Intro() {
   const rootRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -30,11 +35,17 @@ export function Intro() {
     let raf = 0;
     let done = false;
 
+    // Hand off to the page: "exit" runs the dissolve in intro.css, "done" removes the overlay.
+    // The gate script schedules the same steps, so the intro ends on time even before hydration.
     const finish = () => {
       if (done) return;
       done = true;
-      root.dataset.state = "out";
-      timers.push(window.setTimeout(() => (html.dataset.intro = "done"), reduced ? 220 : 720));
+      if (html.dataset.intro === "play") html.dataset.intro = "exit";
+      timers.push(
+        window.setTimeout(() => {
+          if (html.dataset.intro === "exit") html.dataset.intro = "done";
+        }, reduced ? EXIT_REDUCED_MS : EXIT_MS),
+      );
     };
 
     const onKey = (e: KeyboardEvent) => {
@@ -44,7 +55,7 @@ export function Intro() {
     document.addEventListener("keydown", onKey);
 
     if (reduced) {
-      timers.push(window.setTimeout(finish, 900));
+      timers.push(window.setTimeout(finish, HOLD_REDUCED_MS));
     } else {
       root.dataset.live = "";
       const svg = svgRef.current;
@@ -66,7 +77,7 @@ export function Intro() {
         if (t < 3) raf = requestAnimationFrame(loop);
       };
       raf = requestAnimationFrame(loop);
-      timers.push(window.setTimeout(finish, 3000));
+      timers.push(window.setTimeout(finish, HOLD_MS));
     }
 
     // Pointer tilt: the logo turns toward the pointer; photo and glow drift against it.
@@ -172,6 +183,7 @@ function embers(cv: HTMLCanvasElement, root: HTMLElement, stopped: () => boolean
 
 /**
  * Inline script for <head>: decides before first paint whether the intro plays.
- * Plays once per session, only when the visitor lands on "/".
+ * Plays once per session, only when the visitor lands on "/", and schedules
+ * the hand-off (play, exit, done) so it never depends on hydration.
  */
-export const introGateScript = `(()=>{try{var d=document.documentElement,k="sweillem.intro";if(location.pathname==="/"&&!sessionStorage.getItem(k)){sessionStorage.setItem(k,"1");d.dataset.intro="play"}else{d.dataset.intro="done"}}catch(e){document.documentElement.dataset.intro="done"}})()`;
+export const introGateScript = `(()=>{try{var d=document.documentElement,k="sweillem.intro";if(location.pathname==="/"&&!sessionStorage.getItem(k)){sessionStorage.setItem(k,"1");d.dataset.intro="play";var r=matchMedia("(prefers-reduced-motion: reduce)").matches,h=r?${HOLD_REDUCED_MS}:${HOLD_MS},x=r?${EXIT_REDUCED_MS}:${EXIT_MS};setTimeout(function(){if(d.dataset.intro==="play")d.dataset.intro="exit"},h);setTimeout(function(){if(d.dataset.intro==="exit")d.dataset.intro="done"},h+x)}else{d.dataset.intro="done"}}catch(e){document.documentElement.dataset.intro="done"}})()`;

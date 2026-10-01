@@ -352,6 +352,12 @@
   }
 }
 
+/* While the intro plays over the home page, the hero waits; its entrance
+   starts as the intro hands off (html[data-intro="exit"], see intro.css). */
+html[data-intro="play"] :is(.rise-word > span, .fade-up, .rings circle, .badge-1935) {
+  animation-play-state: paused;
+}
+
 /* ---------- 404 (M27 pipe roll) ---------- */
 .nf-pipe {
   animation: nf-roll 2.2s var(--ease-glaze) both;
