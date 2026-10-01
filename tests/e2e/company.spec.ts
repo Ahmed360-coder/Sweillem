@@ -57,7 +57,7 @@ test.describe("company pages (Milestone 3)", () => {
     expect(await frame()).toBe(before);
 
     // Scrolling back runs the journey backwards.
-    await scrollTo(0.2);
+    await scrollTo(0.15);
     await expect(journey).toHaveAttribute("data-chapter", "qc");
   });
 

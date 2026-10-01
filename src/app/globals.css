@@ -533,3 +533,14 @@ html[data-intro="play"] :is(.rise-word > span, .fade-up, .rings circle, .badge-1
 @media (prefers-reduced-motion: reduce) {
   .journey-caption { animation: none; }
 }
+
+/* While the scroll journey fills the screen, the header slides out of its way. */
+.site-header {
+  transition: transform 0.35s var(--ease-glaze);
+}
+html[data-journey] .site-header {
+  transform: translateY(-110%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-header { transition: none; }
+}

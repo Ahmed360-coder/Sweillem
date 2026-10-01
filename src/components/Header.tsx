@@ -62,7 +62,7 @@ export function Header() {
   return (
     <>
       <div ref={sentinelRef} aria-hidden="true" className="pointer-events-none absolute top-6 left-0 h-px w-px" />
-      <header data-stuck={stuck && !open ? "" : undefined} className="group/hdr sticky top-0 z-40 py-3.5">
+      <header data-stuck={stuck && !open ? "" : undefined} className="site-header group/hdr sticky top-0 z-40 py-3.5">
         {/* Condensed ground: fades in, so only opacity animates. */}
         <div
           aria-hidden="true"
