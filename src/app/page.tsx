@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ButtonLink } from "@/components/Button";
 import { CtaBand } from "@/components/CtaBand";
+import { HeroSlideshow, type HeroSlide } from "@/components/HeroSlideshow";
 import { FamilyGrid } from "@/components/FamilyGrid";
 import { Section } from "@/components/Section";
 import { frameSVG, getChapters, H, W } from "@/lib/journey/frames";
@@ -20,6 +21,40 @@ const stats = [
   { value: "1200", unit: "°C", label: "Peak firing temperature" },
   { value: "100+", label: "Years design life" },
   { value: "10", label: "Product families" },
+];
+
+// Real site photos, one country after another. Places follow content/company.ts.
+const heroSlides: HeroSlide[] = [
+  {
+    src: "/images/site/hero.webp",
+    alt: "SWEILLEM vitrified clay pipes laid on a site in Germany",
+    kicker: "On site",
+    place: "Germany · Euro Sweillem",
+  },
+  {
+    src: "/images/site/hero-makkah.webp",
+    alt: "Stacked SWEILLEM clay pipes next to hotel towers in Makkah",
+    kicker: "Haram central area",
+    place: "Makkah, Saudi Arabia",
+  },
+  {
+    src: "/images/site/hero-alamein.webp",
+    alt: "Rows of SWEILLEM clay pipes on site with the New Alamein towers behind",
+    kicker: "On site",
+    place: "New Alamein City, Egypt",
+  },
+  {
+    src: "/images/site/hero-makkah-lift.webp",
+    alt: "A crane lifting SWEILLEM clay pipes near the minarets of the Haram in Makkah",
+    kicker: "Delivery",
+    place: "Makkah, Saudi Arabia",
+  },
+  {
+    src: "/images/site/hero-germany-street.webp",
+    alt: "An excavator lowering a clay pipe into a street trench in Germany",
+    kicker: "Laying",
+    place: "Germany · Euro Sweillem",
+  },
 ];
 
 function RisingHeadline({ text, emphasis }: { text: string; emphasis: string }) {
@@ -104,16 +139,7 @@ export default function HomePage() {
                 <circle key={r} cx="200" cy="200" r={r} style={{ "--c": Math.round(2 * Math.PI * r), "--i": i } as CSSProperties} />
               ))}
             </svg>
-            <div className="frame-cut absolute inset-0 overflow-hidden bg-glaze">
-              <Image
-                src="/images/site/hero.webp"
-                alt="SWEILLEM vitrified clay pipes laid on a site in Germany"
-                fill
-                priority
-                sizes="(min-width: 768px) 50vw, 100vw"
-                className="object-cover"
-              />
-            </div>
+            <HeroSlideshow slides={heroSlides} />
             <div
               className="badge-1935 hex absolute end-2 top-[6%] z-10 grid h-24 w-[84px] place-content-center bg-maroon text-center text-on-maroon md:-end-[3%] md:h-32 md:w-28"
               aria-hidden="true"
@@ -121,10 +147,6 @@ export default function HomePage() {
               <span className="font-mono text-[10px] font-medium tracking-[.14em] uppercase">Since</span>
               <b className="font-display text-[22px] leading-none font-bold md:text-[30px]">1935</b>
             </div>
-            <p className="absolute start-3 bottom-3 z-10 grid gap-0.5 rounded-inner bg-surface px-4 py-3 shadow-card md:-start-[4%] md:bottom-[10%] md:min-w-[200px]">
-              <small className="font-mono text-[12px] font-medium tracking-[.1em] text-muted uppercase">On site</small>
-              <strong className="font-display text-base font-semibold">Germany · Euro Sweillem</strong>
-            </p>
           </div>
         </div>
       </section>

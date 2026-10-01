@@ -163,3 +163,32 @@ test.describe("layout rules (design/taste-audit.md)", () => {
     });
   }
 });
+
+test.describe("home hero slideshow", () => {
+  test.beforeEach(async ({ page }) => skipIntro(page));
+
+  test("moves to the next photo by itself and can be paused", async ({ page }) => {
+    await page.goto("/");
+    const caption = page.locator(".hero-caption strong");
+    await expect(caption).toHaveText("Germany · Euro Sweillem");
+    await expect(caption).toHaveText("Makkah, Saudi Arabia", { timeout: 8000 });
+
+    await page.getByRole("button", { name: "Pause slideshow" }).click();
+    await page.getByRole("button", { name: /^Photo 3 of 5/ }).click();
+    await expect(caption).toHaveText("New Alamein City, Egypt");
+    await page.waitForTimeout(6500);
+    await expect(caption).toHaveText("New Alamein City, Egypt");
+    await expect(page.getByRole("button", { name: "Play slideshow" })).toBeVisible();
+  });
+
+  test("stays still with reduced motion", async ({ browser }) => {
+    const ctx = await browser.newContext({ reducedMotion: "reduce" });
+    const page = await ctx.newPage();
+    await skipIntro(page);
+    await page.goto("/");
+    const caption = page.locator(".hero-caption strong");
+    await page.waitForTimeout(6500);
+    await expect(caption).toHaveText("Germany · Euro Sweillem");
+    await ctx.close();
+  });
+});

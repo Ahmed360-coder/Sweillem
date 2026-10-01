@@ -551,3 +551,86 @@ html[data-journey] .site-header {
 @media (prefers-reduced-motion: reduce) {
   .site-header { transition: none; }
 }
+
+/* ---------- home hero slideshow ---------- */
+.hero-slide {
+  opacity: 0;
+  transform: scale(1.12);
+  transition:
+    opacity 0.9s var(--ease-glaze),
+    transform 1.4s var(--ease-glaze);
+}
+.hero-slide[data-active] {
+  z-index: 1;
+  opacity: 1;
+  transform: none;
+}
+/* Slow drift on the photo that is showing. */
+.hero-slide[data-active] .hero-slide-img {
+  animation: hero-drift 7s linear both;
+}
+@keyframes hero-drift {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.07) translateX(-1.5%);
+  }
+}
+/* A glaze highlight sweeps across as each photo arrives. */
+.hero-sweep {
+  z-index: 2;
+  background: linear-gradient(100deg, transparent, rgb(255 236 220 / 0.32), transparent);
+  transform: translateX(0) skewX(-12deg);
+  animation: hero-sweep 1.1s var(--ease-kiln) both;
+}
+@keyframes hero-sweep {
+  to {
+    transform: translateX(400%) skewX(-12deg);
+  }
+}
+[dir="rtl"] .hero-sweep {
+  animation-name: hero-sweep-rtl;
+}
+@keyframes hero-sweep-rtl {
+  to {
+    transform: translateX(-400%) skewX(12deg);
+  }
+}
+.hero-caption {
+  animation: fade-up var(--t-slow) var(--ease-glaze) both;
+}
+.hero-progress {
+  transform: scaleX(0);
+  animation: hero-progress linear forwards paused;
+}
+.hero-progress[data-playing] {
+  animation-play-state: running;
+}
+/* The bar waits for the intro too (see HeroSlideshow). */
+html[data-intro="play"] .hero-progress,
+html[data-intro="exit"] .hero-progress {
+  animation-play-state: paused;
+}
+@keyframes hero-progress {
+  to {
+    transform: scaleX(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide,
+  .hero-slide[data-active] {
+    transform: none;
+  }
+  .hero-slide[data-active] .hero-slide-img,
+  .hero-sweep,
+  .hero-caption {
+    animation: none !important;
+  }
+  .hero-sweep {
+    display: none;
+  }
+  .hero-progress {
+    transform: scaleX(1);
+  }
+}
