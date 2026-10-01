@@ -29,6 +29,10 @@ npm run test:e2e       # Playwright: every page loads, passes axe (WCAG 2.2 AA),
 
 `test:e2e` runs against a production build (`npm run build` first). In a container with its own Chromium, point Playwright at it with `PLAYWRIGHT_CHROMIUM_PATH=/path/to/chrome`. CI (`.github/workflows/ci.yml`) runs all of the above on every pull request.
 
+## Deploy
+
+The repo is linked to the Vercel project `sweillem`. Every push to a branch gets a preview URL (search engines are kept out with `noindex` and a closed `robots.txt`); merging to `main` deploys production at [sweillem.vercel.app](https://sweillem.vercel.app). No build settings or environment variables are needed: Vercel detects Next.js.
+
 ## Where things live
 
 | Path | What it is |
