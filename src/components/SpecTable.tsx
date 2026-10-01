@@ -29,7 +29,7 @@ export function SpecTable({ table, productName, headingLevel = 3 }: { table: Tab
       </div>
 
       {/* Table: tablets, desktops and print. */}
-      <div className="spec-scroll hidden overflow-x-auto rounded-inner border border-line bg-surface md:block print:block" tabIndex={0} role="region" aria-label={`${title}, scrollable table`}>
+      <div className="spec-scroll relative hidden overflow-x-auto rounded-inner border border-line bg-surface md:block print:block" tabIndex={0} role="region" aria-label={`${title}, scrollable table`}>
         <table className="w-full border-collapse text-left text-sm tabular-nums">
           <thead>
             <tr className="bg-sunk align-bottom">

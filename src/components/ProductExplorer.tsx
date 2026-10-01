@@ -133,6 +133,15 @@ export function ProductExplorer({
   const d3i = col("d3");
   const d1 = d1i >= 0 ? leadingNumber(rows[0][d1i]) : null;
   const d3 = d3i >= 0 ? leadingNumber(rows[0][d3i]) : null;
+  // One scale per product, so sizes compare truthfully as you switch.
+  const scaleTo = useMemo(() => {
+    const all = product.spec.tables.flatMap((t) => {
+      const i = t.columns.findIndex((c) => c.key === "d3");
+      const j = t.columns.findIndex((c) => c.key === "d1");
+      return t.rows.map((r) => (i >= 0 ? leadingNumber(r[i]) : null) ?? (j >= 0 ? leadingNumber(r[j]) : null) ?? 0);
+    });
+    return Math.max(200, ...all) * 1.12;
+  }, [product]);
   const differs = distinguishingColumns(table, rows);
   const title = tableTitle(table);
   const figures = KEY_FIGURES.map((k) => col(k)).filter((i) => i > 0);
@@ -194,6 +203,7 @@ export function ProductExplorer({
             <CrossSection
               d1={d1}
               d3={d3}
+              scaleTo={scaleTo}
               title={`Cross-section to scale: inner diameter ${d1} mm${d3 ? `, outer diameter ${d3} mm` : ""}`}
               className="size-28 sm:size-36"
             />
@@ -201,12 +211,12 @@ export function ProductExplorer({
         </div>
 
         {figures.length > 0 && (
-          <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-inner border border-line bg-line sm:grid-cols-4">
+          <dl className="grid grid-cols-2 overflow-hidden rounded-inner border border-line bg-surface sm:grid-cols-4">
             {figures.map((i) => {
               const values = [...new Set(rows.map((r) => cellText(r[i])))];
               const unit = columnUnit(table.columns[i]);
               return (
-                <div key={i} className="grid content-start gap-1 bg-surface p-3">
+                <div key={i} className="grid content-start gap-1 p-3 shadow-[0_0_0_.5px_var(--line)]">
                   <dt className="text-[12.5px] leading-tight text-muted">
                     {columnName(table.columns[i])}
                     {unit && ` (${unit})`}

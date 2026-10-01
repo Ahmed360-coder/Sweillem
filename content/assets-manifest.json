@@ -537,6 +537,30 @@
       "notes": "Home hero slideshow: public/images/projects/germany/gallery-07.jpg cropped to 1227x920 WebP.",
       "publish": "yes",
       "status": "in-repo"
+    },
+    {
+      "path": "public/images/roof-tiles/tile-terracotta-cutout.webp",
+      "source": "generated",
+      "origin": "public/images/roof-tiles/tile-terracotta.jpg (deck image22.jpeg)",
+      "notes": "Tile cut out of its white slide background with the badge removed, by scripts/cut-roof-tiles.mjs. Used by the roof tiles colour viewer and production process.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/roof-tiles/tile-blue-cutout.webp",
+      "source": "generated",
+      "origin": "public/images/roof-tiles/tile-blue.jpg (deck image23.png)",
+      "notes": "Tile cut out of its white slide background with the badge removed, by scripts/cut-roof-tiles.mjs. Used by the roof tiles colour viewer and production process.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/roof-tiles/tile-black-cutout.webp",
+      "source": "generated",
+      "origin": "public/images/roof-tiles/tile-black.jpg (deck image24.jpeg)",
+      "notes": "Tile cut out of its white slide background with the badge removed, by scripts/cut-roof-tiles.mjs. Used by the roof tiles colour viewer and production process.",
+      "publish": "yes",
+      "status": "in-repo"
     }
   ],
   "liveSite": [

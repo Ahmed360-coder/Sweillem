@@ -1185,3 +1185,92 @@ html[data-intro="exit"] .hero-progress {
     font-size: 11pt;
   }
 }
+
+/* ---------- roof tiles: colour viewer and production journey ---------- */
+.tile-swap {
+  opacity: 0;
+  transform: translateY(10px) rotate(-2deg) scale(0.97);
+  transition:
+    opacity var(--t-base) var(--ease-glaze),
+    transform var(--t-slow) var(--ease-set);
+}
+.tile-swap.is-on {
+  opacity: 1;
+  transform: none;
+}
+.roof-plane {
+  transform: rotateX(48deg);
+  transform-origin: 50% 0;
+}
+.tile-stage {
+  background: radial-gradient(ellipse at 50% 35%, var(--surface), var(--sunk));
+}
+.tile-body img {
+  transition:
+    opacity var(--t-slow) var(--ease-glaze),
+    filter var(--t-slow) var(--ease-glaze),
+    clip-path 900ms var(--ease-kiln);
+}
+/* Shaped and dried tiles are bare clay: grey-brown, then paler as they lose water. */
+.tile-stage .tile-raw {
+  filter: grayscale(1) sepia(0.55) brightness(0.62) contrast(1.1);
+}
+.tile-stage[data-step="2"] .tile-raw {
+  filter: grayscale(1) sepia(0.4) brightness(0.95);
+}
+.tile-stage .tile-col {
+  clip-path: inset(0 0 100% 0);
+  opacity: 1;
+}
+.tile-stage[data-step="3"] .tile-col,
+.tile-stage[data-step="4"] .tile-col {
+  clip-path: inset(0 0 0 0);
+}
+.tile-stage[data-step="4"] .tile-col {
+  filter: drop-shadow(0 0 22px rgb(255 120 40 / 0.85)) brightness(1.08);
+}
+.tile-stage[data-step="1"] .tile-body {
+  animation: tile-press 1.6s var(--ease-set) infinite;
+}
+.tile-stage[data-step="1"] .press {
+  animation: plate 1.6s var(--ease-kiln) infinite;
+}
+@keyframes plate {
+  0%,
+  100% {
+    transform: translateY(-100%);
+  }
+  45%,
+  55% {
+    transform: translateY(40%);
+  }
+}
+@keyframes tile-press {
+  45%,
+  55% {
+    transform: scaleY(0.985);
+  }
+}
+.air {
+  animation: air 2.4s linear infinite;
+}
+@keyframes air {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50px);
+  }
+}
+.kiln {
+  background:
+    radial-gradient(ellipse at 50% 110%, rgb(255 150 50 / 0.85), transparent 60%),
+    linear-gradient(180deg, #2a0f08, #6b1d0a 70%, #b6400f);
+  mix-blend-mode: multiply;
+  animation: kiln-flicker 1.8s ease-in-out infinite alternate;
+}
+@keyframes kiln-flicker {
+  to {
+    filter: brightness(1.15) saturate(1.2);
+  }
+}
