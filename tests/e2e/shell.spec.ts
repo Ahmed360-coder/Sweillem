@@ -68,6 +68,18 @@ test.describe("intro", () => {
     await expect(page.locator("#intro")).toBeHidden({ timeout: 4500 });
   });
 
+  test("holds the hero entrance until the intro hands off", async ({ page }) => {
+    await page.goto("/");
+    const word = page.locator(".rise-word > span").first();
+    const playState = () => word.evaluate((el) => getComputedStyle(el).animationPlayState);
+    await expect(page.locator("html")).toHaveAttribute("data-intro", "play");
+    expect(await playState()).toBe("paused");
+    await page.keyboard.press("Escape");
+    await expect(page.locator("html")).toHaveAttribute("data-intro", "exit");
+    expect(await playState()).toBe("running");
+    await expect(page.locator("html")).toHaveAttribute("data-intro", "done", { timeout: 2000 });
+  });
+
   test("never shows on deep links", async ({ page }) => {
     await page.goto("/products");
     await expect(page.locator("html")).toHaveAttribute("data-intro", "done");
