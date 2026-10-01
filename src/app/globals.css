@@ -1206,3 +1206,45 @@ html[data-intro="exit"] .hero-progress {
 .tj-scene {
   animation: fade-up var(--t-base) var(--ease-glaze) both;
 }
+
+/* ---------- downloads centre ---------- */
+.dl-action {
+  display: inline-flex;
+  min-height: 44px;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: var(--radius-inner, 14px);
+  border: 1px solid var(--line);
+  background: var(--paper);
+  padding: 6px 16px;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-decoration: none;
+  transition:
+    border-color var(--t-base) var(--ease-glaze),
+    transform 100ms;
+}
+.dl-action:hover {
+  border-color: var(--maroon);
+}
+.dl-action:active {
+  transform: translateY(1px);
+}
+.dl-format {
+  font-family: var(--font-data);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.dl-action-quiet {
+  border-style: dashed;
+  background: transparent;
+  color: var(--maroon);
+}
+
+/* ---------- project gallery viewer ---------- */
+dialog.gallery::backdrop {
+  background: transparent;
+}
