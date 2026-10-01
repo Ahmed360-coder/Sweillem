@@ -122,7 +122,7 @@ export default function HomePage() {
               <b className="font-display text-[22px] leading-none font-bold md:text-[30px]">1935</b>
             </div>
             <p className="absolute start-3 bottom-3 z-10 grid gap-0.5 rounded-inner bg-surface px-4 py-3 shadow-card md:-start-[4%] md:bottom-[10%] md:min-w-[200px]">
-              <small className="font-mono text-[11px] font-medium tracking-[.1em] text-muted uppercase">On site</small>
+              <small className="font-mono text-[12px] font-medium tracking-[.1em] text-muted uppercase">On site</small>
               <strong className="font-display text-base font-semibold">Germany · Euro Sweillem</strong>
             </p>
           </div>
@@ -236,7 +236,7 @@ export default function HomePage() {
                 </span>
                 <span className="flex items-baseline justify-between gap-3">
                   <span className="font-display text-lg font-semibold">{p.place}</span>
-                  <small className="font-mono text-[11px] tracking-[.12em] text-muted uppercase">{p.region}</small>
+                  <small className="font-mono text-[12px] tracking-[.12em] text-muted uppercase">{p.region}</small>
                 </span>
               </Link>
             </li>

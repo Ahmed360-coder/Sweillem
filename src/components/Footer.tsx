@@ -8,7 +8,7 @@ export function Footer() {
     <footer className="mt-10 border-t border-line pt-12 pb-7 text-sm">
       <div className="wrap grid grid-cols-2 gap-7 md:grid-cols-[1.4fr_repeat(4,1fr)]">
         <div className="col-span-2 md:col-span-1">
-          <Link href="/" aria-label="SWEILLEM home" className="mb-3.5 block h-9 w-fit">
+          <Link href="/" aria-label="SWEILLEM home" className="mb-3.5 block h-11 w-fit py-1">
             <Logo title={null} />
           </Link>
           <p className="max-w-[34ch] text-muted">
@@ -17,15 +17,15 @@ export function Footer() {
         </div>
         {footerNav.map((group) => (
           <nav key={group.title} aria-label={group.title}>
-            <h2 className="mb-2.5 font-mono text-[11px] font-medium tracking-[.12em] text-muted uppercase">
+            <h2 className="mb-2.5 font-mono text-[12px] font-medium tracking-[.12em] text-muted uppercase">
               {group.title}
             </h2>
-            <ul className="space-y-0.5">
+            <ul className="md:space-y-0.5">
               {group.items.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="inline-block py-1 text-ink no-underline hover:text-maroon"
+                    className="flex min-h-11 w-fit items-center text-ink no-underline hover:text-maroon md:inline-block md:min-h-0 md:py-1"
                   >
                     {item.label}
                   </Link>

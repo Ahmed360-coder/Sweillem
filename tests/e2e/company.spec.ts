@@ -13,11 +13,16 @@ test.describe("company pages (Milestone 3)", () => {
     if (isMobile) {
       await last.scrollIntoViewIfNeeded();
     } else {
-      // The section pins; scroll to its end so the last card is current.
-      await page.evaluate(() => {
-        const el = document.querySelector("#heritage-title")!.closest("section")!.querySelector<HTMLElement>("div.relative")!;
-        window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY + el.offsetHeight - window.innerHeight);
-      });
+      // The section pins; scroll to its end so the last card is current. The
+      // section only grows to its pinned height after hydration, so a scroll
+      // made earlier lands short: repeat it until the end is reached.
+      await expect(async () => {
+        await page.evaluate(() => {
+          const el = document.querySelector("#heritage-title")!.closest("section")!.querySelector<HTMLElement>("div.relative")!;
+          window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY + el.offsetHeight - window.innerHeight);
+        });
+        await expect(markets.getByText("(reached)")).toHaveCount(4, { timeout: 1000 });
+      }).toPass();
     }
     await expect(markets.getByText("(reached)")).toHaveCount(4);
     await expect(page.locator('li[data-current]')).toContainText("Euro Sweillem");

@@ -15,6 +15,31 @@ test.describe("header", () => {
     await expect(header).toHaveAttribute("data-stuck", "");
   });
 
+  test("every page lights up a main nav item", async ({ page, isMobile }) => {
+    test.skip(isMobile, "desktop navigation");
+    const nav = page.getByRole("navigation", { name: "Main" });
+    for (const [path, item] of [
+      ["/services", "About"],
+      ["/sustainability", "About"],
+      ["/euro-sweillem", "About"],
+      ["/quality", "About"],
+      ["/joint-performance", "About"],
+      ["/certificates", "Downloads"],
+    ]) {
+      await page.goto(path);
+      await expect(nav.getByRole("link", { name: item })).toHaveAttribute("aria-current", "true");
+    }
+    await page.goto("/quote");
+    await expect(page.locator("header").getByRole("link", { name: /^Quote list/ })).toHaveAttribute("aria-current", "page");
+  });
+
+  test("footer links are 44 px tall on phones", async ({ page, isMobile }) => {
+    test.skip(!isMobile, "phone tap targets");
+    await page.goto("/");
+    const heights = await page.locator("footer nav a").evaluateAll((els) => els.map((e) => e.getBoundingClientRect().height));
+    expect(Math.min(...heights)).toBeGreaterThanOrEqual(44);
+  });
+
   test("mobile menu opens, traps nothing, closes on Escape and after navigating", async ({ page, isMobile }) => {
     test.skip(!isMobile, "mobile navigation");
     await page.goto("/");

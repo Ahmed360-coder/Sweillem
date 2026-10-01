@@ -162,7 +162,7 @@ export function ScrollJourney() {
                 <div className="grid gap-1 px-5 pb-5">
                   <span className="font-mono text-xs text-maroon">Step {pad(c.n!)}</span>
                   <h3 className="text-xl">{c.title}</h3>
-                  <p className="text-[15px] text-muted">{c.caption}</p>
+                  <p className="text-base sm:text-[15px] text-muted">{c.caption}</p>
                 </div>
               </li>
             ))}
@@ -184,7 +184,7 @@ export function ScrollJourney() {
       <h2 id="journey-title" className="sr-only">
         From Aswan clay to the trench
       </h2>
-      {/* The film itself stays on the light paper colour in both themes. */}
+      {/* On purpose, the journey stays on the light paper colour in both themes: frameSVG draws a daylight scene. */}
       <div ref={stageRef} className="sticky top-0 h-[100dvh] overflow-hidden bg-[#f2f2ef] text-[#1c1818]">
         <svg
           ref={svgRef}

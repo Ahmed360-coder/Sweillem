@@ -119,7 +119,7 @@ export function HeritageTrack({ milestones, reach }: { milestones: Milestone[]; 
           }`}
         >
           <div aria-hidden="true" className="grid gap-1">
-            <span className="hidden font-mono text-[11px] tracking-[.12em] text-muted uppercase sm:block">{current.year ? "Year" : "When"}</span>
+            <span className="hidden font-mono text-[12px] tracking-[.12em] text-muted uppercase sm:block">{current.year ? "Year" : "When"}</span>
             <span className="relative grid">
               <span
                 ref={yearRef}
@@ -198,8 +198,8 @@ export function HeritageTrack({ milestones, reach }: { milestones: Milestone[]; 
                   {m.year ?? m.when ?? "Year to confirm"}
                 </span>
                 <h3 className="text-xl">{m.title}</h3>
-                <p className="text-[15px] text-muted">{m.text}</p>
-                <span className="font-mono text-[11px] text-muted">Source: {m.source}</span>
+                <p className="text-base sm:text-[15px] text-muted">{m.text}</p>
+                <span className="font-mono text-[12px] text-muted">Source: {m.source}</span>
               </div>
             </li>
           ))}

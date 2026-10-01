@@ -57,7 +57,7 @@ function CertificateCard({ c, i }: { c: CertificateRecord; i: number }) {
       </a>
       <div className="grid gap-3 p-5">
         <div className="grid gap-1">
-          <span className="font-mono text-[11px] font-medium tracking-[.12em] text-maroon uppercase">{c.title}</span>
+          <span className="font-mono text-[12px] font-medium tracking-[.12em] text-maroon uppercase">{c.title}</span>
           <h3 className="text-xl">{c.standard}</h3>
         </div>
         <dl className="divide-y divide-line border-y border-line">
@@ -76,15 +76,15 @@ function CertificateCard({ c, i }: { c: CertificateRecord; i: number }) {
             )}
           </Field>
         </dl>
-        {c.notes && <p className="text-[13px] text-muted">{c.notes}</p>}
+        {c.notes && <p className="text-base text-muted sm:text-[13px]">{c.notes}</p>}
         <div className="flex flex-wrap gap-x-5 gap-y-2">
           {c.file && (
-            <a href={c.file} className="link text-[15px]" download>
+            <a href={c.file} className="link tap text-base sm:text-[15px]" download>
               Download PDF
             </a>
           )}
           {c.externalUrl && (
-            <a href={c.externalUrl} className="link text-[15px]" target="_blank" rel="noopener noreferrer">
+            <a href={c.externalUrl} className="link tap text-base sm:text-[15px]" target="_blank" rel="noopener noreferrer">
               Check the C2C registry
             </a>
           )}
@@ -131,7 +131,7 @@ export default function CertificatesPage() {
             <h2 id="more-title" className="text-lg">
               Looking for another approval?
             </h2>
-            <p className="max-w-[70ch] text-[15px] text-muted">
+            <p className="max-w-[70ch] text-base sm:text-[15px] text-muted">
               SWEILLEM also names approvals in Belgium, the Czech Republic, Egypt, France, the Netherlands and Singapore. They
               are added here as soon as the files are available. Until then,{" "}
               <Link href="/contact" className="link">

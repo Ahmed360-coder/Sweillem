@@ -101,10 +101,10 @@ export default function JointPerformancePage() {
               <caption className="sr-only">Deflection per metre of deflected pipe length, by nominal size</caption>
               <thead>
                 <tr className="border-b border-line">
-                  <th scope="col" className="px-5 py-3 text-start font-mono text-[11px] font-medium tracking-[.1em] text-muted uppercase">
+                  <th scope="col" className="px-5 py-3 text-start font-mono text-[12px] font-medium tracking-[.1em] text-muted uppercase">
                     Nominal size
                   </th>
-                  <th scope="col" className="px-5 py-3 text-start font-mono text-[11px] font-medium tracking-[.1em] text-muted uppercase">
+                  <th scope="col" className="px-5 py-3 text-start font-mono text-[12px] font-medium tracking-[.1em] text-muted uppercase">
                     Deflection, mm per m
                   </th>
                 </tr>
@@ -136,7 +136,7 @@ export default function JointPerformancePage() {
               Smaller pipes are allowed more deflection per metre of deflected pipe length. A DN 150 joint, for example, is
               tested at 80 mm per metre; a DN 1000 joint at 10 mm.
             </p>
-            <p className="text-[15px] text-muted">
+            <p className="text-base sm:text-[15px] text-muted">
               Joint types for each size are listed in the{" "}
               <Link href="/products/pipes" className="link">
                 pipe tables
@@ -157,7 +157,7 @@ export default function JointPerformancePage() {
               295, valid until 31 May 2027.
             </p>
           </div>
-          <Link href="/certificates" className="link w-fit">
+          <Link href="/certificates" className="link tap w-fit">
             View the certificate
           </Link>
         </div>

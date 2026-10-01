@@ -8,7 +8,19 @@ import { useQuoteCount } from "@/lib/quote";
 import { Logo } from "./Logo";
 import { QuoteIcon } from "./icons";
 
-const isCurrent = (pathname: string, href: string) => pathname === href || pathname.startsWith(`${href}/`);
+/** Pages that sit under a main nav item without being inside its path. */
+const sectionOf: Record<string, string> = {
+  "/services": "/about",
+  "/sustainability": "/about",
+  "/euro-sweillem": "/about",
+  "/quality": "/about",
+  "/joint-performance": "/about",
+  "/certificates": "/downloads",
+};
+
+/** "page" for the item's own page or its children, "true" for its section, else undefined. */
+const currentFor = (pathname: string, href: string) =>
+  pathname === href || pathname.startsWith(`${href}/`) ? "page" : sectionOf[pathname] === href ? "true" : undefined;
 
 export function Header() {
   const pathname = usePathname();
@@ -72,20 +84,19 @@ export function Header() {
           <Link
             href="/"
             aria-label="SWEILLEM home"
-            className="relative z-50 block h-10 flex-none origin-left transition-transform duration-300 ease-glaze group-data-stuck/hdr:scale-[.8] rtl:origin-right"
+            className="relative z-50 block h-11 flex-none py-0.5 origin-left transition-transform duration-300 ease-glaze group-data-stuck/hdr:scale-[.8] rtl:origin-right"
           >
             <Logo title={null} className={open ? "[--logo-mark:#fff] [--logo-word:#fff]" : ""} />
           </Link>
 
           <nav aria-label="Main" className="ms-auto hidden gap-1 whitespace-nowrap min-[980px]:flex">
             {mainNav.map((item) => {
-              const current = isCurrent(pathname, item.href);
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  aria-current={current ? "page" : undefined}
-                  className="relative rounded-full px-3 py-2 text-[14.5px] font-medium text-ink no-underline after:absolute after:inset-x-3 after:bottom-[3px] after:h-0.5 after:origin-left after:scale-x-0 after:bg-maroon after:transition-transform after:duration-300 after:ease-glaze hover:after:scale-x-100 aria-[current=page]:after:scale-x-100 rtl:after:origin-right"
+                  aria-current={currentFor(pathname, item.href)}
+                  className="relative rounded-full px-3 py-2 text-[14.5px] font-medium text-ink no-underline after:absolute after:inset-x-3 after:bottom-[3px] after:h-0.5 after:origin-left after:scale-x-0 after:bg-maroon after:transition-transform after:duration-300 after:ease-glaze hover:after:scale-x-100 [&[aria-current]]:after:scale-x-100 rtl:after:origin-right"
                 >
                   {item.label}
                 </Link>
@@ -96,6 +107,7 @@ export function Header() {
           <div className="ms-auto flex items-center gap-2 min-[980px]:ms-0">
             <Link
               href="/quote"
+              aria-current={pathname === "/quote" ? "page" : undefined}
               aria-label={`Quote list, ${quoteCount} ${quoteCount === 1 ? "item" : "items"}`}
               className="relative z-50 inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-paper no-underline transition-transform duration-100 active:translate-y-px"
             >
@@ -104,7 +116,7 @@ export function Header() {
               <span
                 aria-hidden="true"
                 data-quote-count
-                className="min-w-5 rounded-full bg-maroon px-[5px] text-center font-mono text-[11px] leading-5 font-semibold text-on-maroon"
+                className="min-w-5 rounded-full bg-maroon px-[5px] text-center font-mono text-[12px] leading-5 font-semibold text-on-maroon"
               >
                 {quoteCount}
               </span>
@@ -159,9 +171,9 @@ export function Header() {
             <Link
               key={item.href}
               href={item.href}
-              aria-current={isCurrent(pathname, item.href) ? "page" : undefined}
+              aria-current={currentFor(pathname, item.href)}
               style={{ transitionDelay: open ? `${i * 45 + 160}ms` : "0ms" }}
-              className={`border-b border-[color-mix(in_srgb,var(--on-maroon)_20%,transparent)] py-2 font-display text-3xl leading-tight font-semibold text-inherit no-underline transition-[opacity,transform] duration-[560ms] ease-glaze aria-[current=page]:underline aria-[current=page]:decoration-2 aria-[current=page]:underline-offset-8 ${
+              className={`border-b border-[color-mix(in_srgb,var(--on-maroon)_20%,transparent)] py-2 font-display text-3xl leading-tight font-semibold text-inherit no-underline transition-[opacity,transform] duration-[560ms] ease-glaze [&[aria-current]]:underline [&[aria-current]]:decoration-2 [&[aria-current]]:underline-offset-8 ${
                 open ? "translate-y-0 opacity-100" : "translate-y-[18px] opacity-0"
               }`}
             >

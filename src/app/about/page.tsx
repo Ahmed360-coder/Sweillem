@@ -338,9 +338,9 @@ export default function AboutPage() {
               className="reveal grid content-start gap-2 rounded-card border border-line bg-surface p-5"
               style={{ "--dl": `${i * 70}ms` } as CSSProperties}
             >
-              <span className="font-mono text-[11px] font-medium tracking-[.12em] text-maroon uppercase">{l.kind}</span>
+              <span className="font-mono text-[12px] font-medium tracking-[.12em] text-maroon uppercase">{l.kind}</span>
               <h3 className="text-lg">{l.name}</h3>
-              <p className="text-[15px]">{l.address}</p>
+              <p className="text-base sm:text-[15px]">{l.address}</p>
               <SourceNote>Source: {l.source}</SourceNote>
             </li>
           ))}
