@@ -3,6 +3,7 @@ import Image from "next/image";
 import { CountUp } from "@/components/CountUp";
 import { CtaBand } from "@/components/CtaBand";
 import { HeritageTrack, type Milestone } from "@/components/HeritageTrack";
+import { ReachMap } from "@/components/ReachMap";
 import { PageHeader } from "@/components/PageHeader";
 import { Section } from "@/components/Section";
 import { SourceNote } from "@/components/SourceNote";
@@ -21,24 +22,6 @@ const stats = [
   { value: "90+", label: "Years of experience", source: "About Us" },
   { value: "1987", label: "New factory with advanced production lines", source: "About Us" },
   { value: "14", label: "Countries named on the customer list, from Germany to Brunei", source: "About Us" },
-];
-
-// Countries as listed on the live About Us page, in its order.
-const countries = [
-  "Germany",
-  "Belgium",
-  "Holland",
-  "Czech Republic",
-  "Italy",
-  "Poland",
-  "Romania",
-  "Hungary",
-  "Saudi Arabia",
-  "Qatar",
-  "Greece",
-  "Singapore",
-  "Hong Kong",
-  "Brunei",
 ];
 
 function Photo({ src, alt, contain }: { src: string; alt: string; contain?: boolean }) {
@@ -302,32 +285,10 @@ export default function AboutPage() {
         title="Where SWEILLEM pipes go"
         lede="Customers across the GCC, the Arab world and East and West European markets."
       >
-        <div className="grid gap-8 md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] md:items-center">
-          <div className="reveal relative aspect-[1398/768] overflow-hidden rounded-card bg-[#0b1220]">
-            <Image
-              src="/images/company/international-map.png"
-              alt="Map of Europe and the Middle East with SWEILLEM’s markets marked in red, including Germany, France, Poland, Italy, Spain and Saudi Arabia"
-              fill
-              sizes="(min-width: 900px) 640px, 100vw"
-              className="object-cover"
-            />
-          </div>
-          <div className="grid gap-4">
-            <h3 className="font-mono text-xs font-medium tracking-[.12em] text-muted uppercase">Countries named by SWEILLEM</h3>
-            <ul className="flex flex-wrap gap-2">
-              {countries.map((c, i) => (
-                <li
-                  key={c}
-                  className="reveal rounded-full border border-line bg-surface px-3.5 py-1.5 text-[14px]"
-                  style={{ "--dl": `${i * 40}ms` } as CSSProperties}
-                >
-                  {c}
-                </li>
-              ))}
-            </ul>
-            <SourceNote>The list on About Us ends with “etc.”, so it is not complete.</SourceNote>
-          </div>
-        </div>
+        <ReachMap />
+        <SourceNote className="mt-4">
+          The list on About Us ends with “etc.”, so it is not complete. Map shapes: Natural Earth.
+        </SourceNote>
       </Section>
 
       <Section id="locations" title="Where SWEILLEM is" lede="Addresses as SWEILLEM publishes them on its site and certificates.">
