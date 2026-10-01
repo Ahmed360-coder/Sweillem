@@ -16,24 +16,6 @@ export interface StubPage {
 }
 
 export const stubPages = {
-  projects: {
-    path: "/projects",
-    eyebrow: "Projects",
-    title: "Where SWEILLEM pipes are working",
-    lede: "Sites in Egypt, Saudi Arabia and Germany, including Makkah and New Alamein City.",
-    description: "SWEILLEM vitrified clay pipe projects in Egypt, Saudi Arabia and Germany, including Makkah and New Alamein City.",
-    milestone: 5,
-    coming: "A projects map with region filters and a photo gallery for each project. Client names, years and pipe sizes are added as SWEILLEM confirms them.",
-  },
-  downloads: {
-    path: "/downloads",
-    eyebrow: "Downloads",
-    title: "Certificates and catalogues",
-    lede: "ISO 9001, ISO 14001, ISO 45001, DIN CERTCO and SASO certificates in one place.",
-    description: "Download SWEILLEM certificates: ISO 9001, ISO 14001, ISO 45001, DIN CERTCO and SASO.",
-    milestone: 5,
-    coming: "A searchable list of every file SWEILLEM publishes, filterable by type and country. Only files we actually hold are listed, so every link opens.",
-  },
   contact: {
     path: "/contact",
     eyebrow: "Contact",

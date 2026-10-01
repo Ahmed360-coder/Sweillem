@@ -88,12 +88,12 @@ const standards = [
   "Cradle to Cradle Certified Bronze",
 ];
 
-// Places shown in SWEILLEM's deck. Client names, years and sizes follow in
-// Milestone 5 once SWEILLEM confirms them (docs/content-gaps.md 4).
+// Places shown in SWEILLEM's deck; each card opens its gallery on the Projects
+// page. Client names and years follow once SWEILLEM confirms them (docs/content-gaps.md 4).
 const featured = [
-  { src: "/images/projects/makkah-crop.webp", alt: "Large SWEILLEM pipes on a project in Makkah, near the Haram", place: "Makkah", region: "Saudi Arabia" },
-  { src: "/images/projects/new-alamein-crop.webp", alt: "SWEILLEM pipes waiting to be laid in New Alamein City", place: "New Alamein City", region: "Egypt" },
-  { src: "/images/projects/germany-site.jpg", alt: "SWEILLEM pipes on a site in Germany", place: "Germany", region: "Europe" },
+  { src: "/images/projects/makkah-crop.webp", alt: "Large SWEILLEM pipes on a project in Makkah, near the Haram", place: "Makkah", region: "Saudi Arabia", id: "haram-central-area-makkah" },
+  { src: "/images/projects/new-alamein-crop.webp", alt: "SWEILLEM pipes waiting to be laid in New Alamein City", place: "New Alamein City", region: "Egypt", id: "new-alamein-city" },
+  { src: "/images/projects/germany-site.jpg", alt: "SWEILLEM pipes on a site in Germany", place: "Germany", region: "Europe", id: "germany" },
 ];
 
 const organizationJsonLd = {
@@ -246,7 +246,7 @@ export default function HomePage() {
               className={`reveal ${i === 0 ? "md:row-span-2" : ""}`}
               style={{ "--dl": `${i * 100}ms` } as CSSProperties}
             >
-              <Link href="/projects" className="group grid h-full gap-2.5 text-ink no-underline">
+              <Link href={`/projects#${p.id}`} className="group grid h-full gap-2.5 text-ink no-underline">
                 <span className={`relative block overflow-hidden rounded-card bg-sunk ${i === 0 ? "aspect-[4/3] md:aspect-auto md:h-full md:min-h-[420px]" : "aspect-[16/9]"}`}>
                   <Image
                     src={p.src}

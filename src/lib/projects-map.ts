@@ -69,10 +69,10 @@ const projectCopy: Record<string, Pick<MapPlace, "name" | "short" | "place" | "t
     image: { src: "/images/projects/new-alamein-crop.webp", alt: "SWEILLEM pipes waiting to be laid in New Alamein City" },
   },
   germany: {
-    name: "A site in Germany",
+    name: "Sites in Germany",
     short: "Germany",
     place: "Germany",
-    text: "SWEILLEM pipes on a site in Germany. The map marks the country, as the town is not given.",
+    text: "SWEILLEM pipes on sites in Germany. The map marks the country, as the towns are not given.",
     side: "right",
     image: { src: "/images/projects/germany-site.jpg", alt: "SWEILLEM pipes on a site in Germany" },
   },
