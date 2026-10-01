@@ -27,7 +27,7 @@ Each item says what we have now and what we need. Items marked **Blocks publishi
 | 2.5 | The report says clay pipes "can withstand more than 300 bars during underground maintenance". | Confirm the figure and what it refers to (e.g. high-pressure jetting) before we publish it. |
 | 2.6 | Home and About Us show three testimonials (Sameh Saqr, Ahmed Maher, Sarha Tarek) with no company names; one About Us testimonial is template text. | Genuine testimonials with the person's company and permission to publish, or agreement to drop the section. **Blocks publishing testimonials.** |
 | 2.7 | Home has "History", "Missions" and "Visions" boxes, all filled with the same template text. | Real mission and vision statements, or agreement to drop them. |
-| 2.8 | Services lists six identical "Pipes Service" boxes. | The real list of services (e.g. technical support, delivery, site supervision) in SWEILLEM's words. **Blocks the Services page.** |
+| 2.8 | Services lists six identical "Pipes Service" boxes. | The real list of services (e.g. technical support, delivery, site supervision) in SWEILLEM's words.<br>**Answered:** SWEILLEM approved the list on the new Services page (see 7.5). |
 | 2.9 | Key dates known: 1935 (Cairo plant) and 1987 (new factory). | Any other milestones for the history timeline (first export, Saudi market entry, Euro Sweillem launch, certifications), with years. |
 | 2.10 | Home mentions a "Quality Policy" and "Sweillem Catalogue 2024" but neither links to a file. | The quality policy and the 2024 (or newer) product catalogue as PDFs. |
 
@@ -95,3 +95,15 @@ These are copied exactly as published. They look like typing errors, but we will
 | 6.4 | Three deck slides credit "Photos provided by Pexels" (quality-control montage, "Environmentally friendly" picture, terracotta roof tile). | Confirm which of these pictures are SWEILLEM's own. Until then they are marked `needs-confirmation` in content/assets-manifest.json. |
 | 6.5 | Deck photos are compressed copies (the largest is 2779 px wide). | Full-size originals of the deck photos and any recent factory, product or project photos. |
 | 6.6 | Access to the sweillem.net DNS settings (for launch, Milestone 8). | Who manages the domain. |
+
+## 7. Found while building the company pages (Milestone 3)
+
+| # | What we have | What we need |
+|---|---|---|
+| 7.1 | ~~The ISO certificates give the head office as 6 El Saad Street, Cairo. Contact Us and the Cradle to Cradle certificate say Osman Towers, Kornish El Neil.~~ | **Answered 1 October 2026 (Ahmed):** show both. Osman Towers is the office and 6 El-Saad Street the registered address. |
+| 7.2 | Joint Performance says water loss in the line test must stay below "0.04 liter/ml". The unit cannot be read as written, so the page says "within the limit set by the European Standards" and leaves the number out. | The limit and its unit (for example litres per m² of wetted surface). |
+| 7.3 | The SASO licence (expires 29 June 2025) and the OSS copies of ISO 9001, 14001 and 45001 (expire 12 May 2026) have passed their printed dates. The Certificates page says so under each one. | The renewed SASO licence and the current OSS certificates, or agreement to drop the expired copies. |
+| 7.4 | Euro Sweillem shows Stiegstraße 60, 41379 Brüggen as "Address listed on sweillem.net" (follows 1.3 and 1.7). | Whether Brüggen is the Euro Sweillem warehouse, an office, or something else. |
+| 7.5 | ~~Services is built only from facts SWEILLEM states elsewhere, each with its source (follows 2.8).~~ | **Answered 1 October 2026:** SWEILLEM approves this list (via Ahmed). |
+| 7.6 | The heritage timeline shows the Saudi, GCC, Arab world and Europe markets without years, and Euro Sweillem as "Newest launch" (follows 2.9). | The year of each step. |
+| 7.7 | The film's installation scenes are marked as illustrative on the Process page. | Whether SWEILLEM has real installation footage to replace them. |

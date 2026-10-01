@@ -117,3 +117,29 @@ export interface Fact {
   confirmation: Confirmation;
   notes?: string;
 }
+
+/**
+ * One certificate as printed on the scan or PDF SWEILLEM publishes. Every
+ * field is transcribed from the document itself; dates are ISO (YYYY-MM-DD).
+ */
+export interface CertificateRecord {
+  id: string;
+  /** The standard or mark, as printed (e.g. "ISO 9001:2015"). */
+  standard: string;
+  /** What the certificate covers, in plain words. */
+  title: string;
+  issuer: string;
+  number: string;
+  /** Scope or product line as printed. */
+  scope: string;
+  issued: string;
+  /** Expiry date printed on this copy. */
+  validUntil: string;
+  /** Preview image under /public. */
+  image: string;
+  /** Downloadable PDF under /public, when SWEILLEM publishes one. */
+  file?: string;
+  externalUrl?: string;
+  kind: "management" | "product";
+  notes?: string;
+}

@@ -398,3 +398,149 @@ html[data-intro="play"] :is(.rise-word > span, .fade-up, .rings circle, .badge-1
     animation: none !important;
   }
 }
+
+/* ---------- scroll reveal (RevealObserver sets data-in) ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity var(--t-slow) var(--ease-glaze),
+    transform var(--t-slow) var(--ease-glaze);
+  transition-delay: var(--dl, 0ms);
+}
+.reveal[data-in] {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Bars that grow from the start edge once their section is revealed. */
+.grow-x {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--t-story) var(--ease-kiln);
+  transition-delay: calc(var(--i, 0) * 120ms + 200ms);
+}
+[dir="rtl"] .grow-x {
+  transform-origin: right;
+}
+.reveal[data-in] .grow-x {
+  transform: scaleX(var(--v, 1));
+}
+@media (prefers-reduced-motion: reduce) {
+  .grow-x {
+    transform: scaleX(var(--v, 1));
+  }
+}
+
+/* ---------- home standards marquee (M07) ---------- */
+.marquee {
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.marquee-track {
+  animation: marquee 38s linear infinite;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+[dir="rtl"] .marquee-track {
+  animation-name: marquee-rtl;
+}
+@keyframes marquee-rtl {
+  to {
+    transform: translateX(50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none !important;
+    flex-wrap: wrap;
+  }
+}
+
+/* ---------- joint diagram (Joint performance) ---------- */
+.joint-spigot {
+  transform: translateX(-90px);
+  transition: transform 1.1s var(--ease-set) 0.25s;
+}
+.reveal[data-in] .joint-spigot {
+  transform: none;
+}
+.joint-seal {
+  opacity: 0;
+  transition: opacity var(--t-slow) var(--ease-glaze) 1.2s;
+}
+.reveal[data-in] .joint-seal {
+  opacity: 1;
+}
+.joint-pulse {
+  opacity: 0;
+}
+.reveal[data-in] .joint-pulse {
+  animation: joint-pulse 2.4s var(--ease-glaze) 1.6s infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes joint-pulse {
+  0% {
+    opacity: 0.7;
+    transform: scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .joint-spigot {
+    transform: none;
+  }
+  .joint-seal {
+    opacity: 1;
+  }
+  .reveal[data-in] .joint-pulse {
+    animation: none;
+  }
+}
+
+/* ---------- process journey: kiln dial (M15) ---------- */
+.kiln-arc {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  transition: stroke-dashoffset 1.6s var(--ease-kiln);
+}
+[data-hot] .kiln-arc {
+  stroke-dashoffset: 0;
+}
+
+/* Scroll journey caption on phones: fades in when the step changes. */
+.journey-caption {
+  animation: journey-caption 0.4s var(--ease-glaze, ease-out) both;
+}
+@keyframes journey-caption {
+  from { opacity: 0; transform: translateY(6px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .journey-caption { animation: none; }
+}
+
+/* While the scroll journey fills the screen, the header slides out of its way. */
+.site-header {
+  transition: transform 0.35s var(--ease-glaze);
+}
+html[data-journey] .site-header {
+  transform: translateY(-110%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-header { transition: none; }
+}

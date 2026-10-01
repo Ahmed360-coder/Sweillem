@@ -184,6 +184,7 @@ function embers(cv: HTMLCanvasElement, root: HTMLElement, stopped: () => boolean
 /**
  * Inline script for <head>: decides before first paint whether the intro plays.
  * Plays once per session, only when the visitor lands on "/", and schedules
- * the hand-off (play, exit, done) so it never depends on hydration.
+ * the hand-off (play, exit, done) so it never depends on hydration. A skip key
+ * pressed before the Intro component hydrates starts the exit straight away.
  */
-export const introGateScript = `(()=>{try{var d=document.documentElement,k="sweillem.intro";if(location.pathname==="/"&&!sessionStorage.getItem(k)){sessionStorage.setItem(k,"1");d.dataset.intro="play";var r=matchMedia("(prefers-reduced-motion: reduce)").matches,h=r?${HOLD_REDUCED_MS}:${HOLD_MS},x=r?${EXIT_REDUCED_MS}:${EXIT_MS};setTimeout(function(){if(d.dataset.intro==="play")d.dataset.intro="exit"},h);setTimeout(function(){if(d.dataset.intro==="exit")d.dataset.intro="done"},h+x)}else{d.dataset.intro="done"}}catch(e){document.documentElement.dataset.intro="done"}})()`;
+export const introGateScript = `(()=>{try{var d=document.documentElement,k="sweillem.intro";if(location.pathname==="/"&&!sessionStorage.getItem(k)){sessionStorage.setItem(k,"1");d.dataset.intro="play";var r=matchMedia("(prefers-reduced-motion: reduce)").matches,h=r?${HOLD_REDUCED_MS}:${HOLD_MS},x=r?${EXIT_REDUCED_MS}:${EXIT_MS},out=function(){if(d.dataset.intro==="play"){d.dataset.intro="exit";setTimeout(function(){if(d.dataset.intro==="exit")d.dataset.intro="done"},x)}};setTimeout(out,h);addEventListener("keydown",function f(e){if(/^(Escape|Enter| )$/.test(e.key)){out();removeEventListener("keydown",f)}})}else{d.dataset.intro="done"}}catch(e){document.documentElement.dataset.intro="done"}})()`;

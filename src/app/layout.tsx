@@ -5,6 +5,7 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Intro, introGateScript } from "@/components/Intro";
 import { MotionProvider } from "@/components/MotionProvider";
+import { RevealObserver } from "@/components/RevealObserver";
 import { site, siteUrl } from "@/lib/site";
 import "./globals.css";
 import "./intro.css";
@@ -50,6 +51,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: introGateScript }} />
+        <noscript>
+          <style>{".reveal,.joint-spigot{opacity:1!important;transform:none!important}.joint-seal{opacity:1!important}.grow-x{transform:scaleX(var(--v,1))!important}"}</style>
+        </noscript>
       </head>
       <body>
         <a href="#main" className="skip-link">
@@ -61,6 +65,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             {children}
           </main>
           <Footer />
+          <RevealObserver />
         </MotionProvider>
         <Intro />
       </body>

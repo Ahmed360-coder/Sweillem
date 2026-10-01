@@ -251,6 +251,178 @@
       "notes": "Vector S mark on its own (grey).",
       "publish": "yes",
       "status": "in-repo"
+    },
+    {
+      "path": "public/images/process/raw.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image5.jpg",
+      "slide": 6,
+      "notes": "Process step 1 (raw material): clay on the conveyor, cropped from the manufacturing slide with the baked-in title removed, 900x807 WebP. Made for the redesign prototype (design/prototype/assets).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/process/moulding.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image6.jpg",
+      "slide": 7,
+      "notes": "Process step 2 (moulding): unglazed pipes at the extruder, 900x807 WebP crop. Made for the redesign prototype (design/prototype/assets).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/process/drying.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image7.jpg",
+      "slide": 8,
+      "notes": "Process step 3 (drying): pipes stacked on a car, 900x893 WebP crop. Made for the redesign prototype (design/prototype/assets).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/process/glazing.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image8.jpeg",
+      "slide": 9,
+      "notes": "Process step 4 (glazing): pipes over the glazing tank, 1000x700 WebP crop. Made for the redesign prototype (design/prototype/assets).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/process/truck.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image11.jpg",
+      "slide": 13,
+      "notes": "Process delivery step: loaded truck, cropped to remove the deck caption, 860x590 WebP. Made for the redesign prototype (design/prototype/assets).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/journey/raw.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image5.jpg",
+      "slide": 6,
+      "notes": "Photo card for the 'raw' chapter of the scroll journey on Process, 1000x778 WebP cropped from the deck image. Made for the How it's made animation (animation/how-its-made/assets/photos).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/journey/mould.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image6.jpg",
+      "slide": 7,
+      "notes": "Photo card for the 'mould' chapter of the scroll journey on Process, 1000x778 WebP cropped from the deck image. Made for the How it's made animation (animation/how-its-made/assets/photos).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/journey/dry.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image7.jpg",
+      "slide": 8,
+      "notes": "Photo card for the 'dry' chapter of the scroll journey on Process, 1000x778 WebP cropped from the deck image. Made for the How it's made animation (animation/how-its-made/assets/photos).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/journey/glaze.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image8.jpg",
+      "notes": "Photo card for the 'glaze' chapter of the scroll journey on Process, 1000x778 WebP cropped from the deck image. Made for the How it's made animation (animation/how-its-made/assets/photos).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/journey/fire.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image9.jpg",
+      "slide": 10,
+      "notes": "Photo card for the 'fire' chapter of the scroll journey on Process, 1000x778 WebP cropped from the deck image. Made for the How it's made animation (animation/how-its-made/assets/photos).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/journey/deliver.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image11.jpg",
+      "slide": 13,
+      "notes": "Photo card for the 'deliver' chapter of the scroll journey on Process, 1000x778 WebP cropped from the deck image. Made for the How it's made animation (animation/how-its-made/assets/photos).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/journey/install.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image16.jpg",
+      "notes": "Photo card for the 'install' chapter of the scroll journey on Process, 1000x778 WebP cropped from the deck image. Made for the How it's made animation (animation/how-its-made/assets/photos).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/logistics/germany-warehouses-crop.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image21.jpeg",
+      "slide": 20,
+      "notes": "Germany warehouses in snow, cropped to remove the baked-in caption, 1000x509 WebP. Made for the redesign prototype (design/prototype/assets).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/projects/makkah-crop.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image17.jpg",
+      "slide": 16,
+      "notes": "Makkah project photo, 1000x572 WebP crop. Made for the redesign prototype (design/prototype/assets).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/projects/new-alamein-crop.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image18.png",
+      "slide": 17,
+      "notes": "New Alamein City photo, 476x410 WebP crop. Made for the redesign prototype (design/prototype/assets).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/company/since-1935-crop.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image1.jpeg",
+      "slide": 1,
+      "notes": "\"Since 1935\" photo, 1000x352 WebP crop. Made for the redesign prototype (design/prototype/assets).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/certificates/iso-14001-asr-2024.webp",
+      "source": "live-site",
+      "notes": "Page 1 of public/downloads/certificates/iso-14001-2024.pdf rendered at 110 dpi as a preview image for the Certificates page (the live site has no scan of this certificate).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/certificates/iso-45001-asr-2024.webp",
+      "source": "live-site",
+      "notes": "Page 1 of public/downloads/certificates/iso-45001-2024.pdf rendered at 110 dpi as a preview image for the Certificates page (the live site has no scan of this certificate).",
+      "publish": "yes",
+      "status": "in-repo"
     }
   ],
   "liveSite": [

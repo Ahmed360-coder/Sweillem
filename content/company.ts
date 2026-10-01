@@ -181,7 +181,17 @@ export const locations: Location[] = [
     country: "Egypt",
     address: "Osman Towers – Kornish El Neil Aghakhan – Cairo -Egypt",
     source: [live("/contact-us/")],
-    confirmation: "needs-confirmation",
+    confirmation: "confirmed",
+    notes: "Confirmed by Ahmed on 1 October 2026 as the office; shown alongside the registered address.",
+  },
+  {
+    name: "Registered address",
+    kind: "office",
+    country: "Egypt",
+    address: "6 El-Saad Street, Shoubra Gardens – Khalafawi Square, Cairo, Egypt",
+    source: [live("/downloads/")],
+    confirmation: "confirmed",
+    notes: "As printed on the ASR ISO 9001, 14001 and 45001 certificates. Confirmed by Ahmed on 1 October 2026.",
   },
   {
     name: "Contact page map pin",
