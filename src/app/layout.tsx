@@ -25,6 +25,8 @@ export const metadata: Metadata = {
   },
   description: site.description,
   applicationName: site.name,
+  // The name under the icon on an iPhone home screen; the page title would be cut to "SWEILLEM·Vitri…".
+  appleWebApp: { title: site.name },
   openGraph: {
     type: "website",
     siteName: site.legalName,

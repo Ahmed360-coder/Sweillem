@@ -85,6 +85,16 @@ test.describe("header", () => {
     expect([...hrefs].sort()).toEqual([...staticRoutes].sort());
   });
 
+  test("home-screen icon and name", async ({ page, request }) => {
+    await page.goto("/");
+    await expect(page.locator('meta[name="apple-mobile-web-app-title"]')).toHaveAttribute("content", "SWEILLEM");
+    const touchIcon = await page.locator('link[rel="apple-touch-icon"]').getAttribute("href");
+    expect((await request.get(touchIcon!)).headers()["content-type"]).toBe("image/png");
+    const manifest = await (await request.get((await page.locator('link[rel="manifest"]').getAttribute("href"))!)).json();
+    expect(manifest.short_name).toBe("SWEILLEM");
+    for (const icon of manifest.icons) expect((await request.get(icon.src)).ok()).toBe(true);
+  });
+
   test("quote button shows the list count", async ({ page }) => {
     await page.goto("/quote");
     await expect(page.getByRole("heading", { name: "Your quote list is empty" })).toBeVisible();
