@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useMotionValueEvent, useReducedMotion, useScroll, useSpring } from "motion/react";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 
 // How a roof tile is made, driven by scroll like the pipe journey on /process:
 // the section pins full screen, the visitor's scroll moves the tile from the
@@ -23,9 +23,6 @@ const TILE = {
 };
 /** Tile photo proportions (width / height of the cut-outs). */
 const TR = 420 / 720;
-/** Bare clay: grey-brown, paler once dried. */
-const RAW = "grayscale(1) sepia(.55) brightness(.62) contrast(1.1)";
-const DRY = "grayscale(1) sepia(.4) brightness(.98)";
 
 const VH_PER_STEP = 70;
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
@@ -40,8 +37,71 @@ const CLAY = "#b07a4b";
 const CLAY_DARK = "#7b5236";
 const STEEL = "#7f8285";
 
-function Tile({ x, y, h, src = TILE.terracotta, filter, opacity = 1 }: { x: number; y: number; h: number; src?: string; filter?: string; opacity?: number }) {
-  return <image href={src} x={x} y={y} width={h * TR} height={h} style={filter ? { filter } : undefined} opacity={opacity} preserveAspectRatio="none" />;
+/** The real tile photo: only for finished, fired tiles (packing onwards). */
+function Tile({ x, y, h, src = TILE.terracotta, opacity = 1 }: { x: number; y: number; h: number; src?: string; opacity?: number }) {
+  return <image href={src} x={x} y={y} width={h * TR} height={h} opacity={opacity} preserveAspectRatio="none" />;
+}
+
+/* A drawn tile for the steps before firing, coloured for its stage:
+   wet clay is dark and shiny, dried clay pale and matte (and slightly smaller),
+   glazed tiles take their colour with a wet sheen, and in the kiln they glow. */
+type Shade = { base: string; dark: string; light: string; gloss: number };
+const SHADES = {
+  wet: { base: "#6f5b4b", dark: "#46372d", light: "#927c69", gloss: 0.45 },
+  dry: { base: "#dcc6a7", dark: "#b49d80", light: "#eee0ca", gloss: 0 },
+  terracotta: { base: "#c4623a", dark: "#8f3f22", light: "#e38d64", gloss: 0.4 },
+  blue: { base: "#2f4f7d", dark: "#1c3253", light: "#6283b3", gloss: 0.4 },
+  black: { base: "#2c2c2f", dark: "#141416", light: "#5d5e63", gloss: 0.4 },
+  hot: { base: "#ff8d2e", dark: "#d4521b", light: "#ffd27a", gloss: 0 },
+} satisfies Record<string, Shade>;
+
+const hex = (c: string) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16));
+const mixHex = (a: string, b: string, t: number) =>
+  `#${hex(a)
+    .map((v, i) => Math.round(v + (hex(b)[i] - v) * t).toString(16).padStart(2, "0"))
+    .join("")}`;
+const mixShade = (a: Shade, b: Shade, t: number): Shade => ({
+  base: mixHex(a.base, b.base, t),
+  dark: mixHex(a.dark, b.dark, t),
+  light: mixHex(a.light, b.light, t),
+  gloss: a.gloss + (b.gloss - a.gloss) * t,
+});
+
+function ClayTile({ x, y, h, shade, shrink = 0 }: { x: number; y: number; h: number; shade: Shade; shrink?: number }) {
+  const id = useId();
+  const k = (h / 144) * (1 - shrink);
+  // Shrinking keeps the tile standing on the same line, centred.
+  const dx = (h * TR - 84 * k) / 2;
+  const dy = h - 144 * k;
+  return (
+    <g transform={`translate(${x + dx} ${y + dy}) scale(${k})`}>
+      <defs>
+        <linearGradient id={`${id}r`} x1="0" x2="1">
+          <stop offset="0" stopColor={shade.dark} />
+          <stop offset=".45" stopColor={shade.light} />
+          <stop offset="1" stopColor={shade.dark} />
+        </linearGradient>
+      </defs>
+      <path d="M4 0H68V5H84V144H14V139H0V5H4Z" fill={shade.base} stroke={shade.dark} strokeWidth="1.5" />
+      <path d="M8 6H82V26H8Z" fill={shade.dark} opacity=".28" />
+      <path d="M12 26H82" stroke={shade.dark} strokeWidth="2" />
+      {[3.5, 8.5].map((lx) => (
+        <path key={lx} d={`M${lx} 10V134`} stroke={shade.dark} strokeWidth="1.6" />
+      ))}
+      {[18, 46].map((rx) => (
+        <g key={rx}>
+          <rect x={rx} y="30" width="20" height="108" rx="10" fill={`url(#${id}r)`} />
+          {shade.gloss > 0 && <rect x={rx + 4} y="38" width="4" height="90" rx="2" fill="#fff" opacity={shade.gloss} />}
+        </g>
+      ))}
+      {[71, 78].map((lx) => (
+        <path key={lx} d={`M${lx} 32V138`} stroke={shade.dark} strokeWidth="1.4" />
+      ))}
+      {[60, 84, 108].map((ly) => (
+        <path key={ly} d={`M71 ${ly}H84`} stroke={shade.dark} strokeWidth="1.4" />
+      ))}
+    </g>
+  );
 }
 
 function Truck({ x, load }: { x: number; load?: ReactNode }) {
@@ -143,7 +203,7 @@ function Moulding({ p }: { p: number }) {
       <rect x="370" y="120" width="260" height="40" fill={INK} />
       <rect x="485" y="160" width="30" height={60 + press * 150} fill={STEEL} />
       <rect x="390" y={220 + press * 150} width="220" height="30" rx="4" fill={MAROON} />
-      {formed ? <Tile x={x} y={520 - 150} h={150} filter={RAW} /> : <rect x={x} y={470} width={90} height={50} rx="10" fill={CLAY} stroke={CLAY_DARK} strokeWidth="3" />}
+      {formed ? <ClayTile x={x} y={520 - 150} h={150} shade={SHADES.wet} /> : <rect x={x} y={470} width={90} height={50} rx="10" fill={CLAY} stroke={CLAY_DARK} strokeWidth="3" />}
       <Label x={500} y={100}>MOULDING</Label>
     </g>
   );
@@ -151,7 +211,7 @@ function Moulding({ p }: { p: number }) {
 
 function Drying({ p }: { p: number }) {
   const t = ease(seg(p, 0.1, 0.9));
-  const filter = `grayscale(1) sepia(${0.55 - 0.15 * t}) brightness(${0.62 + 0.36 * t}) contrast(${1.1 - 0.1 * t})`;
+  const shade = mixShade(SHADES.wet, SHADES.dry, t);
   return (
     <g>
       <Ground />
@@ -161,7 +221,7 @@ function Drying({ p }: { p: number }) {
         <g key={r}>
           <rect x="210" y={300 + r * 125} width="580" height="8" fill={STEEL} />
           {Array.from({ length: 7 }, (_, c) => (
-            <Tile key={c} x={225 + c * 80} y={300 + r * 125 - 100} h={100} filter={filter} />
+            <ClayTile key={c} x={225 + c * 80} y={300 + r * 125 - 100} h={100} shade={shade} shrink={0.06 * t} />
           ))}
         </g>
       ))}
@@ -193,17 +253,17 @@ function Glaze({ p }: { p: number }) {
       ))}
       <Label x={500} y={135}>COLOUR AND GLAZE</Label>
       <g opacity={1 - trio}>
-        <Tile x={x} y={370} h={150} filter={DRY} />
+        <ClayTile x={x} y={370} h={150} shade={SHADES.dry} shrink={0.06} />
         <clipPath id="tj-glaze">
           <rect x={x + 87 * (1 - reveal)} y="360" width={87 * reveal + 2} height="170" />
         </clipPath>
         <g clipPath="url(#tj-glaze)">
-          <Tile x={x} y={370} h={150} />
+          <ClayTile x={x} y={370} h={150} shade={SHADES.terracotta} shrink={0.06} />
         </g>
       </g>
       <g opacity={trio}>
-        {[TILE.terracotta, TILE.blue, TILE.black].map((src, i) => (
-          <Tile key={src} x={600 + i * 110} y={520 - 170 - (i === 1 ? 14 : 0) + (1 - trio) * 30} h={170} src={src} />
+        {(["terracotta", "blue", "black"] as const).map((c, i) => (
+          <ClayTile key={c} x={575 + i * 100} y={520 - 170 - (i === 1 ? 14 : 0) + (1 - trio) * 30} h={170} shade={SHADES[c]} shrink={0.06} />
         ))}
       </g>
     </g>
@@ -226,8 +286,21 @@ function Firing({ p }: { p: number }) {
       <g transform={`translate(${-120 + inX * 560} 0)`} opacity={1 - door}>
         <rect x="0" y="500" width="250" height="24" fill={STEEL} />
         {[0, 1, 2].map((i) => (
-          <Tile key={i} x={10 + i * 80} y={400} h={100} filter={DRY} />
+          <ClayTile key={i} x={10 + i * 80} y={400} h={100} shade={mixShade(SHADES.dry, SHADES.terracotta, 0.15)} shrink={0.06} />
         ))}
+      </g>
+      {/* Spy hole in the closed door: the tiles inside glow as the heat climbs. */}
+      <g opacity={door}>
+        <clipPath id="tj-spy">
+          <rect x="545" y="240" width="130" height="86" rx="10" />
+        </clipPath>
+        <rect x="545" y="240" width="130" height="86" rx="10" fill="#1a0d08" />
+        <g clipPath="url(#tj-spy)">
+          {[0, 1, 2].map((i) => (
+            <ClayTile key={i} x={552 + i * 42} y={256} h={96} shade={mixShade(SHADES.dry, SHADES.hot, heat)} shrink={0.06} />
+          ))}
+        </g>
+        <rect x="545" y="240" width="130" height="86" rx="10" fill="none" stroke={INK} strokeWidth="4" />
       </g>
       <text x="610" y="400" textAnchor="middle" fontFamily="var(--font-data)" fontSize="64" fontWeight="600" fill="#fff" opacity={door}>
         {temp} °C
