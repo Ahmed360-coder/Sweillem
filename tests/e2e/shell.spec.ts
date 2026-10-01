@@ -85,6 +85,16 @@ test.describe("header", () => {
     expect([...hrefs].sort()).toEqual([...staticRoutes].sort());
   });
 
+  test("home-screen icon and name", async ({ page, request }) => {
+    await page.goto("/");
+    await expect(page.locator('meta[name="apple-mobile-web-app-title"]')).toHaveAttribute("content", "SWEILLEM");
+    const touchIcon = await page.locator('link[rel="apple-touch-icon"]').getAttribute("href");
+    expect((await request.get(touchIcon!)).headers()["content-type"]).toBe("image/png");
+    const manifest = await (await request.get((await page.locator('link[rel="manifest"]').getAttribute("href"))!)).json();
+    expect(manifest.short_name).toBe("SWEILLEM");
+    for (const icon of manifest.icons) expect((await request.get(icon.src)).ok()).toBe(true);
+  });
+
   test("quote button shows the list count", async ({ page }) => {
     await page.goto("/quote");
     await expect(page.getByRole("heading", { name: "Your quote list is empty" })).toBeVisible();
@@ -189,6 +199,24 @@ test.describe("home hero slideshow", () => {
     await page.waitForTimeout(6500);
     await expect(caption).toHaveText("New Alamein City, Egypt");
     await expect(page.getByRole("button", { name: "Play slideshow" })).toBeVisible();
+  });
+
+  test("a tap on the photo shows the next one, and after the last the first", async ({ page }) => {
+    await page.goto("/");
+    const current = page.locator('[aria-current="true"][aria-label^="Photo "]');
+    const photo = page.getByRole("button", { name: /^Next photo/ });
+    await expect(current).toHaveAttribute("aria-label", /^Photo 1 of 5/);
+    await expect(photo).toHaveAccessibleName("Next photo: Makkah, Saudi Arabia");
+    for (const n of [2, 3, 4, 5, 1]) {
+      await photo.click();
+      await expect(current).toHaveAttribute("aria-label", new RegExp(`^Photo ${n} of 5`));
+    }
+    // The caption sits on the photo; a tap on it goes through to the photo.
+    const box = (await page.locator(".hero-caption").boundingBox())!;
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    await expect(current).toHaveAttribute("aria-label", /^Photo 2 of 5/);
+    await photo.press("Enter");
+    await expect(current).toHaveAttribute("aria-label", /^Photo 3 of 5/);
   });
 
   test("stays still with reduced motion", async ({ browser }) => {

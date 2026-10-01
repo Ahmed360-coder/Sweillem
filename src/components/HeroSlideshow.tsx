@@ -15,9 +15,10 @@ const SLIDE_MS = 5500;
 /**
  * Home hero photos from SWEILLEM sites in several countries. Each photo drifts
  * slowly while it shows; the next one rises in over it with a glaze sweep, and
- * the caption changes with it. Only transform and opacity animate. It pauses
- * on hover, while the tab is hidden, with the pause button, and never plays
- * by itself for people who ask for reduced motion.
+ * the caption changes with it. Only transform and opacity animate. Tapping
+ * the photo shows the next one, and after the last it starts again from the
+ * first. It pauses on hover, while the tab is hidden, with the pause button,
+ * and never plays by itself for people who ask for reduced motion.
  */
 const reducedQuery = "(prefers-reduced-motion: reduce)";
 const subscribeReducedMotion = (onChange: () => void) => {
@@ -47,6 +48,7 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
   }, [playing, index, slides.length]);
 
   const current = slides[index];
+  const next = (index + 1) % slides.length;
   return (
     <div
       className="absolute inset-0"
@@ -54,7 +56,7 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
       onPointerLeave={() => setHovered(false)}
     >
       <div
-        className="absolute inset-0 overflow-hidden rounded-full bg-glaze shadow-card"
+        className="absolute inset-0 isolate overflow-hidden rounded-full bg-glaze shadow-card"
         role="group"
         aria-roledescription="slideshow"
         aria-label="Project photos"
@@ -78,10 +80,20 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
         ))}
         <span key={index} aria-hidden="true" className="hero-sweep pointer-events-none absolute inset-y-0 -start-1/2 w-1/2" />
       </div>
+      {/* Outside the clipped circle so its focus ring shows; the waiting time starts over with each tap. */}
+      <button
+        type="button"
+        onClick={() => {
+          firstTurn.current = false;
+          setIndex(next);
+        }}
+        aria-label={`Next photo: ${slides[next].place}`}
+        className="absolute inset-0 cursor-pointer rounded-full"
+      />
 
       <p
         aria-live={playing ? "off" : "polite"}
-        className="absolute start-3 bottom-3 z-10 grid gap-0.5 overflow-hidden rounded-inner bg-surface px-4 py-3 shadow-card md:-start-[4%] md:bottom-[10%] md:min-w-[220px]"
+        className="pointer-events-none absolute start-3 bottom-3 z-10 grid gap-0.5 overflow-hidden rounded-inner bg-surface px-4 py-3 shadow-card md:-start-[4%] md:bottom-[10%] md:min-w-[220px]"
       >
         <span key={index} className="hero-caption grid gap-0.5">
           <small className="font-mono text-[12px] font-medium tracking-[.1em] text-muted uppercase">{current.kicker}</small>
