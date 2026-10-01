@@ -13,10 +13,15 @@ test.describe("header", () => {
     await expect(nav.getByRole("link", { name: "About" })).toHaveAttribute("aria-current", "page");
     const header = page.locator("header").first();
     await expect(header).not.toHaveAttribute("data-stuck");
-    // A wheel event sent before the page can scroll is dropped (seen on slow CI
-    // runners), so scroll again until the header condenses.
+    // Scroll with the pointer over the page, as a visitor does; Playwright's
+    // pointer otherwise sits on the corner pixel of the header. A wheel event
+    // sent before the page can scroll is dropped (seen on slow CI runners), so
+    // scroll again until the header condenses. Checking scrollY first tells a
+    // page that did not scroll apart from a header that did not condense.
+    await page.mouse.move(640, 400);
     await expect(async () => {
       await page.mouse.wheel(0, 400);
+      await expect.poll(() => page.evaluate(() => window.scrollY), { message: "the page scrolls", timeout: 1000 }).toBeGreaterThan(24);
       await expect(header).toHaveAttribute("data-stuck", "", { timeout: 1000 });
     }).toPass();
   });
@@ -310,7 +315,10 @@ test.describe("projects map", () => {
       await expect(page.locator(".pmap")).toHaveAttribute("data-ready", "");
       await dialog.getByRole("button", { name: /^New Alamein City/ }).click();
       await expect(dialog.getByRole("heading", { name: "New Alamein City" })).toBeVisible();
-      const axe = await new AxeBuilder({ page }).include("#map-panel").withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
+      const axe = await new AxeBuilder({ page })
+        .include("#map-panel")
+        .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+        .analyze();
       expect(axe.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(", ")}`)).toEqual([]);
       await ctx.close();
     });
