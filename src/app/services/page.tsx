@@ -14,9 +14,8 @@ export const metadata = pageMetadata({
   path: "/services",
 });
 
-// Built only from what SWEILLEM states on its site, deck and certificates.
-// The live Services page has six identical placeholder boxes; SWEILLEM's own
-// list of services is still to come (docs/content-gaps.md 2.8).
+// Built from what SWEILLEM states on its site, deck and certificates, and
+// approved by SWEILLEM on 1 October 2026 (docs/content-gaps.md 7.5).
 const services = [
   {
     title: "Pipes and fittings for the whole line",

@@ -27,7 +27,7 @@ Each item says what we have now and what we need. Items marked **Blocks publishi
 | 2.5 | The report says clay pipes "can withstand more than 300 bars during underground maintenance". | Confirm the figure and what it refers to (e.g. high-pressure jetting) before we publish it. |
 | 2.6 | Home and About Us show three testimonials (Sameh Saqr, Ahmed Maher, Sarha Tarek) with no company names; one About Us testimonial is template text. | Genuine testimonials with the person's company and permission to publish, or agreement to drop the section. **Blocks publishing testimonials.** |
 | 2.7 | Home has "History", "Missions" and "Visions" boxes, all filled with the same template text. | Real mission and vision statements, or agreement to drop them. |
-| 2.8 | Services lists six identical "Pipes Service" boxes. | The real list of services (e.g. technical support, delivery, site supervision) in SWEILLEM's words. **Blocks the Services page.** |
+| 2.8 | Services lists six identical "Pipes Service" boxes. | The real list of services (e.g. technical support, delivery, site supervision) in SWEILLEM's words.<br>**Answered:** SWEILLEM approved the list on the new Services page (see 7.5). |
 | 2.9 | Key dates known: 1935 (Cairo plant) and 1987 (new factory). | Any other milestones for the history timeline (first export, Saudi market entry, Euro Sweillem launch, certifications), with years. |
 | 2.10 | Home mentions a "Quality Policy" and "Sweillem Catalogue 2024" but neither links to a file. | The quality policy and the 2024 (or newer) product catalogue as PDFs. |
 
@@ -104,6 +104,6 @@ These are copied exactly as published. They look like typing errors, but we will
 | 7.2 | Joint Performance says water loss in the line test must stay below "0.04 liter/ml". The unit cannot be read as written, so the page says "within the limit set by the European Standards" and leaves the number out. | The limit and its unit (for example litres per m² of wetted surface). |
 | 7.3 | The SASO licence (expires 29 June 2025) and the OSS copies of ISO 9001, 14001 and 45001 (expire 12 May 2026) have passed their printed dates. The Certificates page says so under each one. | The renewed SASO licence and the current OSS certificates, or agreement to drop the expired copies. |
 | 7.4 | Euro Sweillem shows Stiegstraße 60, 41379 Brüggen as "Address listed on sweillem.net" (follows 1.3 and 1.7). | Whether Brüggen is the Euro Sweillem warehouse, an office, or something else. |
-| 7.5 | Services is built only from facts SWEILLEM states elsewhere (products, stock in Germany, delivery, technical team, certificates, quotations), each with its source (follows 2.8). | SWEILLEM's own list of services, or approval of this one. |
+| 7.5 | ~~Services is built only from facts SWEILLEM states elsewhere, each with its source (follows 2.8).~~ | **Answered 1 October 2026:** SWEILLEM approves this list (via Ahmed). |
 | 7.6 | The heritage timeline shows the Saudi, GCC, Arab world and Europe markets without years, and Euro Sweillem as "Newest launch" (follows 2.9). | The year of each step. |
 | 7.7 | The film's installation scenes are marked as illustrative on the Process page. | Whether SWEILLEM has real installation footage to replace them. |
