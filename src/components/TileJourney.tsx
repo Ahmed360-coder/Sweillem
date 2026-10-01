@@ -218,6 +218,7 @@ function Firing({ p }: { p: number }) {
   return (
     <g>
       <Ground />
+      <g transform="translate(-110 0)">
       <rect x="380" y="200" width="460" height="360" rx="12" fill="#3b2119" stroke={INK} strokeWidth="3" />
       <rect x="410" y="230" width="400" height="300" fill={`rgb(${60 + heat * 195} ${30 + heat * 90} ${20 + heat * 10})`} />
       <rect x="380" y="200" width={460 * door} height="360" fill={`rgb(${90 + heat * 120} ${51 + heat * 40} 37)`} stroke={INK} strokeWidth="3" opacity={door > 0.02 ? 1 : 0} />
@@ -234,6 +235,7 @@ function Firing({ p }: { p: number }) {
       <text x="610" y="450" textAnchor="middle" fontFamily="var(--font-data)" fontSize="24" fill="#f6ebe4" opacity={door}>
         {heat < 1 ? "firing" : "2 to 4 days"}
       </text>
+      </g>
     </g>
   );
 }
