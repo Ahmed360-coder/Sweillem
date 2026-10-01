@@ -1129,3 +1129,80 @@ html[data-intro="exit"] .hero-progress {
     animation: none;
   }
 }
+
+/* ---------- print: product pages become spec sheets ---------- */
+@page {
+  size: A4 landscape;
+  margin: 12mm;
+}
+@media print {
+  :root {
+    --paper: #fff;
+    --surface: #fff;
+    --sunk: #eee;
+    --ink: #000;
+    --muted: #333;
+    --line: #bbb;
+    --maroon: #7a0404;
+    color-scheme: light;
+  }
+  body {
+    font-size: 10pt;
+  }
+  .site-header,
+  body > footer,
+  main ~ footer,
+  .skip-link,
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: flex !important;
+  }
+  .wrap {
+    max-width: none;
+    padding-inline: 0;
+  }
+  section {
+    padding-block: 8pt !important;
+  }
+  .spec-scroll {
+    overflow: visible !important;
+    border: 0;
+  }
+  .spec-table table {
+    font-size: 8pt;
+  }
+  .spec-table th,
+  .spec-table td {
+    padding: 2pt 4pt !important;
+    position: static !important;
+  }
+  .spec-table tr {
+    break-inside: avoid;
+  }
+  .lede {
+    font-size: 11pt;
+  }
+}
+
+/* ---------- roof tiles: colour viewer and production journey ---------- */
+.tile-swap {
+  opacity: 0;
+  transform: translateY(10px) rotate(-2deg) scale(0.97);
+  transition:
+    opacity var(--t-base) var(--ease-glaze),
+    transform var(--t-slow) var(--ease-set);
+}
+.tile-swap.is-on {
+  opacity: 1;
+  transform: none;
+}
+.roof-plane {
+  transform: rotateX(48deg);
+  transform-origin: 50% 0;
+}
+/* Tile journey: each scene fades in as its step begins. */
+.tj-scene {
+  animation: fade-up var(--t-base) var(--ease-glaze) both;
+}

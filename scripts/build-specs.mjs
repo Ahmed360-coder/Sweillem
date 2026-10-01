@@ -12,24 +12,45 @@ const outDir = join(root, "content/specs");
 const COLUMN_KEYS = [
   [/^Nominal size DN1\/DN2/i, "dn"],
   [/^Nominal size DN/i, "dn"],
+  // Enlarger and reducer tables give the two ends as separate columns.
+  [/^Dn1 \(/, "dn"],
+  [/^Dn2 \(/, "dn2"],
+  [/^DN$|^Dn \(/, "dn"],
   [/^Joint spigot/i, "d7"],
   [/^Joint/i, "joint"],
+  [/^System$/, "joint"],
   [/^Angle/i, "angle"],
   [/^Strength class/i, "strengthClass"],
+  [/^Class$/, "strengthClass"],
   [/^Crushing strength/i, "crushingStrength"],
+  [/^FN \(/, "crushingStrength"],
   [/^INNER/i, "d1"],
+  [/^d1 \(/, "d1"],
   [/^OUTER/i, "d3"],
+  [/^d3 \(/, "d3"],
   [/^Wall ?thickness/i, "wallThickness"],
   [/^Socket inner/i, "d4"],
   [/^B\.M\.R/i, "bmr"],
   [/^Length/i, "length"],
+  [/^L \(/, "length"],
   [/^Weight/i, "weight"],
   [/^Measurement a ?max/i, "aMax"],
   [/^Measurement e ?min/i, "eMin"],
+  [/^a$/, "holeDiameter"],
+  [/^R\. min/, "rMin"],
+  [/^H\. min/, "hMin"],
 ];
 
-function columnKey(label) {
-  for (const [re, key] of COLUMN_KEYS) if (re.test(label.trim())) return key;
+// Perforated pipe hole counts: "System MP Z1" -> "mpZ1".
+const HOLES = /^System (MP|LP|TP) (Z[12])$/;
+
+function columnKey(label, previous) {
+  const l = label.trim();
+  // "max. dev." is the tolerance of the column before it (d1 or d3).
+  if (/^max\. dev/.test(l) && previous) return `${previous}Dev`;
+  const holes = HOLES.exec(l);
+  if (holes) return `${holes[1].toLowerCase()}${holes[2]}`;
+  for (const [re, key] of COLUMN_KEYS) if (re.test(l)) return key;
   throw new Error(`No column key for header "${label}"`);
 }
 
@@ -81,7 +102,8 @@ function parse(file) {
       current.section = line.slice(9).trim();
     } else if (line.startsWith("|")) {
       if (!current.columns) {
-        current.columns = cells(line).map((label) => ({ key: columnKey(label), label }));
+        current.columns = [];
+        for (const label of cells(line)) current.columns.push({ key: columnKey(label, current.columns.at(-1)?.key), label });
         i++; // skip |---| separator
       } else {
         const row = cells(line);

@@ -373,7 +373,7 @@
     {
       "path": "public/images/products/cards/enlarger-reducer.webp",
       "source": "live-site",
-      "notes": "Product card picture: public/images/products/enlarger-drawing.jpg (the live-site drawing) padded to 900x600 WebP.",
+      "notes": "Product card picture: public/images/products/reducer-drawing.jpg (the live-site reducer drawing) padded to 900x600 WebP.",
       "publish": "yes",
       "status": "in-repo"
     },
@@ -469,19 +469,43 @@
       "notes": "Home hero slideshow: public/images/projects/germany/gallery-07.jpg cropped to 1227x920 WebP.",
       "publish": "yes",
       "status": "in-repo"
+    },
+    {
+      "path": "public/images/roof-tiles/tile-terracotta-cutout.webp",
+      "source": "generated",
+      "origin": "public/images/roof-tiles/tile-terracotta.jpg (deck image22.jpeg)",
+      "notes": "Tile cut out of its white slide background with the badge removed, by scripts/cut-roof-tiles.mjs. Used by the roof tiles colour viewer and production process.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/roof-tiles/tile-blue-cutout.webp",
+      "source": "generated",
+      "origin": "public/images/roof-tiles/tile-blue.jpg (deck image23.png)",
+      "notes": "Tile cut out of its white slide background with the badge removed, by scripts/cut-roof-tiles.mjs. Used by the roof tiles colour viewer and production process.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/roof-tiles/tile-black-cutout.webp",
+      "source": "generated",
+      "origin": "public/images/roof-tiles/tile-black.jpg (deck image24.jpeg)",
+      "notes": "Tile cut out of its white slide background with the badge removed, by scripts/cut-roof-tiles.mjs. Used by the roof tiles colour viewer and production process.",
+      "publish": "yes",
+      "status": "in-repo"
     }
   ],
   "liveSite": [
     {
       "url": "https://sweillem.net/wp-content/uploads/2025/02/Reducer-e1739694383756.jpg",
-      "path": "public/images/products/enlarger-drawing.jpg",
+      "path": "public/images/products/reducer-drawing.jpg",
       "kind": "drawing",
       "usedOn": [
         "/enlarger-reducer/"
       ],
       "status": "downloaded",
       "publish": "yes",
-      "notes": "File is named \"Reducer\" but is shown under the ENLARGER heading; check which part it shows.",
+      "notes": "Reducer drawing (DN1 socket narrowing to DN2). The live page shows it under the ENLARGER heading by mistake; the new site pairs it with the REDUCERS table.",
       "bytes": 36359,
       "sha256": "bd2a3fc864f55592af6f92e98ba6670c8ccd69d16e8a98875791582c029419c7",
       "contentType": "image/jpeg"
@@ -502,14 +526,14 @@
     },
     {
       "url": "https://sweillem.net/wp-content/uploads/2025/02/Enlarger-e1739694465179.jpg",
-      "path": "public/images/products/reducer-drawing.jpg",
+      "path": "public/images/products/enlarger-drawing.jpg",
       "kind": "drawing",
       "usedOn": [
         "/enlarger-reducer/"
       ],
       "status": "downloaded",
       "publish": "yes",
-      "notes": "File is named \"Enlarger\" but is shown under the REDUCERS heading; check which part it shows.",
+      "notes": "Enlarger drawing (DN1 socket widening to DN2). The live page shows it under the REDUCERS heading by mistake; the new site pairs it with the ENLARGER table.",
       "bytes": 14670,
       "sha256": "da1d7387ae5b74c80f024e8f5a115ab2144a64c9a4f705f8c93d3b4cbdcd0c56",
       "contentType": "image/jpeg"

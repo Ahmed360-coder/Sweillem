@@ -1,0 +1,207 @@
+{
+  "product": "enlarger-reducer",
+  "title": "Enlarger and Reducer",
+  "source": "https://sweillem.net/enlarger-reducer/",
+  "captured": "2026-09-30",
+  "tables": [
+    {
+      "id": "enlarger",
+      "title": "ENLARGER",
+      "strength": null,
+      "section": null,
+      "notes": [
+        "Transcribed on 2026-10-01 from the picture of the table (public/images/products/enlarger-specs-table.jpg) and checked cell by cell."
+      ],
+      "columns": [
+        {
+          "key": "dn",
+          "label": "Dn1 (mm)"
+        },
+        {
+          "key": "dn2",
+          "label": "Dn2 (mm)"
+        },
+        {
+          "key": "strengthClass",
+          "label": "Class"
+        },
+        {
+          "key": "joint",
+          "label": "System"
+        },
+        {
+          "key": "weight",
+          "label": "Weight"
+        }
+      ],
+      "rows": [
+        [
+          "125",
+          "150",
+          "--/--",
+          "F/F",
+          "8"
+        ],
+        [
+          "150",
+          "200",
+          "--/(160/200)",
+          "F/F",
+          "14"
+        ],
+        [
+          "150",
+          "200",
+          "--/(160/200)",
+          "F/C",
+          "14"
+        ],
+        [
+          "200",
+          "200",
+          "(160/200) / 240",
+          "C/C",
+          "18"
+        ],
+        [
+          "200",
+          "200",
+          "(160/200) / 240",
+          "F/C",
+          "18"
+        ],
+        [
+          "200",
+          "250",
+          "(160/200) / 160",
+          "C/C",
+          "20"
+        ],
+        [
+          "200",
+          "250",
+          "(160/200) / 160",
+          "F/C",
+          "20"
+        ],
+        [
+          "250",
+          "300",
+          "160/160",
+          "C/C",
+          "24"
+        ]
+      ]
+    },
+    {
+      "id": "reducers",
+      "title": "REDUCERS",
+      "strength": null,
+      "section": null,
+      "notes": [
+        "Transcribed on 2026-10-01 from the picture of the table (public/images/products/reducer-specs-table.jpg) and checked cell by cell."
+      ],
+      "columns": [
+        {
+          "key": "dn",
+          "label": "Dn1 (mm)"
+        },
+        {
+          "key": "dn2",
+          "label": "Dn2 (mm)"
+        },
+        {
+          "key": "strengthClass",
+          "label": "Class"
+        },
+        {
+          "key": "joint",
+          "label": "System"
+        },
+        {
+          "key": "weight",
+          "label": "Weight"
+        }
+      ],
+      "rows": [
+        [
+          "150",
+          "125",
+          "--/--",
+          "F/F",
+          "11"
+        ],
+        [
+          "200",
+          "150",
+          "(160/200)/--",
+          "C/F",
+          "13"
+        ],
+        [
+          "200",
+          "150",
+          "(160/200)/--",
+          "F/F",
+          "13"
+        ],
+        [
+          "250",
+          "200",
+          "160/(160/200)",
+          "C/C",
+          "22"
+        ],
+        [
+          "250",
+          "200",
+          "160/(160/200)",
+          "C/F",
+          "22"
+        ],
+        [
+          "250",
+          "150",
+          "160/--",
+          "C/F",
+          "22"
+        ],
+        [
+          "200",
+          "200",
+          "240/(160/200)",
+          "C/C",
+          "15"
+        ],
+        [
+          "200",
+          "200",
+          "240/(160/200)",
+          "C/F",
+          "15"
+        ],
+        [
+          "250",
+          "250",
+          "240/160",
+          "C/C",
+          "24"
+        ],
+        [
+          "300",
+          "200",
+          "240/(160/200)",
+          "C/C",
+          "27"
+        ],
+        [
+          "300",
+          "200",
+          "240/(160/200)",
+          "C/F",
+          "27"
+        ]
+      ]
+    }
+  ]
+}

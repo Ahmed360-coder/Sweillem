@@ -108,3 +108,12 @@ These are copied exactly as published. They look like typing errors, but we will
 | 7.6 | The heritage timeline shows the Saudi, GCC, Arab world and Europe markets without years, and Euro Sweillem as "Newest launch" (follows 2.9). | The year of each step. |
 | 7.7 | The film's installation scenes are marked as illustrative on the Process page. | Whether SWEILLEM has real installation footage to replace them. |
 | 7.8 | The projects map in the header pins Makkah (Haram central area), Sharurah and New Alamein City at their city centres, and the site in Germany at the middle of Germany because no town is given. Brüggen and Jeddah are the footer addresses (follows 1.3, 4.1 and 4.2). | The town of the German site, and any other projects or depots SWEILLEM wants on the map. |
+
+## 8. Found while building the products (Milestone 4)
+
+| # | What we have now | What we need |
+|---|---|---|
+| 8.1 | Perforated Pipe, Half Channels, Enlarger and Reducers tables were typed out from the pictures on the live pages and checked cell by cell (2026-10-01). The two Enlarger/Reducer drawings sit under the wrong headings on the live page; the new site pairs each with the table its dimensions match. U-Trap has a drawing (DN2 d8, d4, d3, A, B, M1) but no values. | SWEILLEM's own tables as text to confirm the transcription, and the U-Trap dimensions. |
+| 8.2 | The roof tiles page shows a six-step "How a tile is made" journey using SWEILLEM's published clay process (Aswan clay, moulding, Lingl dryers, firing to 1200 °C over 2 to 4 days). The deck describes this process for pipes; it does not say how tiles are shaped or coloured. | Whether tiles go through the same plant and steps, how they are shaped (pressed or extruded), and how each colour is applied (glaze, engobe or body colour). Until then the steps before firing show a drawn tile, coloured for its stage (dark wet clay, pale dried clay, glazed, glowing in the kiln); the real tile photo appears only from packing onwards (Ahmed, 2026-10-01). |
+| 8.3 | The three tile photos (deck slides 21 and 22) show SWEILLEM-stamped tiles and are used, cut out of their backgrounds, in the colour viewer. The "On a roof" view is an illustration made by repeating the photo (follows 6.4). | Confirm the tile photos are SWEILLEM's own, and send a real roof photo if one exists. |
+| 8.4 | The product explorer and tables offer "Add to quote" on every size. The quote list keeps items on the visitor's device until the request form arrives in Milestone 6. | Nothing yet; see 1.4 for the inbox. |

@@ -28,7 +28,23 @@ export type SpecColumnKey =
   | "length"
   | "weight"
   | "aMax"
-  | "eMin";
+  | "eMin"
+  /** Second nominal size where a table gives the two ends separately (enlarger, reducer). */
+  | "dn2"
+  /** Tolerances published in their own "max. dev." column. */
+  | "d1Dev"
+  | "d3Dev"
+  /** Perforated pipe: hole diameter "a" and hole counts per perforation system. */
+  | "holeDiameter"
+  | "mpZ1"
+  | "mpZ2"
+  | "lpZ1"
+  | "lpZ2"
+  | "tpZ1"
+  | "tpZ2"
+  /** Half channels: minimum radius and minimum height. */
+  | "rMin"
+  | "hMin";
 
 export interface SpecColumn {
   key: SpecColumnKey;
@@ -61,6 +77,8 @@ export type ProductContentState =
   | "tables"
   /** Specs exist only as pictures of tables; transcription pending. */
   | "table-images"
+  /** A dimension drawing without a table of values. */
+  | "drawing"
   /** Live page is empty. */
   | "empty";
 

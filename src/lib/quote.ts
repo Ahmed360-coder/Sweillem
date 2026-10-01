@@ -62,3 +62,10 @@ export function useQuote(): QuoteItem[] {
 export function useQuoteCount(): number {
   return useQuote().reduce((n, item) => n + item.qty, 0);
 }
+
+/** Add one of an item, or one more if the same product, size and class is already listed. */
+export function addToQuote(item: Omit<QuoteItem, "qty">) {
+  const items = read();
+  const same = (i: QuoteItem) => i.product === item.product && i.size === item.size && (i.strengthClass ?? "") === (item.strengthClass ?? "");
+  writeQuote(items.some(same) ? items.map((i) => (same(i) ? { ...i, qty: i.qty + 1 } : i)) : [...items, { ...item, qty: 1 }]);
+}
