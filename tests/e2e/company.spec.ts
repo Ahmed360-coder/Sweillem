@@ -35,24 +35,43 @@ test.describe("company pages (Milestone 3)", () => {
     await expect(page.locator("[data-hot]")).toContainText("1200", { timeout: 4000 });
   });
 
-  test("the film has captions, chapters and loads nothing until played", async ({ page, request }) => {
+  test("scrolling drives the journey, and it holds still when scrolling stops", async ({ page }) => {
     await page.goto("/process");
-    const video = page.locator("#film video");
-    await expect(video).toHaveAttribute("preload", "none");
-    await expect(video.locator('track[kind="captions"]')).toHaveCount(1);
-    await expect(page.getByRole("group", { name: "Jump to a chapter" }).getByRole("button")).toHaveCount(9);
-    for (const src of ["/video/how-its-made.mp4", "/video/how-its-made.en.vtt", "/video/how-its-made-poster.png"]) {
-      expect((await request.get(src)).status(), src).toBe(200);
-    }
+    const journey = page.locator("#journey");
+    await expect(journey).toHaveAttribute("data-chapter", "intro");
+    const scrollTo = (f: number) =>
+      page.evaluate((f) => {
+        const s = document.getElementById("journey")!;
+        window.scrollTo(0, s.getBoundingClientRect().top + window.scrollY + f * (s.offsetHeight - window.innerHeight));
+      }, f);
+
+    await scrollTo(0.55);
+    await expect(journey).toHaveAttribute("data-chapter", "fire");
+    await expect(page.getByRole("button", { name: /Final firing/ })).toHaveAttribute("aria-current", "step");
+
+    // Once the scroll settles, the frame stops changing.
+    await page.waitForTimeout(1500);
+    const frame = () => journey.locator("svg").first().evaluate((el) => el.innerHTML);
+    const before = await frame();
+    await page.waitForTimeout(800);
+    expect(await frame()).toBe(before);
+
+    // Scrolling back runs the journey backwards.
+    await scrollTo(0.2);
+    await expect(journey).toHaveAttribute("data-chapter", "qc");
   });
 
-  test("home film card opens the player in a dialog and Escape closes it", async ({ page }) => {
+  test("the step buttons move the journey to that step", async ({ page }) => {
+    await page.goto("/process");
+    await page.getByRole("button", { name: /Delivery/ }).click();
+    await expect(page.locator("#journey")).toHaveAttribute("data-chapter", "deliver");
+  });
+
+  test("home journey card links to the scroll journey", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: /Watch the film/ }).click();
-    const dialog = page.getByRole("dialog", { name: "How it’s made film" });
-    await expect(dialog).toBeVisible();
-    await page.keyboard.press("Escape");
-    await expect(dialog).toBeHidden();
+    await page.getByRole("link", { name: /Scroll the journey/ }).click();
+    await expect(page).toHaveURL(/\/process#journey$/);
+    await expect(page.locator("#journey")).toBeVisible();
   });
 
   test("every certificate file and image opens", async ({ page, request }) => {
@@ -71,6 +90,10 @@ test.describe("company pages (Milestone 3)", () => {
     await page.goto("/quality");
     const card = page.locator(".reveal").last();
     await expect(card).toHaveCSS("opacity", "1");
+
+    // The journey is not pinned: every step shows its finished drawing.
+    await page.goto("/process");
+    await expect(page.locator("#journey li > svg")).toHaveCount(9);
     await ctx.close();
   });
 });

@@ -303,6 +303,74 @@
       "status": "in-repo"
     },
     {
+      "path": "public/images/journey/raw.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image5.jpg",
+      "slide": 6,
+      "notes": "Photo card for the 'raw' chapter of the scroll journey on Process, 1000x778 WebP cropped from the deck image. Made for the How it's made animation (animation/how-its-made/assets/photos).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/journey/mould.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image6.jpg",
+      "slide": 7,
+      "notes": "Photo card for the 'mould' chapter of the scroll journey on Process, 1000x778 WebP cropped from the deck image. Made for the How it's made animation (animation/how-its-made/assets/photos).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/journey/dry.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image7.jpg",
+      "slide": 8,
+      "notes": "Photo card for the 'dry' chapter of the scroll journey on Process, 1000x778 WebP cropped from the deck image. Made for the How it's made animation (animation/how-its-made/assets/photos).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/journey/glaze.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image8.jpg",
+      "notes": "Photo card for the 'glaze' chapter of the scroll journey on Process, 1000x778 WebP cropped from the deck image. Made for the How it's made animation (animation/how-its-made/assets/photos).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/journey/fire.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image9.jpg",
+      "slide": 10,
+      "notes": "Photo card for the 'fire' chapter of the scroll journey on Process, 1000x778 WebP cropped from the deck image. Made for the How it's made animation (animation/how-its-made/assets/photos).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/journey/deliver.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image11.jpg",
+      "slide": 13,
+      "notes": "Photo card for the 'deliver' chapter of the scroll journey on Process, 1000x778 WebP cropped from the deck image. Made for the How it's made animation (animation/how-its-made/assets/photos).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/journey/install.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image16.jpg",
+      "notes": "Photo card for the 'install' chapter of the scroll journey on Process, 1000x778 WebP cropped from the deck image. Made for the How it's made animation (animation/how-its-made/assets/photos).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
       "path": "public/images/logistics/germany-warehouses-crop.webp",
       "source": "deck",
       "deckFile": "Sweillem vitrified clay pipes.pptx",

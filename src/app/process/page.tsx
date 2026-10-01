@@ -1,11 +1,10 @@
 import { CtaBand } from "@/components/CtaBand";
-import { FilmPlayer } from "@/components/FilmPlayer";
 import { PageHeader } from "@/components/PageHeader";
 import { ProcessJourney, type ProcessStep } from "@/components/ProcessJourney";
+import { ScrollJourney } from "@/components/ScrollJourney";
 import { Section } from "@/components/Section";
 import { SourceNote } from "@/components/SourceNote";
 import { pageMetadata } from "@/lib/metadata";
-import { siteUrl } from "@/lib/site";
 
 export const metadata = pageMetadata({
   title: "How vitrified clay pipes are made",
@@ -70,34 +69,18 @@ const steps: ProcessStep[] = [
   },
 ];
 
-const videoJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "VideoObject",
-  name: "How a SWEILLEM clay pipe is made",
-  description: "An animated film following one vitrified clay pipe from the Aswan quarry through the kiln to a sewer line.",
-  thumbnailUrl: `${siteUrl}/video/how-its-made-poster.png`,
-  contentUrl: `${siteUrl}/video/how-its-made.mp4`,
-  uploadDate: "2026-09-30",
-  duration: "PT1M45S",
-};
-
 export default function ProcessPage() {
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(videoJsonLd) }} />
       <PageHeader
         eyebrow="Manufacturing process"
         title="Six steps from Aswan clay to a finished joint"
-        lede="Every SWEILLEM pipe is moulded, dried, glazed inside and out, and fired at up to 1200 °C. Watch the film, then scroll through each step."
+        lede="Every SWEILLEM pipe is moulded, dried, glazed inside and out, and fired at up to 1200 °C. Scroll to move one pipe through the factory, at your own pace."
       />
 
-      <section aria-label="How it’s made film" className="py-[clamp(24px,4vw,48px)]">
-        <div className="wrap">
-          <FilmPlayer />
-        </div>
-      </section>
+      <ScrollJourney />
 
-      <Section id="steps" title="Step by step">
+      <Section id="steps" title="Each step, with the facts">
         <ProcessJourney steps={steps} />
         <SourceNote className="mt-8">
           Sources: SWEILLEM’s 2024 company report and deck, and the Joint Performance page on sweillem.net.

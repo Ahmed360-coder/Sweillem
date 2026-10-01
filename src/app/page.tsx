@@ -4,9 +4,13 @@ import Link from "next/link";
 import { ButtonLink } from "@/components/Button";
 import { CtaBand } from "@/components/CtaBand";
 import { FamilyGrid } from "@/components/FamilyGrid";
-import { FilmCard } from "@/components/FilmCard";
 import { Section } from "@/components/Section";
+import { frameSVG, getChapters, H, W } from "@/lib/journey/frames";
 import { site, siteUrl } from "@/lib/site";
+
+// The journey card shows the kiln mid-firing, drawn by the same code as the Process journey.
+const fire = getChapters("en").find((c) => c.id === "fire")!;
+const teaserFrame = frameSVG(fire.start + fire.lead + 6, { uid: "teaser" });
 
 // Stats that SWEILLEM publishes and that agree across its sources.
 // The project count stays off until SWEILLEM confirms it (docs/content-gaps.md 2.1).
@@ -168,20 +172,39 @@ export default function HomePage() {
         <FamilyGrid />
       </Section>
 
-      <section id="film" aria-labelledby="film-title" className="pb-[clamp(48px,7vw,96px)]">
+      <section id="journey" aria-labelledby="journey-title" className="pb-[clamp(48px,7vw,96px)]">
         <div className="wrap grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] md:items-center">
           <div className="grid gap-3">
-            <h2 id="film-title" className="text-[clamp(26px,3.4vw,42px)]">
+            <h2 id="journey-title" className="text-[clamp(26px,3.4vw,42px)]">
               From Aswan clay to the trench
             </h2>
-            <p className="lede">A short animated film follows one pipe from the quarry, through the kiln, to a sewer line in the ground.</p>
-            <Link href="/process" className="link w-fit">
+            <p className="lede">
+              Follow one pipe from the quarry, through the kiln, to a sewer line in the ground. You move it along as you
+              scroll.
+            </p>
+            <Link href="/process#steps" className="link w-fit">
               The six steps in detail
             </Link>
           </div>
-          <div className="reveal">
-            <FilmCard />
-          </div>
+          <Link
+            href="/process#journey"
+            className="reveal group relative block overflow-hidden rounded-card bg-[#f2f2ef] shadow-card"
+          >
+            <svg
+              viewBox={`0 0 ${W} ${H}`}
+              className="block h-auto w-full transition-transform duration-700 ease-glaze group-hover:scale-[1.02]"
+              aria-hidden="true"
+              dangerouslySetInnerHTML={{ __html: teaserFrame }}
+            />
+            <span className="absolute end-3 bottom-3 flex items-center gap-3 rounded-full bg-ink/85 py-1 ps-1 pe-4 text-paper shadow-card backdrop-blur-sm sm:end-4 sm:bottom-4 sm:py-1.5 sm:ps-1.5 sm:pe-5">
+              <span className="hex grid size-10 place-content-center bg-maroon text-on-maroon transition-transform duration-300 ease-set group-hover:scale-110 sm:size-12">
+                <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
+                  <path d="M12 5v14M6 13l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+              <span className="font-display text-base font-semibold sm:text-lg">Scroll the journey</span>
+            </span>
+          </Link>
         </div>
       </section>
 
