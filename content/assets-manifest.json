@@ -493,6 +493,22 @@
       "notes": "Product card picture: schematic section of a end plug in a socket, drawn by scripts/draw-product-cards.py in the style of the live-site drawings because SWEILLEM publishes no picture of this product. Not to scale; replace with a SWEILLEM photo or drawing when one is supplied.",
       "publish": "yes",
       "status": "in-repo"
+    },
+    {
+      "path": "public/images/company/export-map-night.webp",
+      "source": "generated",
+      "origin": "NASA “Earth at night”, as shipped in the three-globe package (scripts/assets/earth-night.jpg)",
+      "notes": "Night satellite background of the export map on About, 1400x820 WebP. Reprojected by scripts/build-export-map.mjs to the map projection, with a Far East inset top right.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/company/export-map-day.webp",
+      "source": "generated",
+      "origin": "NASA “Blue Marble”, as shipped in the three-globe package (scripts/assets/earth-day.jpg)",
+      "notes": "Day satellite background of the export map on About, 1400x820 WebP. Reprojected by scripts/build-export-map.mjs, same projection and inset as the night version.",
+      "publish": "yes",
+      "status": "in-repo"
     }
   ],
   "liveSite": [

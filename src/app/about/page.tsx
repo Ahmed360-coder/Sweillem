@@ -287,7 +287,8 @@ export default function AboutPage() {
       >
         <ReachMap />
         <SourceNote className="mt-4">
-          The list on About Us ends with “etc.”, so it is not complete. Map shapes: Natural Earth.
+          The list on About Us ends with “etc.”, so the map also marks the countries filled red on SWEILLEM’s own export
+          map. Map shapes: Natural Earth. Satellite views: NASA Earth at Night and Blue Marble.
         </SourceNote>
       </Section>
 
