@@ -86,7 +86,7 @@ export default function QualityPage() {
             <caption className="sr-only">Strength class and crushing strength of N and H pipes by nominal size</caption>
             <thead>
               <tr className="border-b border-line text-start">
-                <th scope="col" rowSpan={2} className="px-4 py-3 text-start font-mono text-[11px] font-medium tracking-[.1em] text-muted uppercase">
+                <th scope="col" rowSpan={2} className="px-4 py-3 text-start font-mono text-[12px] font-medium tracking-[.1em] text-muted uppercase">
                   Size DN
                 </th>
                 <th scope="colgroup" colSpan={2} className="border-s border-line px-4 pt-3 text-start font-display text-base font-semibold">
@@ -98,7 +98,7 @@ export default function QualityPage() {
               </tr>
               <tr className="border-b border-line">
                 {["TKL", "FN kN/m", "TKL", "FN kN/m"].map((h, i) => (
-                  <th key={i} scope="col" className={`px-4 pb-3 text-start font-mono text-[11px] font-medium tracking-[.1em] text-muted uppercase ${i % 2 === 0 ? "border-s border-line" : ""}`}>
+                  <th key={i} scope="col" className={`px-4 pb-3 text-start font-mono text-[12px] font-medium tracking-[.1em] text-muted uppercase ${i % 2 === 0 ? "border-s border-line" : ""}`}>
                     {h}
                   </th>
                 ))}
@@ -160,9 +160,9 @@ export default function QualityPage() {
             >
               <span className="font-mono text-xs font-medium tracking-[.12em] text-maroon uppercase">0{i + 1}</span>
               <h3 className="text-lg">{c.step}</h3>
-              <p className="text-[15px] text-muted">{c.text}</p>
+              <p className="text-base sm:text-[15px] text-muted">{c.text}</p>
               {c.href && (
-                <Link href={c.href} className="link w-fit text-[15px]">
+                <Link href={c.href} className="link tap w-fit text-base sm:text-[15px]">
                   Joint performance
                 </Link>
               )}
@@ -203,7 +203,7 @@ export default function QualityPage() {
             <h2 id="en295-title" className="text-lg">
               EN 295 and GSO EN 295 requirement tables
             </h2>
-            <p className="max-w-[70ch] text-[15px] text-muted">
+            <p className="max-w-[70ch] text-base sm:text-[15px] text-muted">
               The current site shows these requirements as pictures hosted on another website. They will appear here as
               readable tables once SWEILLEM supplies them as text.
             </p>

@@ -121,12 +121,12 @@ export default function SustainabilityPage() {
               className={`reveal grid content-start gap-3 rounded-card p-5 ${i === 0 ? "bg-maroon text-on-maroon" : "border border-line bg-surface"}`}
               style={{ "--dl": `${i * 100}ms` } as CSSProperties}
             >
-              <span className={`w-fit rounded-full px-2.5 py-0.5 font-mono text-[11px] tracking-[.08em] uppercase ${i === 0 ? "bg-white/15" : "bg-sunk text-muted"}`}>
+              <span className={`w-fit rounded-full px-2.5 py-0.5 font-mono text-[12px] tracking-[.08em] uppercase ${i === 0 ? "bg-white/15" : "bg-sunk text-muted"}`}>
                 {s.status}
               </span>
               <h3 className={`text-2xl ${i === 0 ? "text-on-maroon" : ""}`}>{s.name}</h3>
               <p className={`font-medium ${i === 0 ? "" : "text-maroon"}`}>{s.kind}</p>
-              <p className={`text-[15px] ${i === 0 ? "opacity-90" : "text-muted"}`}>{s.text}</p>
+              <p className={`text-base sm:text-[15px] ${i === 0 ? "opacity-90" : "text-muted"}`}>{s.text}</p>
             </li>
           ))}
         </ol>
@@ -141,7 +141,7 @@ export default function SustainabilityPage() {
               SWEILLEM’s vitrified clay pipes DN 125 to DN 1000 with accessories are Cradle to Cradle Certified at Full Scope
               Bronze level (version 4.1, certificate 9605, May 2025 to May 2028).
             </p>
-            <Link href="/certificates" className="link w-fit">
+            <Link href="/certificates" className="link tap w-fit">
               View the certificate
             </Link>
           </article>

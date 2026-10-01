@@ -87,9 +87,9 @@ export default function EuroSweillemPage() {
             >
               <span aria-hidden="true" className="hex block size-3 bg-maroon" />
               <h3 className="text-xl">{p.title}</h3>
-              <p className="text-[15px] text-muted">{p.text}</p>
+              <p className="text-base sm:text-[15px] text-muted">{p.text}</p>
               {p.href && (
-                <Link href={p.href} className="link w-fit text-[15px]">
+                <Link href={p.href} className="link tap w-fit text-base sm:text-[15px]">
                   Quality and standards
                 </Link>
               )}
@@ -115,7 +115,7 @@ export default function EuroSweillemPage() {
 
       <Section id="address" title="SWEILLEM in Germany">
         <div className="reveal grid gap-2 rounded-card border border-line bg-surface p-[clamp(20px,3vw,32px)] sm:max-w-md">
-          <p className="font-mono text-[11px] font-medium tracking-[.12em] text-maroon uppercase">Address listed on sweillem.net</p>
+          <p className="font-mono text-[12px] font-medium tracking-[.12em] text-maroon uppercase">Address listed on sweillem.net</p>
           <p className="text-lg">
             Stiegstraße 60
             <br />

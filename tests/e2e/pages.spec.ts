@@ -28,6 +28,21 @@ for (const path of staticRoutes) {
   });
 }
 
+// Dark mode follows the device, so every page must pass contrast there too.
+// Reduced motion shows every scroll-reveal element at once, so axe can measure
+// text that would otherwise still be waiting below the fold.
+test.describe("dark mode", () => {
+  test.use({ colorScheme: "dark", reducedMotion: "reduce" });
+  for (const path of staticRoutes) {
+    test(`${path} passes axe in dark mode`, async ({ page }) => {
+      await page.goto(path);
+      await page.waitForTimeout(1200);
+      const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
+      expect(axe.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`)).toEqual([]);
+    });
+  }
+});
+
 test("unknown pages get the 404 page", async ({ page }) => {
   const res = await page.goto("/no-such-page");
   expect(res?.status()).toBe(404);

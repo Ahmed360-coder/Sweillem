@@ -57,8 +57,8 @@
     --ink: #f1ebe8;
     --muted: #aaa19d;
     --line: #382e2d;
-    --maroon: #e0524a;
-    --maroon-hi: #f07068;
+    --maroon: #ea6a62;
+    --maroon-hi: #f4857d;
     --on-maroon: #1a0706;
     --slate: #9a9da0;
     --glaze: #5a3325;
@@ -82,8 +82,8 @@
   --ink: #f1ebe8;
   --muted: #aaa19d;
   --line: #382e2d;
-  --maroon: #e0524a;
-  --maroon-hi: #f07068;
+  --maroon: #ea6a62;
+  --maroon-hi: #f4857d;
   --on-maroon: #1a0706;
   --slate: #9a9da0;
   --glaze: #5a3325;
@@ -229,6 +229,13 @@
     color: var(--muted);
     max-width: 62ch;
     text-wrap: pretty;
+  }
+  /* Grows a small standalone link's hit area to 44 px tall without moving anything. */
+  .tap::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    inset-block: min(0px, calc((100% - 44px) / 2));
   }
   .link {
     position: relative;

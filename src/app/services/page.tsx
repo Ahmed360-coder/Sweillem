@@ -102,9 +102,9 @@ export default function ServicesPage() {
             >
               <span className="font-mono text-xs font-medium tracking-[.12em] text-maroon">{String(i + 1).padStart(2, "0")}</span>
               <h3 className="text-xl">{s.title}</h3>
-              <p className="text-[15px] text-muted">{s.text}</p>
+              <p className="text-base sm:text-[15px] text-muted">{s.text}</p>
               {s.href && (
-                <Link href={s.href} className="link w-fit text-[15px]">
+                <Link href={s.href} className="link tap w-fit text-base sm:text-[15px]">
                   {s.cta}
                 </Link>
               )}
