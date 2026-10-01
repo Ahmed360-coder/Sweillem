@@ -552,6 +552,89 @@ html[data-journey] .site-header {
   .site-header { transition: none; }
 }
 
+/* ---------- home hero slideshow ---------- */
+.hero-slide {
+  opacity: 0;
+  transform: scale(1.12);
+  transition:
+    opacity 0.9s var(--ease-glaze),
+    transform 1.4s var(--ease-glaze);
+}
+.hero-slide[data-active] {
+  z-index: 1;
+  opacity: 1;
+  transform: none;
+}
+/* Slow drift on the photo that is showing. */
+.hero-slide[data-active] .hero-slide-img {
+  animation: hero-drift 7s linear both;
+}
+@keyframes hero-drift {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.07) translateX(-1.5%);
+  }
+}
+/* A glaze highlight sweeps across as each photo arrives. */
+.hero-sweep {
+  z-index: 2;
+  background: linear-gradient(100deg, transparent, rgb(255 236 220 / 0.32), transparent);
+  transform: translateX(0) skewX(-12deg);
+  animation: hero-sweep 1.1s var(--ease-kiln) both;
+}
+@keyframes hero-sweep {
+  to {
+    transform: translateX(400%) skewX(-12deg);
+  }
+}
+[dir="rtl"] .hero-sweep {
+  animation-name: hero-sweep-rtl;
+}
+@keyframes hero-sweep-rtl {
+  to {
+    transform: translateX(-400%) skewX(12deg);
+  }
+}
+.hero-caption {
+  animation: fade-up var(--t-slow) var(--ease-glaze) both;
+}
+.hero-progress {
+  transform: scaleX(0);
+  animation: hero-progress linear forwards paused;
+}
+.hero-progress[data-playing] {
+  animation-play-state: running;
+}
+/* The bar waits for the intro too (see HeroSlideshow). */
+html[data-intro="play"] .hero-progress,
+html[data-intro="exit"] .hero-progress {
+  animation-play-state: paused;
+}
+@keyframes hero-progress {
+  to {
+    transform: scaleX(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide,
+  .hero-slide[data-active] {
+    transform: none;
+  }
+  .hero-slide[data-active] .hero-slide-img,
+  .hero-sweep,
+  .hero-caption {
+    animation: none !important;
+  }
+  .hero-sweep {
+    display: none;
+  }
+  .hero-progress {
+    transform: scaleX(1);
+  }
+}
+
 /* ---------- export map on About (ReachMap) ---------- */
 /* The map keeps its satellite colours in both site themes. */
 .reach-photo {
@@ -742,6 +825,307 @@ html[data-journey] .site-header {
     display: none;
   }
   .reach-origin-ring {
+    animation: none;
+  }
+}
+
+/* ---------- projects map in the header (MapPanel) ---------- */
+/* The zoom is three numbers in map units; registering them lets the browser
+   tween them, so the map and the pins on it move together. Only transforms
+   read them. */
+@property --zoom {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+@property --pan-x {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@property --pan-y {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+.pmap {
+  container-type: size;
+  transition:
+    --zoom 0.9s var(--ease-kiln),
+    --pan-x 0.9s var(--ease-kiln),
+    --pan-y 0.9s var(--ease-kiln);
+}
+.pmap-zoom {
+  transform: translate(calc(var(--pan-x) * 1px), calc(var(--pan-y) * 1px)) scale(var(--zoom));
+  opacity: 0;
+  transition: opacity 0.5s var(--ease-glaze);
+}
+.pmap[data-ready] .pmap-zoom {
+  opacity: 1;
+}
+.pmap-land {
+  fill: #1a2640;
+}
+.pmap-borders {
+  fill: none;
+  stroke: #33435f;
+  stroke-width: 0.6;
+}
+.pmap-egypt {
+  fill: #3a2f33;
+}
+.pmap-country {
+  fill: #b3130b;
+  opacity: 0.85;
+  transition: opacity 0.3s var(--ease-glaze);
+}
+.pmap-arc {
+  fill: none;
+  stroke: #f5b041;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  opacity: 0.7;
+  transition: opacity 0.3s var(--ease-glaze);
+}
+.pmap-ship {
+  fill: #ffe2a8;
+}
+.pmap-ships {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.pmap[data-ready][data-view="world"]:not([data-layer="projects"]) .pmap-ships {
+  opacity: 1;
+  transition: opacity 0.4s 1s;
+}
+
+/* Opening: countries, then routes, then pins arrive (animations, so the
+   states below can still fade between each other without the delays). */
+@keyframes pmap-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes pmap-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+.pmap[data-ready] .pmap-country {
+  animation: pmap-fade 0.6s var(--ease-glaze) backwards;
+  animation-delay: calc(150ms + var(--i) * 45ms);
+}
+.pmap[data-ready] .pmap-arc {
+  animation: pmap-fade 0.6s var(--ease-glaze) backwards;
+  animation-delay: calc(350ms + var(--i) * 55ms);
+}
+.pmap[data-ready] .pmap-mark {
+  animation: pmap-pop 0.5s var(--ease-set) backwards;
+  animation-delay: calc(650ms + var(--i) * 45ms);
+}
+
+/* Something picked: the rest steps back. */
+.pmap[data-focus] .pmap-country {
+  opacity: 0.45;
+}
+.pmap[data-focus] .pmap-arc {
+  opacity: 0.22;
+}
+.pmap[data-focus] .pmap-pin:not([data-on]) .pmap-mark {
+  opacity: 0.55;
+}
+.pmap .pmap-country[data-on] {
+  opacity: 1;
+  fill: #e0362b;
+}
+.pmap .pmap-arc[data-on] {
+  opacity: 1;
+  stroke-width: 2.4;
+}
+
+/* Layers. */
+.pmap[data-layer="projects"] .pmap-country {
+  opacity: 0.3;
+}
+.pmap[data-layer="projects"] .pmap-arc {
+  opacity: 0;
+}
+.pmap[data-layer="projects"] .pmap-pin[data-layer="distribution"],
+.pmap[data-layer="distribution"] .pmap-pin[data-layer="projects"],
+.pmap:not([data-ready]) .pmap-pin {
+  opacity: 0;
+}
+
+/* Pins sit over the map in page pixels, so they and their labels keep their
+   size at every zoom. 1 map unit is 1/1000 of the map's width (it keeps the
+   map's 1000 x 620 shape). */
+.pmap-pin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  transform: translate(
+    calc((var(--pan-x) + var(--x) * var(--zoom)) * 100cqw / 1000),
+    calc((var(--pan-y) + var(--y) * var(--zoom)) * 100cqh / 620)
+  );
+  /* The map picks the pin nearest the pointer (MapPanel), so pins never block each other. */
+  pointer-events: none;
+  transition: opacity 0.3s;
+  -webkit-tap-highlight-color: transparent;
+}
+.pmap-pin[data-on] {
+  z-index: 2;
+}
+.pmap-pin[data-hover] {
+  z-index: 3;
+}
+.pmap-pin::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 1.5px solid #fff;
+  border-radius: 50%;
+  opacity: 0;
+}
+.pmap-pin[data-on]::before {
+  animation: reach-pulse 1.6s var(--ease-glaze) infinite;
+}
+.pmap-mark {
+  position: relative;
+  display: block;
+  transition: opacity 0.3s;
+}
+.pmap-market .pmap-mark {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fff;
+}
+.pmap-place[data-kind="project"] .pmap-mark {
+  width: 20px;
+  height: 23px;
+  clip-path: var(--hex);
+  background: #fff;
+}
+.pmap-place[data-kind="project"] .pmap-mark::after {
+  content: "";
+  position: absolute;
+  inset: 2.5px;
+  clip-path: var(--hex);
+  background: #e0362b;
+}
+.pmap-place[data-kind="address"] .pmap-mark {
+  width: 14px;
+  height: 14px;
+  rotate: 45deg;
+  border: 2px solid #0b1220;
+  background: #f5b041;
+}
+.pmap-place[data-kind="origin"] .pmap-mark {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #0b1220;
+  border-radius: 50%;
+  background: #f5b041;
+}
+.pmap-place[data-kind="origin"] .pmap-mark::after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+  border: 1.5px solid #f5b041;
+  border-radius: 50%;
+  animation: reach-pulse 2.4s var(--ease-glaze) infinite;
+}
+.pmap-label {
+  position: absolute;
+  top: 50%;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #fff;
+  color: #1c1818;
+  font: 600 13px/1.25 var(--font-body);
+  white-space: nowrap;
+  box-shadow: 0 6px 16px -8px rgb(4 8 16 / 0.7);
+  opacity: 0;
+  transform: translate(-4px, -50%);
+  transition:
+    opacity 0.25s,
+    transform 0.25s var(--ease-glaze);
+  pointer-events: none;
+}
+.pmap-label[data-side="right"] {
+  left: calc(50% + 13px);
+}
+.pmap-label[data-side="left"] {
+  right: calc(50% + 13px);
+  transform: translate(4px, -50%);
+}
+.pmap-pin[data-hover] .pmap-label,
+.pmap-pin[data-on] .pmap-label {
+  opacity: 1;
+  transform: translate(0, -50%);
+}
+/* Zoomed in on a wide map, every project and address in the region is named,
+   and the export markets too outside Europe, where they are few and apart. */
+@container (min-width: 560px) {
+  .pmap[data-view="europe"] .pmap-place[data-region="europe"] .pmap-label,
+  .pmap[data-view="middle-east"] .pmap-pin[data-region="middle-east"] .pmap-label,
+  .pmap[data-view="far-east"] .pmap-pin[data-region="far-east"] .pmap-label {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+}
+
+/* The key under the map uses the same marks. */
+.pmap-key {
+  display: inline-block;
+  flex: none;
+}
+.pmap-key-project {
+  width: 12px;
+  height: 14px;
+  clip-path: var(--hex);
+  background: #e0362b;
+}
+.pmap-key-address {
+  width: 10px;
+  height: 10px;
+  rotate: 45deg;
+  background: #e8a02e;
+}
+.pmap-key-origin {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #e8a02e;
+}
+.pmap-key-route {
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: #e8a02e;
+}
+.pmap-key-market {
+  width: 14px;
+  height: 10px;
+  border-radius: 3px;
+  background: #b3130b;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pmap {
+    transition: none;
+  }
+  .pmap[data-ready] .pmap-country,
+  .pmap[data-ready] .pmap-arc,
+  .pmap[data-ready] .pmap-mark,
+  .pmap-place[data-kind="origin"] .pmap-mark::after,
+  .pmap-pin[data-on]::before {
     animation: none;
   }
 }

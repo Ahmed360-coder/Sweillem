@@ -1,4 +1,6 @@
+import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { staticRoutes } from "../../src/lib/site";
 import { skipIntro } from "./helpers";
 
 test.describe("header", () => {
@@ -11,10 +13,15 @@ test.describe("header", () => {
     await expect(nav.getByRole("link", { name: "About" })).toHaveAttribute("aria-current", "page");
     const header = page.locator("header").first();
     await expect(header).not.toHaveAttribute("data-stuck");
-    // A wheel event sent before the page can scroll is dropped (seen on slow CI
-    // runners), so scroll again until the header condenses.
+    // Scroll with the pointer over the page, as a visitor does; Playwright's
+    // pointer otherwise sits on the corner pixel of the header. A wheel event
+    // sent before the page can scroll is dropped (seen on slow CI runners), so
+    // scroll again until the header condenses. Checking scrollY first tells a
+    // page that did not scroll apart from a header that did not condense.
+    await page.mouse.move(640, 400);
     await expect(async () => {
       await page.mouse.wheel(0, 400);
+      await expect.poll(() => page.evaluate(() => window.scrollY), { message: "the page scrolls", timeout: 1000 }).toBeGreaterThan(24);
       await expect(header).toHaveAttribute("data-stuck", "", { timeout: 1000 });
     }).toPass();
   });
@@ -44,25 +51,38 @@ test.describe("header", () => {
     expect(Math.min(...heights)).toBeGreaterThanOrEqual(44);
   });
 
-  test("mobile menu opens, traps nothing, closes on Escape and after navigating", async ({ page, isMobile }) => {
-    test.skip(!isMobile, "mobile navigation");
+  test("side menu opens, closes on Escape and after navigating", async ({ page }) => {
     await page.goto("/");
-    const burger = page.getByRole("button", { name: "Menu" });
-    const menu = page.locator("#mobile-menu");
+    const burger = page.getByRole("button", { name: "Menu", exact: true });
+    const menu = page.locator("#site-menu");
     await expect(burger).toHaveAttribute("aria-expanded", "false");
     await expect(menu).toHaveAttribute("inert", "");
 
     await burger.click();
     await expect(burger).toHaveAttribute("aria-expanded", "true");
     await expect(menu).not.toHaveAttribute("inert");
+    await expect(page.locator("#main")).toHaveAttribute("inert", "");
     await page.keyboard.press("Escape");
     await expect(burger).toHaveAttribute("aria-expanded", "false");
     await expect(burger).toBeFocused();
 
     await burger.click();
-    await menu.getByRole("link", { name: "Projects" }).click();
-    await expect(page).toHaveURL(/\/projects$/);
+    await page.getByRole("button", { name: "Close menu" }).click();
     await expect(burger).toHaveAttribute("aria-expanded", "false");
+
+    await burger.click();
+    await menu.getByRole("link", { name: "Certificates" }).click();
+    await expect(page).toHaveURL(/\/certificates$/);
+    await expect(burger).toHaveAttribute("aria-expanded", "false");
+    await burger.click();
+    await expect(menu.getByRole("link", { name: "Certificates" })).toHaveAttribute("aria-current", "page");
+  });
+
+  test("side menu links to every page", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Menu", exact: true }).click();
+    const hrefs = await page.locator("#site-menu a").evaluateAll((els) => els.map((e) => e.getAttribute("href")));
+    expect([...hrefs].sort()).toEqual([...staticRoutes].sort());
   });
 
   test("quote button shows the list count", async ({ page }) => {
@@ -150,6 +170,157 @@ test.describe("layout rules (design/taste-audit.md)", () => {
       expect(new Set(tops).size).toBe(1);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
       expect(overflow).toBeLessThanOrEqual(0);
+    });
+  }
+});
+
+test.describe("home hero slideshow", () => {
+  test.beforeEach(async ({ page }) => skipIntro(page));
+
+  test("moves to the next photo by itself and can be paused", async ({ page }) => {
+    await page.goto("/");
+    const caption = page.locator(".hero-caption strong");
+    await expect(caption).toHaveText("Germany · Euro Sweillem");
+    await expect(caption).toHaveText("Makkah, Saudi Arabia", { timeout: 8000 });
+
+    await page.getByRole("button", { name: "Pause slideshow" }).click();
+    await page.getByRole("button", { name: /^Photo 3 of 5/ }).click();
+    await expect(caption).toHaveText("New Alamein City, Egypt");
+    await page.waitForTimeout(6500);
+    await expect(caption).toHaveText("New Alamein City, Egypt");
+    await expect(page.getByRole("button", { name: "Play slideshow" })).toBeVisible();
+  });
+
+  test("stays still with reduced motion", async ({ browser }) => {
+    const ctx = await browser.newContext({ reducedMotion: "reduce" });
+    const page = await ctx.newPage();
+    await skipIntro(page);
+    await page.goto("/");
+    const caption = page.locator(".hero-caption strong");
+    await page.waitForTimeout(6500);
+    await expect(caption).toHaveText("Germany · Euro Sweillem");
+    await ctx.close();
+  });
+});
+
+test.describe("projects map", () => {
+  test.beforeEach(async ({ page }) => skipIntro(page));
+
+  test("opens from the header, zooms to a pick and closes on Escape", async ({ page }) => {
+    await page.goto("/about");
+    const button = page.locator("header").getByRole("button", { name: "Map", exact: true });
+    const panel = page.locator("#map-panel");
+    await expect(panel).toHaveAttribute("inert", "");
+
+    await button.click();
+    await expect(button).toHaveAttribute("aria-expanded", "true");
+    await expect(panel).not.toHaveAttribute("inert");
+    await expect(page.locator("#main")).toHaveAttribute("inert", "");
+    const dialog = page.getByRole("dialog", { name: "Projects and distribution" });
+    await expect(dialog).toBeVisible();
+    const map = panel.locator(".pmap");
+    await expect(map).toHaveAttribute("data-ready", "");
+    await expect(map.locator("path.pmap-country")).toHaveCount(14);
+    await expect(map.locator(".pmap-place")).toHaveCount(7);
+
+    await dialog.getByRole("button", { name: /^Haram central area/ }).click();
+    await expect(map).toHaveAttribute("data-view", "middle-east");
+    await expect(dialog.getByRole("heading", { name: "Haram central area" })).toBeVisible();
+    await expect(map.locator('[data-pick="place:haram-central-area-makkah"] .pmap-label')).toHaveCSS("opacity", "1");
+
+    await dialog.getByRole("group", { name: "Zoom to" }).getByRole("button", { name: "Far East" }).click();
+    await expect(map).toHaveAttribute("data-view", "far-east");
+    await expect(dialog.getByRole("heading", { name: "Haram central area" })).toBeHidden();
+    await dialog.getByRole("button", { name: "Hong Kong" }).click();
+    await expect(map.locator("path.pmap-arc").nth(12)).toHaveAttribute("data-on", "");
+
+    await dialog.getByRole("group", { name: "Show" }).getByRole("button", { name: "Projects" }).click();
+    await expect(dialog.getByRole("heading", { name: "Distribution", exact: true })).toBeHidden();
+    await expect(map.locator('[data-pick="place:jeddah"]')).toHaveCSS("opacity", "0");
+
+    await page.keyboard.press("Escape");
+    await expect(button).toHaveAttribute("aria-expanded", "false");
+    await expect(panel).toHaveAttribute("inert", "");
+    await expect(button).toBeFocused();
+  });
+
+  test("a click picks the pin under it, even where pins crowd", async ({ page }) => {
+    await page.goto("/");
+    await page.locator("header").getByRole("button", { name: "Map", exact: true }).click();
+    const dialog = page.getByRole("dialog", { name: "Projects and distribution" });
+    const map = page.locator(".pmap");
+    await expect(map).toHaveAttribute("data-ready", "");
+    for (const [region, id, heading] of [
+      ["Middle East", "haram-central-area-makkah", "Haram central area"],
+      ["Middle East", "jeddah", "Jeddah"],
+      ["World", "new-alamein-city", "New Alamein City"],
+      ["World", "cairo", "Cairo"],
+    ] as const) {
+      await dialog.getByRole("group", { name: "Zoom to" }).getByRole("button", { name: region }).click();
+      await page.waitForTimeout(1100);
+      const box = await map.locator(`[data-pick="place:${id}"] .pmap-mark`).boundingBox();
+      await page.mouse.click(box!.x + box!.width / 2, box!.y + box!.height / 2);
+      await expect(dialog.getByRole("heading", { name: heading, exact: true })).toBeVisible();
+    }
+  });
+
+  test("keeps keyboard focus inside while open", async ({ page, isMobile }) => {
+    test.skip(isMobile, "keyboard");
+    await page.goto("/");
+    await page.locator("header").getByRole("button", { name: "Map", exact: true }).click();
+    await expect(page.getByRole("button", { name: "Close map" })).toBeFocused();
+    // Back from the first control, focus leaves for the browser itself (as with a native modal),
+    // never for the skip link or the page behind.
+    for (const key of ["Shift+Tab", "Shift+Tab", "Tab", "Tab"]) {
+      await page.keyboard.press(key);
+      const where = await page.evaluate(() => {
+        const a = document.activeElement;
+        return a === document.body || !a ? "outside the page" : a.closest("#map-panel") ? "panel" : a.outerHTML.slice(0, 80);
+      });
+      expect(["panel", "outside the page"]).toContain(where);
+    }
+  });
+
+  test("opens from the side menu", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Menu", exact: true }).click();
+    await page.getByRole("button", { name: /^Map of projects and distribution/ }).click();
+    await expect(page.locator("#site-menu")).toHaveAttribute("inert", "");
+    await expect(page.getByRole("dialog", { name: "Projects and distribution" })).toBeVisible();
+    await page.getByRole("button", { name: "Close map" }).click();
+    await expect(page.locator("#map-panel")).toHaveAttribute("inert", "");
+    await expect(page.locator("#main")).not.toHaveAttribute("inert");
+  });
+
+  test("its links close it", async ({ page }) => {
+    await page.goto("/");
+    await page.locator("header").getByRole("button", { name: "Map", exact: true }).click();
+    await page.getByRole("link", { name: "The export map on About" }).click();
+    await expect(page).toHaveURL(/\/about#reach$/);
+    await expect(page.locator("#map-panel")).toHaveAttribute("inert", "");
+  });
+
+  for (const colorScheme of ["light", "dark"] as const) {
+    test(`passes axe when open (${colorScheme})`, async ({ browser, isMobile }) => {
+      const ctx = await browser.newContext({
+        colorScheme,
+        reducedMotion: "reduce",
+        viewport: isMobile ? { width: 360, height: 780 } : { width: 1280, height: 860 },
+      });
+      const page = await ctx.newPage();
+      await skipIntro(page);
+      await page.goto("/");
+      await page.locator("header").getByRole("button", { name: "Map", exact: true }).click();
+      const dialog = page.getByRole("dialog", { name: "Projects and distribution" });
+      await expect(page.locator(".pmap")).toHaveAttribute("data-ready", "");
+      await dialog.getByRole("button", { name: /^New Alamein City/ }).click();
+      await expect(dialog.getByRole("heading", { name: "New Alamein City" })).toBeVisible();
+      const axe = await new AxeBuilder({ page })
+        .include("#map-panel")
+        .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+        .analyze();
+      expect(axe.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(", ")}`)).toEqual([]);
+      await ctx.close();
     });
   }
 });

@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { Intro, introGateScript } from "@/components/Intro";
 import { MotionProvider } from "@/components/MotionProvider";
 import { RevealObserver } from "@/components/RevealObserver";
+import { mapData } from "@/lib/projects-map";
 import { site, siteUrl } from "@/lib/site";
 import "./globals.css";
 import "./intro.css";
@@ -60,7 +61,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           Skip to content
         </a>
         <MotionProvider>
-          <Header />
+          <Header mapData={mapData} />
           <main id="main" tabIndex={-1} className="flex-1 outline-none">
             {children}
           </main>

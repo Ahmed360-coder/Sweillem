@@ -66,6 +66,46 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
   },
 ];
 
+/** Every page, grouped, for the side menu. */
+export const siteMap: { title: string; items: NavItem[] }[] = [
+  { title: "Start", items: [{ href: "/", label: "Home" }] },
+  {
+    title: "Products",
+    items: [
+      { href: "/products", label: "All products" },
+      ...products.map((p) => ({ href: `/products/${p.slug}`, label: p.name })),
+      { href: "/roof-tiles", label: "Roof tiles" },
+    ],
+  },
+  {
+    title: "Company",
+    items: [
+      { href: "/about", label: "About" },
+      { href: "/process", label: "How it’s made" },
+      { href: "/projects", label: "Projects" },
+      { href: "/services", label: "Services" },
+      { href: "/sustainability", label: "Sustainability" },
+      { href: "/euro-sweillem", label: "Euro Sweillem" },
+    ],
+  },
+  {
+    title: "Quality",
+    items: [
+      { href: "/quality", label: "Quality" },
+      { href: "/certificates", label: "Certificates" },
+      { href: "/joint-performance", label: "Joint performance" },
+      { href: "/downloads", label: "Downloads" },
+    ],
+  },
+  {
+    title: "Contact",
+    items: [
+      { href: "/contact", label: "Contact us" },
+      { href: "/quote", label: "Quote list" },
+    ],
+  },
+];
+
 /** Every static route, for the sitemap and the smoke tests. */
 export const staticRoutes = [
   "/",

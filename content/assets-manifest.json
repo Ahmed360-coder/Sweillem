@@ -509,6 +509,34 @@
       "notes": "Day satellite background of the export map on About, 1400x820 WebP. Reprojected by scripts/build-export-map.mjs, same projection and inset as the night version.",
       "publish": "yes",
       "status": "in-repo"
+    },
+    {
+      "path": "public/images/site/hero-makkah.webp",
+      "source": "live-site",
+      "notes": "Home hero slideshow: public/images/projects/saudi-arabia/haram-central-area-700mm-1.jpg cropped to 1227x920 WebP.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/site/hero-alamein.webp",
+      "source": "live-site",
+      "notes": "Home hero slideshow: public/images/projects/egypt/alamein-2.jpg cropped to 1227x920 WebP.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/site/hero-makkah-lift.webp",
+      "source": "live-site",
+      "notes": "Home hero slideshow: public/images/projects/saudi-arabia/gallery-01.jpg cropped to 1227x920 WebP.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/site/hero-germany-street.webp",
+      "source": "live-site",
+      "notes": "Home hero slideshow: public/images/projects/germany/gallery-07.jpg cropped to 1227x920 WebP.",
+      "publish": "yes",
+      "status": "in-repo"
     }
   ],
   "liveSite": [
