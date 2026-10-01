@@ -522,3 +522,14 @@ html[data-intro="play"] :is(.rise-word > span, .fade-up, .rings circle, .badge-1
 [data-hot] .kiln-arc {
   stroke-dashoffset: 0;
 }
+
+/* Scroll journey caption on phones: fades in when the step changes. */
+.journey-caption {
+  animation: journey-caption 0.4s var(--ease-glaze, ease-out) both;
+}
+@keyframes journey-caption {
+  from { opacity: 0; transform: translateY(6px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .journey-caption { animation: none; }
+}
