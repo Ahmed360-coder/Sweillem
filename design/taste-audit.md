@@ -37,3 +37,8 @@ Ahmed asked for the taste skill (`npx skills add Leonxlnx/taste-skill`) to be ru
 - **Type:** keep the one-line navigation, the eyebrow limit, sentence-case headings, and no en or em dashes in copy, including the CMS content.
 - **Shape and shadows:** use one radius scale (cards 22, inner 14, inputs 10, controls full pill), and shadows tinted to the page colour, never pure black.
 - **Layout:** hero headline in three lines at most at 1280 px, and no row of three equal cards.
+- **Phones and access (from the UI UX Pro Max pass, see `ui-ux-pro-max-audit.md`):**
+  - Tap targets at least 44 px tall, form fields at 16 px or larger, and body text at 16 px.
+  - No text under 12 px.
+  - Every page passes axe in dark mode.
+  - Every page marks a navigation item as current.

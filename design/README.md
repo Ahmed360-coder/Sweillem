@@ -8,6 +8,7 @@ Clickable prototype of the new sweillem.net, used to agree the look and the inte
 - `tokens.css` – colour, type, motion and shape tokens.
 - `intro-spec.md` – the 3-second intro screen (M00): sequence, reactive behaviour and build rules.
 - `taste-audit.md` – the taste-skill pass: what changed, what was kept on purpose, and rules for the build.
+- `ui-ux-pro-max-audit.md`: the UI UX Pro Max pass over the built site and the prototype, with fixes for the build.
 - `motion-spec.md` – every animation with trigger, timing, easing and reduced-motion fallback.
 
 ## Screens
