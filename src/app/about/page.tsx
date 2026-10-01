@@ -7,6 +7,7 @@ import { ReachMap } from "@/components/ReachMap";
 import { PageHeader } from "@/components/PageHeader";
 import { Section } from "@/components/Section";
 import { SourceNote } from "@/components/SourceNote";
+import { locations } from "@/lib/locations";
 import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata({
@@ -153,45 +154,6 @@ const milestones: Milestone[] = [
     source: "Company deck",
     reach: 4,
     visual: <Photo src="/images/logistics/germany-warehouses-crop.webp" alt="SWEILLEM pipes stacked in a warehouse yard in Germany" />,
-  },
-];
-
-const locations = [
-  {
-    kind: "Office",
-    name: "Cairo office",
-    address: "Osman Towers, Kornish El Nile, Cairo, Egypt",
-    source: "Contact Us, sweillem.net, and the Cradle to Cradle certificate",
-  },
-  {
-    kind: "Registered address",
-    name: "Cairo",
-    address: "6 El-Saad Street, Shoubra Gardens, Khalafawi Square, Cairo, Egypt",
-    source: "ISO 9001, 14001 and 45001 certificates",
-  },
-  {
-    kind: "Factory",
-    name: "Saryaqos",
-    address: "Cairo Ismailia Agricultural Road, Saryaqos, Qalyubia, Egypt",
-    source: "ISO, SASO and DIN CERTCO certificates",
-  },
-  {
-    kind: "Site",
-    name: "Arab Al Hoson",
-    address: "El Mataria, Egypt",
-    source: "Company deck",
-  },
-  {
-    kind: "Europe",
-    name: "Germany",
-    address: "Stiegstraße 60, 41379 Brüggen, Germany",
-    source: "sweillem.net footer",
-  },
-  {
-    kind: "Saudi Arabia",
-    name: "Jeddah",
-    address: "Jeddah, Kingdom of Saudi Arabia",
-    source: "sweillem.net footer",
   },
 ];
 

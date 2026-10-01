@@ -5,7 +5,7 @@ import { addToQuote, type QuoteItem } from "@/lib/quote";
 
 /**
  * Adds one size to the visitor's quote list (kept on their device until the
- * request is sent, Milestone 6). Says "Added" for a moment, out loud too.
+ * request is sent from /quote). Says "Added" for a moment, out loud too.
  */
 export function AddToQuote({
   item,

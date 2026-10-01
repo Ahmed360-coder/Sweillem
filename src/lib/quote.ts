@@ -2,9 +2,9 @@
 
 import { useSyncExternalStore } from "react";
 
-// Quote list store. Milestone 6 adds items from product pages and sends the
-// request; the header only needs the count, so the store lives here from the start.
-// Items stay on the visitor's device (localStorage) until the request is sent.
+// Quote list store. Product pages add lines, /quote edits and sends them, and
+// the header shows the count. Items stay on the visitor's device
+// (localStorage) until the request is sent.
 
 export interface QuoteItem {
   product: string;
@@ -66,6 +66,22 @@ export function useQuoteCount(): number {
 /** Add one of an item, or one more if the same product, size and class is already listed. */
 export function addToQuote(item: Omit<QuoteItem, "qty">) {
   const items = read();
-  const same = (i: QuoteItem) => i.product === item.product && i.size === item.size && (i.strengthClass ?? "") === (item.strengthClass ?? "");
-  writeQuote(items.some(same) ? items.map((i) => (same(i) ? { ...i, qty: i.qty + 1 } : i)) : [...items, { ...item, qty: 1 }]);
+  const line = { ...item, qty: 1 };
+  writeQuote(items.some((i) => sameLine(i, line)) ? items.map((i) => (sameLine(i, line) ? { ...i, qty: i.qty + 1 } : i)) : [...items, line]);
+}
+
+const sameLine = (a: QuoteItem, b: QuoteItem) => a.product === b.product && a.size === b.size && (a.strengthClass ?? "") === (b.strengthClass ?? "");
+
+/** Set how many of one line the visitor wants (at least 1; remove the line to drop it). */
+export function setQuoteQty(line: QuoteItem, qty: number) {
+  const n = Math.max(1, Math.min(100000, Math.floor(qty) || 1));
+  writeQuote(read().map((i) => (sameLine(i, line) ? { ...i, qty: n } : i)));
+}
+
+export function removeFromQuote(line: QuoteItem) {
+  writeQuote(read().filter((i) => !sameLine(i, line)));
+}
+
+export function clearQuote() {
+  writeQuote([]);
 }

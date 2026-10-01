@@ -103,7 +103,7 @@ test.describe("header", () => {
       window.dispatchEvent(new Event("sweillem:quote"));
     });
     await expect(page.locator("[data-quote-count]")).toHaveText("3");
-    await expect(page.getByText("Pipes · DN 200 · N")).toBeVisible();
+    await expect(page.getByRole("spinbutton", { name: "Quantity: Pipes, DN 200, N" })).toHaveValue("3");
   });
 });
 
