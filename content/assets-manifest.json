@@ -201,6 +201,56 @@
       "notes": "Black tile with \"sweillem roofing tiles\" badge.",
       "publish": "needs-confirmation",
       "status": "in-repo"
+    },
+    {
+      "path": "public/images/site/hero.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image16.png",
+      "slide": 16,
+      "notes": "Home hero: pipes on a German site, cropped and compressed to 1227x920 WebP for the redesign prototype (same photo as projects/germany-site.jpg).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/site/glazed.webp",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image9.jpg",
+      "slide": 10,
+      "notes": "Intro background: glazed pipes from the final firing slide, 900x808 WebP (same photo as manufacturing/glazed-pipes-02.jpg).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/brand/sweillem-logo.svg",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image2.png (redrawn as vector)",
+      "slide": 2,
+      "notes": "Vector redraw of the logo (grey S mark, maroon wordmark) by the redesign thread, from the deck PNG. Not yet an official SWEILLEM file.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/brand/sweillem-logo-white.svg",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image2.png (redrawn as vector)",
+      "slide": 2,
+      "notes": "White version of the vector logo redraw, for dark grounds.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/brand/sweillem-mark.svg",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image2.png (redrawn as vector)",
+      "slide": 2,
+      "notes": "Vector S mark on its own (grey).",
+      "publish": "yes",
+      "status": "in-repo"
     }
   ],
   "liveSite": [
