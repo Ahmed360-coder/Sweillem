@@ -42,6 +42,8 @@ export function Intro() {
     };
     root.addEventListener("click", finish);
     document.addEventListener("keydown", onKey);
+    // A skip key pressed before hydration is recorded by introGateScript.
+    if ("introSkip" in html.dataset) finish();
 
     if (reduced) {
       timers.push(window.setTimeout(finish, 900));
@@ -172,6 +174,7 @@ function embers(cv: HTMLCanvasElement, root: HTMLElement, stopped: () => boolean
 
 /**
  * Inline script for <head>: decides before first paint whether the intro plays.
- * Plays once per session, only when the visitor lands on "/".
+ * Plays once per session, only when the visitor lands on "/". It also records a
+ * skip key pressed before the Intro component hydrates.
  */
-export const introGateScript = `(()=>{try{var d=document.documentElement,k="sweillem.intro";if(location.pathname==="/"&&!sessionStorage.getItem(k)){sessionStorage.setItem(k,"1");d.dataset.intro="play"}else{d.dataset.intro="done"}}catch(e){document.documentElement.dataset.intro="done"}})()`;
+export const introGateScript = `(()=>{try{var d=document.documentElement,k="sweillem.intro";if(location.pathname==="/"&&!sessionStorage.getItem(k)){sessionStorage.setItem(k,"1");d.dataset.intro="play";addEventListener("keydown",function f(e){if(/^(Escape|Enter| )$/.test(e.key)){d.dataset.introSkip="";removeEventListener("keydown",f)}})}else{d.dataset.intro="done"}}catch(e){document.documentElement.dataset.intro="done"}})()`;
