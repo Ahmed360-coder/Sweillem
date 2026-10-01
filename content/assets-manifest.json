@@ -423,6 +423,76 @@
       "notes": "Page 1 of public/downloads/certificates/iso-45001-2024.pdf rendered at 110 dpi as a preview image for the Certificates page (the live site has no scan of this certificate).",
       "publish": "yes",
       "status": "in-repo"
+    },
+    {
+      "path": "public/images/products/cards/perforated-pipe.webp",
+      "source": "live-site",
+      "notes": "Product card picture: public/images/products/perforated-pipe-drawing.jpg (the live-site drawing) padded to 900x600 WebP, with the baked-in 'PERFORATED PIPES' heading removed.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/products/cards/u-trap.webp",
+      "source": "live-site",
+      "notes": "Product card picture: public/images/products/u-trap.jpg (the live-site drawing) padded to 900x600 WebP, with a stray mark in the top-left corner removed.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/products/cards/enlarger-reducer.webp",
+      "source": "live-site",
+      "notes": "Product card picture: public/images/products/enlarger-drawing.jpg (the live-site drawing) padded to 900x600 WebP.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/products/cards/half-channels.webp",
+      "source": "live-site",
+      "notes": "Product card picture: public/images/products/half-channel-drawing.jpg (the live-site drawing) padded to 900x600 WebP.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/products/cards/pipes.svg",
+      "source": "drawn",
+      "notes": "Product card picture: schematic section of a pipe, drawn by scripts/draw-product-cards.py in the style of the live-site drawings because SWEILLEM publishes no picture of this product. Not to scale; replace with a SWEILLEM photo or drawing when one is supplied.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/products/cards/short-pieces.svg",
+      "source": "drawn",
+      "notes": "Product card picture: schematic section of a short piece, drawn by scripts/draw-product-cards.py in the style of the live-site drawings because SWEILLEM publishes no picture of this product. Not to scale; replace with a SWEILLEM photo or drawing when one is supplied.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/products/cards/bends.svg",
+      "source": "drawn",
+      "notes": "Product card picture: schematic section of a bend, drawn by scripts/draw-product-cards.py in the style of the live-site drawings because SWEILLEM publishes no picture of this product. Not to scale; replace with a SWEILLEM photo or drawing when one is supplied.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/products/cards/junctions.svg",
+      "source": "drawn",
+      "notes": "Product card picture: schematic section of a junction, drawn by scripts/draw-product-cards.py in the style of the live-site drawings because SWEILLEM publishes no picture of this product. Not to scale; replace with a SWEILLEM photo or drawing when one is supplied.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/products/cards/jointing-systems.svg",
+      "source": "drawn",
+      "notes": "Product card picture: schematic section of a spigot and socket joint, drawn by scripts/draw-product-cards.py in the style of the live-site drawings because SWEILLEM publishes no picture of this product. Not to scale; replace with a SWEILLEM photo or drawing when one is supplied.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/products/cards/input-clutch-end-plugs.svg",
+      "source": "drawn",
+      "notes": "Product card picture: schematic section of a end plug in a socket, drawn by scripts/draw-product-cards.py in the style of the live-site drawings because SWEILLEM publishes no picture of this product. Not to scale; replace with a SWEILLEM photo or drawing when one is supplied.",
+      "publish": "yes",
+      "status": "in-repo"
     }
   ],
   "liveSite": [

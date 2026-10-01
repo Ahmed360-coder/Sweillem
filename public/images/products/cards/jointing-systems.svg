@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-50 0 900 600" role="img" aria-label="Joint in section: a spigot pushed home into a socket, sealed by a polyurethane ring">
+<title>Joint in section: a spigot pushed home into a socket, sealed by a polyurethane ring</title>
+<defs><pattern id="h" width="13" height="13" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="13" height="13" fill="#efc397"/><line x1="0" y1="0" x2="0" y2="13" stroke="#c6a17e" stroke-width="3"/></pattern></defs>
+<rect x="-50" width="900" height="600" fill="#fff"/>
+<g stroke="#70483a" stroke-width="4" stroke-linejoin="round" fill="url(#h)">
+<g transform="translate(350,300) rotate(0)"><path d="M0.0 -208.0 L230.0 -208.0 L266.0 -156.0 L440.0 -156.0 L440.0 -120.0 L230.0 -120.0 L230.0 -176.0 L0.0 -176.0 Z"/><path d="M-340.0 -156.0 L220.0 -156.0 L220.0 -120.0 L-340.0 -120.0 Z"/><rect x="36" y="-176.0" width="140" height="20" fill="#d7262d" stroke-width="2"/><path d="M0.0 208.0 L230.0 208.0 L266.0 156.0 L440.0 156.0 L440.0 120.0 L230.0 120.0 L230.0 176.0 L0.0 176.0 Z"/><path d="M-340.0 156.0 L220.0 156.0 L220.0 120.0 L-340.0 120.0 Z"/><rect x="36" y="156.0" width="140" height="20" fill="#d7262d" stroke-width="2"/><line x1="-350.0" y1="0.0" x2="450.0" y2="0.0" fill="none" stroke-width="2" stroke-dasharray="26 7 4 7"/></g>
+</g>
+</svg>
