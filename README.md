@@ -31,7 +31,7 @@ npm run test:e2e       # Playwright: every page loads, passes axe (WCAG 2.2 AA),
 
 ## Deploy
 
-The repo is linked to the Vercel project `sweillem`. Every push to a branch gets a preview URL (search engines are kept out with `noindex` and a closed `robots.txt`); merging to `main` deploys production at [sweillem.vercel.app](https://sweillem.vercel.app). No build settings or environment variables are needed: Vercel detects Next.js.
+The repo is linked to the Vercel project `sweillem`. Every push to a branch gets a preview URL (search engines are kept out with `noindex` and a closed `robots.txt`); merging to `main` deploys production at [sweillem.vercel.app](https://sweillem.vercel.app). `vercel.json` pins the framework to Next.js. The project was imported before `main` had the app, so Vercel had set it up as a plain static site and served the empty `public/` folder, which gave a 404 on every page.
 
 ## Where things live
 
