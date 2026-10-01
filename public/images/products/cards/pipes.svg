@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-50 0 900 600" role="img" aria-label="Vitrified clay pipe in section, socket end on the left">
+<title>Vitrified clay pipe in section, socket end on the left</title>
+<defs><pattern id="h" width="13" height="13" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="13" height="13" fill="#efc397"/><line x1="0" y1="0" x2="0" y2="13" stroke="#c6a17e" stroke-width="3"/></pattern></defs>
+<rect x="-50" width="900" height="600" fill="#fff"/>
+<g stroke="#70483a" stroke-width="4" stroke-linejoin="round" fill="url(#h)">
+<g transform="translate(30,300) rotate(0)"><g><path d="M0.0 -178.0 L110.0 -178.0 L136.0 -144.0 L740.0 -144.0 L740.0 -110.0 L110.0 -110.0 L110.0 -156.0 L0.0 -156.0 Z"/><rect x="14" y="-156.0" width="40" height="12" fill="#d7262d" stroke-width="1.5"/></g><g transform="scale(1,-1)"><path d="M0.0 -178.0 L110.0 -178.0 L136.0 -144.0 L740.0 -144.0 L740.0 -110.0 L110.0 -110.0 L110.0 -156.0 L0.0 -156.0 Z"/><rect x="14" y="-156.0" width="40" height="12" fill="#d7262d" stroke-width="1.5"/></g><line x1="-10.0" y1="0.0" x2="730.0" y2="0.0" fill="none" stroke-width="2" stroke-dasharray="26 7 4 7"/></g>
+</g>
+</svg>
