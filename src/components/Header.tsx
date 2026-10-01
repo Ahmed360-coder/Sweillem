@@ -76,7 +76,27 @@ export function Header() {
           aria-hidden="true"
           className="absolute inset-0 -z-10 bg-[color-mix(in_srgb,var(--paper)_86%,transparent)] opacity-0 shadow-[0_1px_0_var(--line)] backdrop-blur-md transition-opacity duration-300 ease-glaze group-data-stuck/hdr:opacity-100"
         />
-        <div className="wrap flex items-center gap-5">
+        <div className="wrap flex items-center gap-3 min-[980px]:gap-5">
+          <button
+            ref={burgerRef}
+            type="button"
+            aria-label="Menu"
+            aria-expanded={open}
+            aria-controls="site-menu"
+            onClick={() => setOpen(true)}
+            className="group/burger relative z-50 -ms-2.5 size-11 flex-none cursor-pointer rounded-full transition-colors duration-200 hover:bg-sunk"
+          >
+            {[14, 20, 26].map((top, i) => (
+              <span
+                key={top}
+                aria-hidden="true"
+                style={{ top: top + 1 }}
+                className={`absolute inset-x-2.5 h-0.5 origin-left bg-ink transition-transform duration-300 ease-glaze rtl:origin-right ${
+                  i === 1 ? "scale-x-75 group-hover/burger:scale-x-100" : ""
+                }`}
+              />
+            ))}
+          </button>
           <Link
             href="/"
             aria-label="SWEILLEM home"
@@ -117,26 +137,6 @@ export function Header() {
                 {quoteCount}
               </span>
             </Link>
-            <button
-              ref={burgerRef}
-              type="button"
-              aria-label="Menu"
-              aria-expanded={open}
-              aria-controls="site-menu"
-              onClick={() => setOpen(true)}
-              className="group/burger relative z-50 size-11 cursor-pointer rounded-full transition-colors duration-200 hover:bg-sunk"
-            >
-              {[14, 20, 26].map((top, i) => (
-                <span
-                  key={top}
-                  aria-hidden="true"
-                  style={{ top: top + 1 }}
-                  className={`absolute inset-x-2.5 h-0.5 origin-right bg-ink transition-transform duration-300 ease-glaze rtl:origin-left ${
-                    i === 1 ? "scale-x-75 group-hover/burger:scale-x-100" : ""
-                  }`}
-                />
-              ))}
-            </button>
           </div>
         </div>
       </header>

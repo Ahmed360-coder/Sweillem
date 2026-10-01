@@ -133,7 +133,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="relative -order-1 aspect-[4/3.3] min-w-0 md:order-none md:aspect-[1/1.02]">
+          <div className="relative -order-1 mx-auto aspect-square w-full max-w-[min(460px,82vw)] min-w-0 md:order-none md:max-w-none">
             <svg className="rings pointer-events-none absolute -inset-[8%] -z-10" viewBox="0 0 400 400" aria-hidden="true">
               {[190, 160, 128, 94].map((r, i) => (
                 <circle key={r} cx="200" cy="200" r={r} style={{ "--c": Math.round(2 * Math.PI * r), "--i": i } as CSSProperties} />

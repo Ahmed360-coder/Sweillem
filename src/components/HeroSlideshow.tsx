@@ -54,7 +54,7 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
       onPointerLeave={() => setHovered(false)}
     >
       <div
-        className="frame-cut absolute inset-0 overflow-hidden bg-glaze"
+        className="absolute inset-0 overflow-hidden rounded-full bg-glaze shadow-card"
         role="group"
         aria-roledescription="slideshow"
         aria-label="Project photos"
@@ -89,7 +89,7 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
         </span>
       </p>
 
-      <div className="absolute end-3 bottom-3 z-10 flex items-center gap-1 rounded-pill bg-[rgb(20_10_8/0.45)] p-1 backdrop-blur-sm md:bottom-[10%]">
+      <div className="absolute start-0 top-[2%] z-10 flex items-center rounded-pill md:start-auto md:top-auto md:end-0 md:bottom-[2%] bg-[rgb(20_10_8/0.62)] p-0.5 backdrop-blur-sm">
         {slides.map((s, i) => (
           <button
             key={s.src}
@@ -97,9 +97,9 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
             onClick={() => setIndex(i)}
             aria-label={`Photo ${i + 1} of ${slides.length}: ${s.place}`}
             aria-current={i === index ? "true" : undefined}
-            className="grid size-8 cursor-pointer place-items-center rounded-full"
+            className="grid h-7 w-6 cursor-pointer place-items-center rounded-full"
           >
-            <span className="relative h-1 w-4 overflow-hidden rounded-full bg-white/40">
+            <span className="relative h-1 w-3.5 overflow-hidden rounded-full bg-white/40">
               {i === index && (
                 <span
                   key={`${index}-${playing}`}
@@ -115,7 +115,7 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
           type="button"
           onClick={() => setPaused((p) => !p)}
           aria-label={paused ? "Play slideshow" : "Pause slideshow"}
-          className="grid size-8 cursor-pointer place-items-center rounded-full text-white hover:bg-white/15"
+          className="grid size-7 cursor-pointer place-items-center rounded-full text-white hover:bg-white/15"
         >
           {paused ? (
             <svg viewBox="0 0 24 24" className="size-3.5" fill="currentColor" aria-hidden="true">

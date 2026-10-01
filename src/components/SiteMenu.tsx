@@ -6,7 +6,7 @@ import { siteMap } from "@/lib/site";
 
 /**
  * Side menu listing every page of the site, grouped by section. It slides in
- * from the end edge over a dimmed page; only transform and opacity animate.
+ * from the start edge, beside the menu button over a dimmed page; only transform and opacity animate.
  * Closed, it is inert so nothing inside can be focused or read.
  */
 export function SiteMenu({ open, pathname, onClose }: { open: boolean; pathname: string; onClose: () => void }) {
@@ -40,7 +40,7 @@ export function SiteMenu({ open, pathname, onClose }: { open: boolean; pathname:
         role="dialog"
         aria-modal="true"
         aria-label="Site menu"
-        className="absolute inset-y-0 end-0 flex w-[min(400px,calc(100vw-40px))] translate-x-full flex-col bg-surface shadow-card transition-transform duration-[420ms] ease-kiln group-data-open/menu:translate-x-0 rtl:-translate-x-full rtl:group-data-open/menu:translate-x-0"
+        className="absolute inset-y-0 start-0 flex w-[min(400px,calc(100vw-40px))] -translate-x-full flex-col bg-surface shadow-card transition-transform duration-[420ms] ease-kiln group-data-open/menu:translate-x-0 rtl:translate-x-full rtl:group-data-open/menu:translate-x-0"
       >
         <div className="flex items-center justify-between border-b border-line px-6 py-3.5">
           <p className="font-mono text-[12px] font-medium tracking-[.12em] text-muted uppercase">Every page</p>
@@ -70,7 +70,7 @@ export function SiteMenu({ open, pathname, onClose }: { open: boolean; pathname:
                         aria-current={current ? "page" : undefined}
                         style={{ transitionDelay: open ? `${Math.min(i, 14) * 22 + 120}ms` : "0ms" }}
                         className={`group/link flex min-h-11 items-center gap-3 rounded-inner px-3 -mx-3 text-[16px] font-medium text-ink no-underline transition-[opacity,transform] duration-[420ms] ease-glaze hover:bg-sunk aria-[current=page]:bg-sunk aria-[current=page]:text-maroon ${
-                          open ? "translate-x-0 opacity-100" : "translate-x-3 opacity-0 rtl:-translate-x-3"
+                          open ? "translate-x-0 opacity-100" : "-translate-x-3 opacity-0 rtl:translate-x-3"
                         }`}
                       >
                         <span
