@@ -1,0 +1,193 @@
+{
+  "product": "perforated-pipe",
+  "title": "Perforated Pipe",
+  "source": "https://sweillem.net/perforated-pipe/",
+  "captured": "2026-09-30",
+  "tables": [
+    {
+      "id": "perforated-pipes",
+      "title": "PERFORATED PIPES",
+      "strength": null,
+      "section": null,
+      "notes": [
+        "Transcribed on 2026-10-01 from the picture of the table (public/images/products/perforated-pipe-specs-table.jpg) and checked cell by cell. On the picture the six hole-count columns sit under a two-row heading \"System\" › \"MP\", \"LP\", \"TP\" › \"Z1\", \"Z2\"; here each label carries its full heading."
+      ],
+      "columns": [
+        {
+          "key": "dn",
+          "label": "DN"
+        },
+        {
+          "key": "joint",
+          "label": "System"
+        },
+        {
+          "key": "strengthClass",
+          "label": "Class"
+        },
+        {
+          "key": "crushingStrength",
+          "label": "FN (KN/M)"
+        },
+        {
+          "key": "d1",
+          "label": "d1 (mm)"
+        },
+        {
+          "key": "d1Dev",
+          "label": "max. dev. (mm)"
+        },
+        {
+          "key": "d3",
+          "label": "d3 (mm)"
+        },
+        {
+          "key": "d3Dev",
+          "label": "max. dev. (mm)"
+        },
+        {
+          "key": "holeDiameter",
+          "label": "a"
+        },
+        {
+          "key": "length",
+          "label": "L (m)"
+        },
+        {
+          "key": "mpZ1",
+          "label": "System MP Z1"
+        },
+        {
+          "key": "mpZ2",
+          "label": "System MP Z2"
+        },
+        {
+          "key": "lpZ1",
+          "label": "System LP Z1"
+        },
+        {
+          "key": "lpZ2",
+          "label": "System LP Z2"
+        },
+        {
+          "key": "tpZ1",
+          "label": "System TP Z1"
+        },
+        {
+          "key": "tpZ2",
+          "label": "System TP Z2"
+        }
+      ],
+      "rows": [
+        [
+          "200",
+          "C/F",
+          "160",
+          "32",
+          "200",
+          "± 5",
+          "242",
+          "± 5",
+          "12",
+          "2",
+          "3",
+          "22",
+          "7",
+          "22",
+          "8",
+          "22"
+        ],
+        [
+          "250",
+          "C/F",
+          "160",
+          "40",
+          "250",
+          "± 6",
+          "299",
+          "± 6",
+          "12",
+          "2",
+          "3",
+          "22",
+          "7",
+          "22",
+          "8",
+          "22"
+        ],
+        [
+          "300",
+          "C/F",
+          "160",
+          "48",
+          "300",
+          "± 7",
+          "355",
+          "± 7",
+          "12",
+          "2",
+          "3",
+          "22",
+          "7",
+          "22",
+          "8",
+          "22"
+        ],
+        [
+          "400",
+          "C",
+          "160",
+          "64",
+          "398",
+          "± 8",
+          "486",
+          "± 8",
+          "12",
+          "2",
+          "3",
+          "22",
+          "7",
+          "22",
+          "8",
+          "22"
+        ],
+        [
+          "500",
+          "C",
+          "120",
+          "60",
+          "496",
+          "± 9",
+          "581",
+          "± 9",
+          "12",
+          "2",
+          "3",
+          "22",
+          "7",
+          "22",
+          "8",
+          "22"
+        ],
+        [
+          "600",
+          "C",
+          "95",
+          "57",
+          "597",
+          "± 12",
+          "687",
+          "± 12",
+          "12",
+          "2",
+          "3",
+          "22",
+          "7",
+          "22",
+          "8",
+          "22"
+        ]
+      ]
+    }
+  ]
+}

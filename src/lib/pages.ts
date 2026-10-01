@@ -25,15 +25,6 @@ export const stubPages = {
     milestone: 5,
     coming: "A projects map with region filters and a photo gallery for each project. Client names, years and pipe sizes are added as SWEILLEM confirms them.",
   },
-  "roof-tiles": {
-    path: "/roof-tiles",
-    eyebrow: "New product line",
-    title: "Clay roof tiles",
-    lede: "SWEILLEM roofing tiles in terracotta, blue and black.",
-    description: "SWEILLEM clay roof tiles in terracotta, blue and black.",
-    milestone: 4,
-    coming: "A colour viewer for the three tile colours and an enquiry button. Sizes, weights and standards are added when SWEILLEM provides them.",
-  },
   downloads: {
     path: "/downloads",
     eyebrow: "Downloads",

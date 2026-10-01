@@ -1129,3 +1129,59 @@ html[data-intro="exit"] .hero-progress {
     animation: none;
   }
 }
+
+/* ---------- print: product pages become spec sheets ---------- */
+@page {
+  size: A4 landscape;
+  margin: 12mm;
+}
+@media print {
+  :root {
+    --paper: #fff;
+    --surface: #fff;
+    --sunk: #eee;
+    --ink: #000;
+    --muted: #333;
+    --line: #bbb;
+    --maroon: #7a0404;
+    color-scheme: light;
+  }
+  body {
+    font-size: 10pt;
+  }
+  .site-header,
+  body > footer,
+  main ~ footer,
+  .skip-link,
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: flex !important;
+  }
+  .wrap {
+    max-width: none;
+    padding-inline: 0;
+  }
+  section {
+    padding-block: 8pt !important;
+  }
+  .spec-scroll {
+    overflow: visible !important;
+    border: 0;
+  }
+  .spec-table table {
+    font-size: 8pt;
+  }
+  .spec-table th,
+  .spec-table td {
+    padding: 2pt 4pt !important;
+    position: static !important;
+  }
+  .spec-table tr {
+    break-inside: avoid;
+  }
+  .lede {
+    font-size: 11pt;
+  }
+}

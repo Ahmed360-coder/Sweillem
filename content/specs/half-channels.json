@@ -1,0 +1,101 @@
+{
+  "product": "half-channels",
+  "title": "Half Channels",
+  "source": "https://sweillem.net/half-channels/",
+  "captured": "2026-09-30",
+  "tables": [
+    {
+      "id": "half-channels-180deg",
+      "title": "HALF CHANNELS 180°",
+      "strength": null,
+      "section": null,
+      "notes": [
+        "Transcribed on 2026-10-01 from the picture of the table (public/images/products/half-channel-specs-table.jpg) and checked cell by cell."
+      ],
+      "columns": [
+        {
+          "key": "dn",
+          "label": "Dn (mm)"
+        },
+        {
+          "key": "strengthClass",
+          "label": "Class"
+        },
+        {
+          "key": "rMin",
+          "label": "R. min. (mm)"
+        },
+        {
+          "key": "length",
+          "label": "L (mm)"
+        },
+        {
+          "key": "hMin",
+          "label": "H. min. (mm)"
+        },
+        {
+          "key": "weight",
+          "label": "Weight (Kg)"
+        }
+      ],
+      "rows": [
+        [
+          "150",
+          "--",
+          "146",
+          "1000",
+          "65",
+          "11"
+        ],
+        [
+          "200",
+          "160/200",
+          "195",
+          "1000",
+          "90",
+          "19"
+        ],
+        [
+          "250",
+          "160",
+          "244",
+          "1000",
+          "115",
+          "24"
+        ],
+        [
+          "300",
+          "160",
+          "293",
+          "1000",
+          "140",
+          "33"
+        ],
+        [
+          "400",
+          "120",
+          "390",
+          "1000",
+          "190",
+          "52"
+        ],
+        [
+          "500",
+          "120",
+          "487",
+          "1000",
+          "240",
+          "83"
+        ],
+        [
+          "600",
+          "95",
+          "585",
+          "1000",
+          "290",
+          "105"
+        ]
+      ]
+    }
+  ]
+}

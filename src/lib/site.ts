@@ -73,6 +73,8 @@ export const siteMap: { title: string; items: NavItem[] }[] = [
     title: "Products",
     items: [
       { href: "/products", label: "All products" },
+      { href: "/products/explorer", label: "Product explorer" },
+      { href: "/products/compare", label: "Compare N and H class" },
       ...products.map((p) => ({ href: `/products/${p.slug}`, label: p.name })),
       { href: "/roof-tiles", label: "Roof tiles" },
     ],
@@ -117,5 +119,7 @@ export const staticRoutes = [
   "/certificates",
   "/joint-performance",
   "/quote",
+  "/products/explorer",
+  "/products/compare",
   ...products.map((p) => `/products/${p.slug}`),
 ];
