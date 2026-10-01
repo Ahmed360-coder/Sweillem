@@ -124,7 +124,7 @@ export const mapData: MapData = {
       place: "Germany",
       text: "SWEILLEM’s address in Germany, as listed on sweillem.net. Euro Sweillem, the European central stock, has its warehouses in Germany.",
       region: "europe",
-      side: "left",
+      side: "right",
       ...at("brueggen"),
     },
     {
@@ -133,7 +133,7 @@ export const mapData: MapData = {
       name: "Jeddah",
       short: "Jeddah",
       place: "Saudi Arabia",
-      text: "SWEILLEM’s address in Saudi Arabia, as listed on sweillem.net. Saudi Arabia was SWEILLEM’s first market outside Egypt.",
+      text: "SWEILLEM’s address in Saudi Arabia, as listed on sweillem.net. Saudi Arabia was SWEILLEM’s first successful market outside Egypt.",
       region: "middle-east",
       side: "left",
       ...at("jeddah"),

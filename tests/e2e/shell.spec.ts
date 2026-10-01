@@ -239,6 +239,43 @@ test.describe("projects map", () => {
     await expect(button).toBeFocused();
   });
 
+  test("a click picks the pin under it, even where pins crowd", async ({ page }) => {
+    await page.goto("/");
+    await page.locator("header").getByRole("button", { name: "Map", exact: true }).click();
+    const dialog = page.getByRole("dialog", { name: "Projects and distribution" });
+    const map = page.locator(".pmap");
+    await expect(map).toHaveAttribute("data-ready", "");
+    for (const [region, id, heading] of [
+      ["Middle East", "haram-central-area-makkah", "Haram central area"],
+      ["Middle East", "jeddah", "Jeddah"],
+      ["World", "new-alamein-city", "New Alamein City"],
+      ["World", "cairo", "Cairo"],
+    ] as const) {
+      await dialog.getByRole("group", { name: "Zoom to" }).getByRole("button", { name: region }).click();
+      await page.waitForTimeout(1100);
+      const box = await map.locator(`[data-pick="place:${id}"] .pmap-mark`).boundingBox();
+      await page.mouse.click(box!.x + box!.width / 2, box!.y + box!.height / 2);
+      await expect(dialog.getByRole("heading", { name: heading, exact: true })).toBeVisible();
+    }
+  });
+
+  test("keeps keyboard focus inside while open", async ({ page, isMobile }) => {
+    test.skip(isMobile, "keyboard");
+    await page.goto("/");
+    await page.locator("header").getByRole("button", { name: "Map", exact: true }).click();
+    await expect(page.getByRole("button", { name: "Close map" })).toBeFocused();
+    // Back from the first control, focus leaves for the browser itself (as with a native modal),
+    // never for the skip link or the page behind.
+    for (const key of ["Shift+Tab", "Shift+Tab", "Tab", "Tab"]) {
+      await page.keyboard.press(key);
+      const where = await page.evaluate(() => {
+        const a = document.activeElement;
+        return a === document.body || !a ? "outside the page" : a.closest("#map-panel") ? "panel" : a.outerHTML.slice(0, 80);
+      });
+      expect(["panel", "outside the page"]).toContain(where);
+    }
+  });
+
   test("opens from the side menu", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "Menu", exact: true }).click();

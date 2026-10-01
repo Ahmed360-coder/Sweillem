@@ -955,7 +955,6 @@ html[data-intro="exit"] .hero-progress {
 .pmap[data-layer="distribution"] .pmap-pin[data-layer="projects"],
 .pmap:not([data-ready]) .pmap-pin {
   opacity: 0;
-  pointer-events: none;
 }
 
 /* Pins sit over the map in page pixels, so they and their labels keep their
@@ -974,13 +973,16 @@ html[data-intro="exit"] .hero-progress {
     calc((var(--pan-x) + var(--x) * var(--zoom)) * 100cqw / 1000),
     calc((var(--pan-y) + var(--y) * var(--zoom)) * 100cqh / 620)
   );
-  cursor: pointer;
+  /* The map picks the pin nearest the pointer (MapPanel), so pins never block each other. */
+  pointer-events: none;
   transition: opacity 0.3s;
   -webkit-tap-highlight-color: transparent;
 }
-.pmap-pin:hover,
 .pmap-pin[data-on] {
   z-index: 2;
+}
+.pmap-pin[data-hover] {
+  z-index: 3;
 }
 .pmap-pin::before {
   content: "";
@@ -1063,7 +1065,7 @@ html[data-intro="exit"] .hero-progress {
   right: calc(50% + 13px);
   transform: translate(4px, -50%);
 }
-.pmap-pin:hover .pmap-label,
+.pmap-pin[data-hover] .pmap-label,
 .pmap-pin[data-on] .pmap-label {
   opacity: 1;
   transform: translate(0, -50%);

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef } from "react";
+import { inertOutside } from "@/lib/inert";
 import { siteMap } from "@/lib/site";
 import { MapIcon } from "./icons";
 
@@ -28,9 +29,7 @@ export function SiteMenu({
     if (!open) return;
     const panel = panelRef.current;
     (panel?.querySelector<HTMLElement>('[aria-current="page"]') ?? panel?.querySelector<HTMLElement>("a"))?.focus();
-    const behind = Array.from(document.querySelectorAll<HTMLElement>("header.site-header, #main, body footer"));
-    behind.forEach((el) => (el.inert = true));
-    return () => behind.forEach((el) => (el.inert = false));
+    return inertOutside(panel);
   }, [open]);
 
   let index = 0;

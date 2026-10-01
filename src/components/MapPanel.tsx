@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type MouseEvent } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type MouseEvent, type PointerEvent } from "react";
+import { inertOutside } from "@/lib/inert";
 import { loadMapGeo, type MapGeo } from "@/lib/map-geo";
 import pins from "@/lib/map-places.json";
 import type { MapData, MapLayer, MapMarket, MapPlace, MapRegion } from "@/lib/projects-map";
@@ -32,8 +33,9 @@ const subscribeReducedMotion = (onChange: () => void) => {
 };
 const getReducedMotion = () => window.matchMedia(reducedQuery).matches;
 
-/** Export market labels near the map's right edge go on the left of the pin. */
-const marketSide = (x: number) => (x > 850 ? "left" : "right");
+/** How near (in page pixels) a click or tap must land to pick a pin; hovering is stricter. */
+const TAP_REACH = 26;
+const HOVER_REACH = 20;
 
 /**
  * The projects map, opened from the Map button in the header: SWEILLEM's
@@ -43,40 +45,56 @@ const marketSide = (x: number) => (x > 850 ? "left" : "right");
  * shapes load the first time it opens. Closed, it is inert.
  */
 export function MapPanel({ open, data, onClose }: { open: boolean; data: MapData; onClose: () => void }) {
+  const rootRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const asideRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const pinsRef = useRef<HTMLDivElement>(null);
   const reduced = useSyncExternalStore(subscribeReducedMotion, getReducedMotion, () => false);
   const [region, setRegion] = useState<MapRegion>("world");
   const [layer, setLayer] = useState<"all" | MapLayer>("all");
   const [picked, setPicked] = useState<Pick | null>(null);
   const [geo, setGeo] = useState<MapGeo | null>(null);
+  const [failed, setFailed] = useState(false);
+  const [hovered, setHovered] = useState<Pick | null>(null);
+  const [mapWidth, setMapWidth] = useState(0);
 
   // Nothing inside is built until the map is first opened, so other pages
   // do not load its photos (adjusting state during render, not in an effect).
   const [seen, setSeen] = useState(open);
   if (open && !seen) setSeen(true);
 
+  // The shapes load on open (the Map button warms them on hover); a failed load can be retried.
   useEffect(() => {
-    if (!seen || geo) return;
+    if (!open || geo || failed) return;
     let live = true;
-    loadMapGeo()
-      .then((g) => live && setGeo(g))
-      .catch(() => {});
+    loadMapGeo().then(
+      (g) => live && setGeo(g),
+      () => live && setFailed(true),
+    );
     return () => {
       live = false;
     };
-  }, [seen, geo]);
+  }, [open, geo, failed]);
 
-  // While open, the page behind is inert so focus and screen readers stay in the map.
+  // While open, everything else is inert so focus and screen readers stay in the map.
   useEffect(() => {
     if (!open) return;
     closeRef.current?.focus();
-    const behind = Array.from(document.querySelectorAll<HTMLElement>("header.site-header, #main, body footer"));
-    behind.forEach((el) => (el.inert = true));
-    return () => behind.forEach((el) => (el.inert = false));
+    return inertOutside(rootRef.current);
   }, [open]);
 
+  // The map's width in page pixels, to keep pin labels inside it.
+  useEffect(() => {
+    const el = mapRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => setMapWidth(entry.contentRect.width));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [seen]);
+
+  const view = pins.views[region];
   const places = data.places;
   const projects = places.filter((p) => p.layer === "projects");
   const addresses = places.filter((p) => p.layer === "distribution");
@@ -92,11 +110,19 @@ export function MapPanel({ open, data, onClose }: { open: boolean; data: MapData
   };
   const pickPlace = (p: MapPlace) => pick(`place:${p.id}`, p.region);
   const pickMarket = (m: MapMarket) => pick(`market:${m.id}`, m.region);
-  // Picked from a list further down: bring the map (phones) and the card above the lists back into view.
-  const pickFromList = (key: Pick, itemRegion: Exclude<MapRegion, "world">) => {
+  // A new pick made by pointer from a list further down brings the map (phones) and the card
+  // above the lists (wide screens) into view. Keyboard picks stay put, so the focus ring stays in sight.
+  const pickFromList = (e: MouseEvent, key: Pick, itemRegion: Exclude<MapRegion, "world">) => {
+    const isNew = key !== picked;
     pick(key, itemRegion);
+    if (!isNew || e.detail === 0) return;
     const behavior = reduced ? "auto" : "smooth";
-    bodyRef.current?.scrollTo({ top: 0, behavior });
+    const body = bodyRef.current;
+    const map = mapRef.current;
+    if (body && map && body.scrollHeight > body.clientHeight) {
+      const top = map.getBoundingClientRect().top - body.getBoundingClientRect().top + body.scrollTop - 12;
+      if (top < body.scrollTop) body.scrollTo({ top, behavior });
+    }
     asideRef.current?.scrollTo({ top: 0, behavior });
   };
   const regionOfMarket = new Map(data.markets.map((m) => [m.id, m.region]));
@@ -112,22 +138,57 @@ export function MapPanel({ open, data, onClose }: { open: boolean; data: MapData
     if (l !== "all" && itemLayer && itemLayer !== l) setPicked(null);
   };
 
-  // Pins on the map are for pointing; the lists beside it do the same for keyboards and screen readers.
+  // Pins on the map are for pointing; the lists beside it do the same for keyboards and screen
+  // readers. Pins sit close together (Makkah and Jeddah are 70 km apart), so a click picks the
+  // pin nearest to it rather than whichever pin's box is on top, and a click on an export
+  // country away from any pin picks that country.
+  const pinAt = (x: number, y: number, reach: number): Pick | null => {
+    if (!geo || !pinsRef.current) return null;
+    let best: Pick | null = null;
+    let bestD = reach;
+    pinsRef.current.querySelectorAll<HTMLElement>("[data-pick]").forEach((pin) => {
+      if (layer !== "all" && pin.dataset.layer !== layer) return;
+      const r = pin.getBoundingClientRect();
+      const d = Math.hypot(r.left + r.width / 2 - x, r.top + r.height / 2 - y);
+      // Places come after markets, so on a tie (the site in Germany) the place wins.
+      if (d <= bestD) {
+        bestD = d;
+        best = pin.dataset.pick as Pick;
+      }
+    });
+    if (best || !shows("distribution")) return best;
+    const country = document.elementsFromPoint(x, y).find((el) => el.classList.contains("pmap-country")) as SVGElement | undefined;
+    return country?.dataset.market ? `market:${country.dataset.market}` : null;
+  };
   const onMapClick = (e: MouseEvent<HTMLDivElement>) => {
-    const key = (e.target as Element).closest<HTMLElement>("[data-pick]")?.dataset.pick as Pick | undefined;
-    if (!key) return;
+    const key = pinAt(e.clientX, e.clientY, TAP_REACH);
     const place = places.find((p) => `place:${p.id}` === key);
     if (place) return pickPlace(place);
     const market = data.markets.find((m) => `market:${m.id}` === key);
     if (market) pickMarket(market);
   };
+  const onMapPointerMove = (e: PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== "mouse") return;
+    const key = pinAt(e.clientX, e.clientY, HOVER_REACH);
+    if (key !== hovered) setHovered(key);
+  };
 
-  const view = pins.views[region];
+  /** Which side of its pin a label goes, so it stays inside the map at the current zoom. */
+  const labelSide = (x: number, name: string, side: "left" | "right") => {
+    if (!mapWidth) return side;
+    const px = ((view.tx + x * view.k) * mapWidth) / 1000;
+    const width = name.length * 7.6 + 34;
+    if (side === "left" && px - width < 4) return "right";
+    if (side === "right" && px + width > mapWidth - 4) return "left";
+    return side;
+  };
+
   const on = (key: Pick) => (picked === key ? "" : undefined);
   const ready = open && geo !== null;
 
   return (
     <div
+      ref={rootRef}
       id="map-panel"
       inert={!open}
       data-open={open ? "" : undefined}
@@ -168,99 +229,128 @@ export function MapPanel({ open, data, onClose }: { open: boolean; data: MapData
             ref={bodyRef}
             className="grid min-h-0 flex-1 overflow-y-auto overscroll-contain lg:grid-cols-[minmax(0,1fr)_minmax(320px,380px)] lg:overflow-hidden"
           >
-            <div className="grid content-start gap-3 p-4 md:p-5 lg:min-h-0 lg:overflow-y-auto">
+            <div className="grid auto-rows-max content-start gap-3 p-4 md:p-5 lg:min-h-0 lg:overflow-y-auto">
               <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
                 <Choice label="Zoom to" items={regions} value={region} onChange={chooseRegion} />
                 <Choice label="Show" items={layers} value={layer} onChange={chooseLayer} />
               </div>
 
               <div
-                role="img"
-                aria-label={`Map of SWEILLEM’s projects in Saudi Arabia, Egypt and Germany, its addresses in Cairo, Brüggen and Jeddah, and routes from Cairo to the ${data.markets.length} countries it names.`}
+                ref={mapRef}
                 data-view={region}
                 data-layer={layer}
                 data-ready={ready ? "" : undefined}
                 data-focus={picked ? "" : undefined}
                 style={{ "--zoom": view.k, "--pan-x": view.tx, "--pan-y": view.ty } as CSSProperties}
-                className="pmap relative aspect-[1000/620] w-full overflow-hidden rounded-inner bg-[#0b1220]"
+                className="pmap relative mx-auto aspect-[1000/620] w-full max-w-[calc((100dvh_-_230px)_*_1.6129)] overflow-hidden rounded-inner bg-[#0b1220]"
               >
-                <svg viewBox="0 0 1000 620" className="absolute inset-0 size-full" aria-hidden="true">
-                  {geo && (
-                    <g className="pmap-zoom">
-                      <path d={geo.land} className="pmap-land" />
-                      <path d={geo.borders} className="pmap-borders" vectorEffect="non-scaling-stroke" />
-                      <path d={geo.egypt} className="pmap-egypt" />
-                      {geo.markets.map((m, i) => (
-                        <path
-                          key={m.id}
-                          d={m.d}
-                          data-on={on(`market:${m.id}`)}
-                          className="pmap-country"
-                          style={{ "--i": i } as CSSProperties}
-                        />
-                      ))}
-                      {geo.markets.map((m, i) => (
-                        <path
-                          key={m.id}
-                          id={`pmap-arc-${m.id}`}
-                          d={m.arc}
-                          data-on={on(`market:${m.id}`)}
-                          vectorEffect="non-scaling-stroke"
-                          className="pmap-arc"
-                          style={{ "--i": i } as CSSProperties}
-                        />
-                      ))}
-                      {open && !reduced && (
-                        <g className="pmap-ships">
-                          {geo.markets.map((m, i) => (
-                            <circle key={m.id} r={2.4} className="pmap-ship">
-                              <animateMotion dur={`${3 + (i % 4) * 0.4}s`} begin={`${(i * 0.37).toFixed(2)}s`} repeatCount="indefinite">
-                                <mpath href={`#pmap-arc-${m.id}`} />
-                              </animateMotion>
-                            </circle>
-                          ))}
-                        </g>
-                      )}
-                    </g>
-                  )}
-                </svg>
+                <div
+                  role="img"
+                  aria-label={`Map of SWEILLEM’s projects in Saudi Arabia, Egypt and Germany, its addresses in Cairo, Brüggen and Jeddah, and routes from Cairo to the ${data.markets.length} countries it names.`}
+                  className="absolute inset-0"
+                >
+                  <svg viewBox="0 0 1000 620" className="absolute inset-0 size-full" aria-hidden="true">
+                    {geo && (
+                      <g className="pmap-zoom">
+                        <path d={geo.land} className="pmap-land" />
+                        <path d={geo.borders} className="pmap-borders" vectorEffect="non-scaling-stroke" />
+                        <path d={geo.egypt} className="pmap-egypt" />
+                        {geo.markets.map((m, i) => (
+                          <path
+                            key={m.id}
+                            d={m.d}
+                            data-market={m.id}
+                            data-on={on(`market:${m.id}`)}
+                            className="pmap-country"
+                            style={{ "--i": i } as CSSProperties}
+                          />
+                        ))}
+                        {geo.markets.map((m, i) => (
+                          <path
+                            key={m.id}
+                            id={`pmap-arc-${m.id}`}
+                            d={m.arc}
+                            data-on={on(`market:${m.id}`)}
+                            vectorEffect="non-scaling-stroke"
+                            className="pmap-arc"
+                            style={{ "--i": i } as CSSProperties}
+                          />
+                        ))}
+                        {open && !reduced && (
+                          <g className="pmap-ships">
+                            {geo.markets.map((m, i) => (
+                              <circle key={m.id} r={2.4} className="pmap-ship">
+                                <animateMotion dur={`${3 + (i % 4) * 0.4}s`} begin={`${(i * 0.37).toFixed(2)}s`} repeatCount="indefinite">
+                                  <mpath href={`#pmap-arc-${m.id}`} />
+                                </animateMotion>
+                              </circle>
+                            ))}
+                          </g>
+                        )}
+                      </g>
+                    )}
+                  </svg>
 
-                <div className="absolute inset-0" onClick={onMapClick}>
-                  {geo?.markets.map((m, i) => (
-                    <div
-                      key={m.id}
-                      data-pick={`market:${m.id}`}
-                      data-layer="distribution"
-                      data-region={regionOfMarket.get(m.id)}
-                      data-on={on(`market:${m.id}`)}
-                      className="pmap-pin pmap-market"
-                      style={{ "--x": m.x, "--y": m.y, "--i": i } as CSSProperties}
-                    >
-                      <span className="pmap-mark" />
-                      <span className="pmap-label" data-side={marketSide(m.x)}>
-                        {m.name}
-                      </span>
-                    </div>
-                  ))}
-                  {places.map((p, i) => (
-                    <div
-                      key={p.id}
-                      data-pick={`place:${p.id}`}
-                      data-layer={p.layer}
-                      data-region={p.region}
-                      data-kind={p.origin ? "origin" : p.layer === "projects" ? "project" : "address"}
-                      data-on={on(`place:${p.id}`)}
-                      className="pmap-pin pmap-place"
-                      style={{ "--x": p.x, "--y": p.y, "--i": i + 4 } as CSSProperties}
-                    >
-                      <span className="pmap-mark" />
-                      <span className="pmap-label" data-side={p.side}>
-                        {p.short}
-                      </span>
-                    </div>
-                  ))}
+                  <div
+                    ref={pinsRef}
+                    className="absolute inset-0 data-hover:cursor-pointer"
+                    data-hover={hovered ? "" : undefined}
+                    onClick={onMapClick}
+                    onPointerMove={onMapPointerMove}
+                    onPointerLeave={() => setHovered(null)}
+                  >
+                    {geo?.markets.map((m, i) => (
+                      <div
+                        key={m.id}
+                        data-pick={`market:${m.id}`}
+                        data-layer="distribution"
+                        data-region={regionOfMarket.get(m.id)}
+                        data-on={on(`market:${m.id}`)}
+                        data-hover={hovered === `market:${m.id}` ? "" : undefined}
+                        className="pmap-pin pmap-market"
+                        style={{ "--x": m.x, "--y": m.y, "--i": i } as CSSProperties}
+                      >
+                        <span className="pmap-mark" />
+                        <span className="pmap-label" data-side={labelSide(m.x, m.name, "right")}>
+                          {m.name}
+                        </span>
+                      </div>
+                    ))}
+                    {places.map((p, i) => (
+                      <div
+                        key={p.id}
+                        data-pick={`place:${p.id}`}
+                        data-layer={p.layer}
+                        data-region={p.region}
+                        data-kind={p.origin ? "origin" : p.layer === "projects" ? "project" : "address"}
+                        data-on={on(`place:${p.id}`)}
+                        data-hover={hovered === `place:${p.id}` ? "" : undefined}
+                        className="pmap-pin pmap-place"
+                        style={{ "--x": p.x, "--y": p.y, "--i": i + 4 } as CSSProperties}
+                      >
+                        <span className="pmap-mark" />
+                        <span className="pmap-label" data-side={labelSide(p.x, p.short, p.side)}>
+                          {p.short}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                {!geo && <p className="absolute inset-0 grid place-items-center text-[14px] text-[#c9d2e3]">Loading the map…</p>}
+                {!geo &&
+                  (failed ? (
+                    <div className="absolute inset-0 grid place-content-center justify-items-center gap-3 p-4 text-center text-[14px] text-[#c9d2e3]">
+                      <p>The map could not load.</p>
+                      <button
+                        type="button"
+                        onClick={() => setFailed(false)}
+                        className="min-h-11 cursor-pointer rounded-full bg-white px-5 text-[14px] font-semibold text-[#1c1818] transition-transform duration-100 active:translate-y-px"
+                      >
+                        Try again
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="absolute inset-0 grid place-items-center text-[14px] text-[#c9d2e3]">Loading the map…</p>
+                  ))}
               </div>
 
               <ul aria-label="Map key" className="flex flex-wrap gap-x-5 gap-y-1.5 text-[13px] text-muted">
@@ -311,7 +401,11 @@ export function MapPanel({ open, data, onClose }: { open: boolean; data: MapData
                   <ul className="grid gap-2">
                     {projects.map((p) => (
                       <li key={p.id}>
-                        <PlaceButton place={p} pressed={picked === `place:${p.id}`} onPick={() => pickFromList(`place:${p.id}`, p.region)} />
+                        <PlaceButton
+                          place={p}
+                          pressed={picked === `place:${p.id}`}
+                          onPick={(e) => pickFromList(e, `place:${p.id}`, p.region)}
+                        />
                       </li>
                     ))}
                   </ul>
@@ -326,7 +420,11 @@ export function MapPanel({ open, data, onClose }: { open: boolean; data: MapData
                   <ul className="grid gap-2">
                     {addresses.map((p) => (
                       <li key={p.id}>
-                        <PlaceButton place={p} pressed={picked === `place:${p.id}`} onPick={() => pickFromList(`place:${p.id}`, p.region)} />
+                        <PlaceButton
+                          place={p}
+                          pressed={picked === `place:${p.id}`}
+                          onPick={(e) => pickFromList(e, `place:${p.id}`, p.region)}
+                        />
                       </li>
                     ))}
                   </ul>
@@ -341,7 +439,7 @@ export function MapPanel({ open, data, onClose }: { open: boolean; data: MapData
                               <button
                                 type="button"
                                 aria-pressed={picked === `market:${m.id}`}
-                                onClick={() => pickFromList(`market:${m.id}`, m.region)}
+                                onClick={(e) => pickFromList(e, `market:${m.id}`, m.region)}
                                 className="min-h-11 cursor-pointer rounded-full border border-line bg-surface px-3.5 text-[14px] transition-[background-color,transform] duration-100 hover:bg-sunk active:translate-y-px aria-pressed:border-maroon aria-pressed:bg-maroon aria-pressed:text-on-maroon"
                               >
                                 {m.name}
@@ -407,7 +505,7 @@ function Choice<T extends string>({
   );
 }
 
-function PlaceButton({ place, pressed, onPick }: { place: MapPlace; pressed: boolean; onPick: () => void }) {
+function PlaceButton({ place, pressed, onPick }: { place: MapPlace; pressed: boolean; onPick: (e: MouseEvent) => void }) {
   return (
     <button
       type="button"
