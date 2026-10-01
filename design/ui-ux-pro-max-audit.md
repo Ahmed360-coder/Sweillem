@@ -1,6 +1,6 @@
 # UI UX Pro Max pass on the site and the prototype
 
-Ahmed asked for the UI UX Pro Max skill on 1 Oct 2026. The skill is [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill), v2.13.0. I used the rule set in its `ui-ux-pro-max` skill: 10 categories, checked in the skill's priority order. Its installer and search script did not run here: the session's safety check blocked running downloaded code, so the rules were read straight from the skill's files.
+Ahmed asked for the UI UX Pro Max skill on 1 Oct 2026. The skill is [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill), v2.13.0. I used the rule set in its `ui-ux-pro-max` skill: 10 categories, checked in the skill's priority order. At first the installer was blocked, so the checks below used the rules read straight from the skill's files. After Ahmed asked for it directly, it was installed with `npx ui-ux-pro-max-cli init --ai claude` and its own tools were run (see the last section).
 
 **What was checked:**
 
@@ -41,3 +41,26 @@ The prototype shows the same patterns, and the build has already fixed most of t
 - **Small text:** nothing under 12 px, and source notes capped at 75 characters per line.
 - **Dark mode:** every page passes axe in dark mode too, not only light.
 - **Navigation:** every page lights up a navigation item.
+
+## The skill's own tools (installed 1 Oct 2026)
+
+`--design-system` was run for "industrial manufacturer B2B construction infrastructure trust", with dials variance 6, motion 7 and density 4. Targeted searches were also run on product, colour, type, landing, UX and the Next.js stack.
+
+**Agrees with what we have:**
+
+- **Pattern:** a hero-centric layout with one primary call to action, and a static hero under reduced motion. The site's hero has one primary button and one ghost button.
+- **Style:** minimal.
+- **Key effects:** "3D model viewer + timeline animations". The prototype has the 3D pipe viewer, and the site has the heritage track and the Process scroll journey.
+- **Next.js:** fonts load through `next/font`, and wide tables sit in a scroll region on phones. The site already does both.
+
+**Not adopted:**
+
+- **Palette:** the tool suggests generic construction colours (slate `#64748B` with safety orange `#EA580C`). SWEILLEM's maroon comes from its logo, so the brand palette stays.
+- **Fonts:** the tool suggests Inter headings with Playfair Display body. That pairing is matched to "editorial, luxury" by its own notes, which doesn't suit engineers reading spec sheets. Jost and IBM Plex stay.
+- **Persisted file:** its `design-system/MASTER.md` file was not written into the repo, because it would hold that generic palette.
+
+**Added for the quote and contact forms (a later milestone):**
+
+- Quantity and size fields use `inputmode="numeric"`.
+- Every field has a visible label, with errors shown under the field.
+- Sending shows a loading state, then a success or error message.
