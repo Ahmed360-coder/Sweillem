@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { staticRoutes } from "../../src/lib/site";
 import { skipIntro } from "./helpers";
 
 test.describe("header", () => {
@@ -40,25 +41,38 @@ test.describe("header", () => {
     expect(Math.min(...heights)).toBeGreaterThanOrEqual(44);
   });
 
-  test("mobile menu opens, traps nothing, closes on Escape and after navigating", async ({ page, isMobile }) => {
-    test.skip(!isMobile, "mobile navigation");
+  test("side menu opens, closes on Escape and after navigating", async ({ page }) => {
     await page.goto("/");
-    const burger = page.getByRole("button", { name: "Menu" });
-    const menu = page.locator("#mobile-menu");
+    const burger = page.getByRole("button", { name: "Menu", exact: true });
+    const menu = page.locator("#site-menu");
     await expect(burger).toHaveAttribute("aria-expanded", "false");
     await expect(menu).toHaveAttribute("inert", "");
 
     await burger.click();
     await expect(burger).toHaveAttribute("aria-expanded", "true");
     await expect(menu).not.toHaveAttribute("inert");
+    await expect(page.locator("#main")).toHaveAttribute("inert", "");
     await page.keyboard.press("Escape");
     await expect(burger).toHaveAttribute("aria-expanded", "false");
     await expect(burger).toBeFocused();
 
     await burger.click();
-    await menu.getByRole("link", { name: "Projects" }).click();
-    await expect(page).toHaveURL(/\/projects$/);
+    await page.getByRole("button", { name: "Close menu" }).click();
     await expect(burger).toHaveAttribute("aria-expanded", "false");
+
+    await burger.click();
+    await menu.getByRole("link", { name: "Certificates" }).click();
+    await expect(page).toHaveURL(/\/certificates$/);
+    await expect(burger).toHaveAttribute("aria-expanded", "false");
+    await burger.click();
+    await expect(menu.getByRole("link", { name: "Certificates" })).toHaveAttribute("aria-current", "page");
+  });
+
+  test("side menu links to every page", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Menu", exact: true }).click();
+    const hrefs = await page.locator("#site-menu a").evaluateAll((els) => els.map((e) => e.getAttribute("href")));
+    expect([...hrefs].sort()).toEqual([...staticRoutes].sort());
   });
 
   test("quote button shows the list count", async ({ page }) => {
