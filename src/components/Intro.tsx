@@ -1,29 +1,38 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { jointSeats, pipesFrame } from "@/lib/intro-pipes";
+import { useEffect, useRef, type CSSProperties } from "react";
 import { Logo } from "./Logo";
 
 /**
- * M00 intro: a 3-second brand moment on the first visit per session
- * (design/intro-spec.md). The overlay is server-rendered with CSS keyframes, so
- * it starts before hydration and ends on time even if hydration is slow. JS adds
- * the pipe assembly, embers, pointer tilt, the year counter and the skip handlers.
+ * M00 intro: a 4-second title card on the first visit per session
+ * (design/intro-spec.md). It says who SWEILLEM is and what they make over three
+ * real project photos (Germany, Makkah, New Alamein), then lifts away like a
+ * curtain to reveal the home page.
+ *
+ * Everything moves with CSS keyframes in intro.css, so it starts before hydration
+ * and ends on time even if hydration is slow. JS only adds the skip handlers.
  *
  * Whether it shows at all is decided by the inline script in the root layout
  * (introGateScript), which sets <html data-intro="play"> only when the landing
  * page is "/" and the intro has not played in this session.
  */
-const HOLD_MS = 3000;
-const HOLD_REDUCED_MS = 900;
-const EXIT_MS = 920;
+const HOLD_MS = 4000;
+const HOLD_REDUCED_MS = 1800;
+const EXIT_MS = 950;
 const EXIT_REDUCED_MS = 220;
+
+// Places follow content/company.ts and the home hero captions.
+const places = ["Germany · Euro Sweillem", "Makkah, Saudi Arabia", "New Alamein City, Egypt"];
+
+// Facts SWEILLEM publishes on the home page and About Us.
+const facts = [
+  { value: "1935", label: "Founded in Cairo" },
+  { value: "1200", unit: "°C", label: "Firing temperature" },
+  { value: "EN 295", label: "European standard" },
+];
 
 export function Intro() {
   const rootRef = useRef<HTMLDivElement>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
-  const yearRef = useRef<HTMLElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -32,10 +41,9 @@ export function Intro() {
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const timers: number[] = [];
-    let raf = 0;
     let done = false;
 
-    // Hand off to the page: "exit" runs the dissolve in intro.css, "done" removes the overlay.
+    // Hand off to the page: "exit" runs the curtain lift in intro.css, "done" removes the overlay.
     // The gate script schedules the same steps, so the intro ends on time even before hydration.
     const finish = () => {
       if (done) return;
@@ -53,132 +61,80 @@ export function Intro() {
     };
     root.addEventListener("click", finish);
     document.addEventListener("keydown", onKey);
-
-    if (reduced) {
-      timers.push(window.setTimeout(finish, HOLD_REDUCED_MS));
-    } else {
-      root.dataset.live = "";
-      const svg = svgRef.current;
-      const year = yearRef.current;
-      const t0 = performance.now();
-      const loop = (now: number) => {
-        if (done) return;
-        const t = (now - t0) / 1000;
-        if (svg) {
-          const k = jointSeats.reduce((acc, seat) => acc + Math.max(0, 1 - Math.abs(t - (seat + 0.04)) / 0.12), 0);
-          const shake = k ? `translate(${((Math.random() - 0.5) * 10 * k).toFixed(1)} ${((Math.random() - 0.5) * 6 * k).toFixed(1)})` : "";
-          svg.innerHTML = `<g transform="${shake}">${pipesFrame(t)}</g>`;
-          if (t > 1.1 && !svg.dataset.settled) svg.dataset.settled = "";
-        }
-        if (year) {
-          const p = Math.min(1, Math.max(0, (t - 1.85) / 0.75));
-          year.textContent = String(1900 + Math.round(35 * (1 - Math.pow(1 - p, 3))));
-        }
-        if (t < 3) raf = requestAnimationFrame(loop);
-      };
-      raf = requestAnimationFrame(loop);
-      timers.push(window.setTimeout(finish, HOLD_MS));
-    }
-
-    // Pointer tilt: the logo turns toward the pointer; photo and glow drift against it.
-    const onMove = (e: PointerEvent) => {
-      if (reduced) return;
-      const r = root.getBoundingClientRect();
-      root.style.setProperty("--px", (((e.clientX - r.left) / r.width - 0.5) * 2).toFixed(3));
-      root.style.setProperty("--py", (((e.clientY - r.top) / r.height - 0.5) * 2).toFixed(3));
-    };
-    root.addEventListener("pointermove", onMove);
-
-    const stopEmbers = reduced || !canvasRef.current ? () => {} : embers(canvasRef.current, root, () => done);
+    timers.push(window.setTimeout(finish, reduced ? HOLD_REDUCED_MS : HOLD_MS));
 
     return () => {
-      cancelAnimationFrame(raf);
       timers.forEach(clearTimeout);
-      stopEmbers();
       root.removeEventListener("click", finish);
-      root.removeEventListener("pointermove", onMove);
       document.removeEventListener("keydown", onKey);
     };
   }, []);
 
   return (
     <div ref={rootRef} id="intro" className="intro">
-      <div className="intro-art" aria-hidden="true">
-        {/* Photo is a CSS background so it only downloads when the intro actually plays. */}
-        <div className="intro-bg">
-          <div className="intro-photo" />
-        </div>
-        <div className="intro-shade" />
-        <div className="intro-glow" />
-        <canvas ref={canvasRef} className="intro-embers" />
-        <div className="intro-center">
-          <svg className="intro-hex" viewBox="0 0 100 115">
-            <path pathLength={100} d="M50 2l46 26.5v58L50 113 4 86.5v-58z" />
-            <path className="h2" pathLength={100} d="M50 2l46 26.5v58L50 113 4 86.5v-58z" />
-          </svg>
+      {/* Photos are CSS backgrounds so they only download when the intro actually plays. */}
+      <div className="intro-photos" aria-hidden="true">
+        {places.map((_, i) => (
+          <div key={i} className="intro-photo" style={{ "--n": i } as CSSProperties} />
+        ))}
+      </div>
+      <div className="intro-shade" aria-hidden="true" />
+
+      <div className="intro-card" aria-hidden="true">
+        <div className="intro-top">
           <div className="intro-logo">
             <Logo title={null} />
           </div>
-          <p className="intro-tag">
-            <span>Since</span>
-            <b ref={yearRef}>1935</b>
-            <span>·</span>
-            <span>Cairo</span>
+        </div>
+
+        <div className="intro-copy">
+          <p className="intro-eyebrow">
+            <span className="intro-hex" />
+            Cairo · since 1935
           </p>
-          <div className="intro-slot">
-            <svg
-              ref={svgRef}
-              className="intro-pipes"
-              viewBox="0 0 1200 160"
-              dangerouslySetInnerHTML={{ __html: pipesFrame(9) }}
-            />
-          </div>
+          <p className="intro-title">
+            <span className="intro-line">
+              <span>Vitrified clay pipes</span>
+            </span>
+            <span className="intro-line">
+              <span>
+                built for <em>100+ years.</em>
+              </span>
+            </span>
+          </p>
+          <p className="intro-lede">
+            Glazed sewer and drainage pipes made from Aswan clay, laid from Egypt to Saudi Arabia and Germany.
+          </p>
+        </div>
+
+        <div className="intro-foot">
+          <dl className="intro-facts">
+            {facts.map((f, i) => (
+              <div key={f.label} style={{ "--n": i } as CSSProperties}>
+                <dt>{f.label}</dt>
+                <dd>
+                  {f.value}
+                  {f.unit && <small>{f.unit}</small>}
+                </dd>
+              </div>
+            ))}
+          </dl>
+          <ul className="intro-places">
+            {places.map((p, i) => (
+              <li key={p} style={{ "--n": i } as CSSProperties}>
+                {p}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
+
+      <div className="intro-progress" aria-hidden="true" />
       <button type="button" className="intro-skip" tabIndex={-1} aria-hidden="true">
-        Skip intro
+        Skip
       </button>
     </div>
   );
-}
-
-/** Kiln embers rising on a small canvas; they drift with the pointer. */
-function embers(cv: HTMLCanvasElement, root: HTMLElement, stopped: () => boolean) {
-  const ctx = cv.getContext("2d");
-  if (!ctx) return () => {};
-  const r = cv.getBoundingClientRect();
-  const dpr = Math.min(2, window.devicePixelRatio || 1);
-  cv.width = r.width * dpr;
-  cv.height = r.height * dpr;
-  ctx.scale(dpr, dpr);
-  const P = Array.from({ length: 46 }, () => ({
-    x: Math.random() * r.width,
-    y: r.height + Math.random() * r.height * 0.6,
-    v: 0.4 + Math.random() * 1.3,
-    s: 0.6 + Math.random() * 1.8,
-    a: 0.3 + Math.random() * 0.6,
-  }));
-  let raf = 0;
-  const loop = () => {
-    if (stopped()) return;
-    ctx.clearRect(0, 0, r.width, r.height);
-    const px = Number(root.style.getPropertyValue("--px")) || 0;
-    for (const p of P) {
-      p.y -= p.v;
-      p.x += px * 0.8 + Math.sin(p.y / 40) * 0.3;
-      if (p.y < -10) {
-        p.y = r.height + 10;
-        p.x = Math.random() * r.width;
-      }
-      ctx.fillStyle = `rgba(255,${120 + Math.round(p.a * 80)},70,${p.a * (p.y / r.height)})`;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.s, 0, 7);
-      ctx.fill();
-    }
-    raf = requestAnimationFrame(loop);
-  };
-  loop();
-  return () => cancelAnimationFrame(raf);
 }
 
 /**
