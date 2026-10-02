@@ -36,6 +36,16 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
   // The first photo waits out the intro (about 3.9 s) so it still gets its full turn.
   const firstTurn = useRef(true);
 
+  // The other photos load once the page has finished loading, so they don't
+  // compete with the first photo and the page's own files.
+  const [warm, setWarm] = useState(false);
+  useEffect(() => {
+    const go = () => setWarm(true);
+    if (document.readyState === "complete") return void window.setTimeout(go, 0);
+    window.addEventListener("load", go, { once: true });
+    return () => window.removeEventListener("load", go);
+  }, []);
+
   const playing = !paused && !hovered && !reduced;
   useEffect(() => {
     if (!playing) return;
@@ -68,14 +78,16 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
             aria-hidden={i !== index}
             className="hero-slide absolute inset-0"
           >
-            <Image
-              src={s.src}
-              alt={s.alt}
-              fill
-              priority={i === 0}
-              sizes="(min-width: 768px) 50vw, 100vw"
-              className="hero-slide-img object-cover"
-            />
+            {(i === 0 || i === index || warm) && (
+              <Image
+                src={s.src}
+                alt={s.alt}
+                fill
+                priority={i === 0}
+                sizes="(min-width: 768px) 50vw, 100vw"
+                className="hero-slide-img object-cover"
+              />
+            )}
           </div>
         ))}
         <span key={index} aria-hidden="true" className="hero-sweep pointer-events-none absolute inset-y-0 -start-1/2 w-1/2" />

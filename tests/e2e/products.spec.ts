@@ -34,7 +34,7 @@ test("explorer finds an H class pipe and keeps the choice in the link", async ({
 test("add to quote counts up in the quote list", async ({ page }) => {
   await page.goto("/products/half-channels");
   await page.getByRole("radio", { name: "300", exact: true }).check({ force: true });
-  await page.getByRole("button", { name: "Add DN 300 Half channels 180° to quote" }).click();
+  await page.getByRole("button", { name: "Add to quote: DN 300 Half channels 180°" }).click();
   await expect(page.getByRole("status").filter({ hasText: "Added" }).first()).toBeAttached();
   await page.goto("/quote");
   await expect(page.getByRole("spinbutton", { name: /Quantity: Half Channels, Half channels 180°, DN 300/ })).toHaveValue("1");

@@ -193,7 +193,9 @@ html[data-intro="exit"] main {
   font: 500 12px/1 var(--font-data);
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  opacity: 0;
+  /* 1%, not 0: the tag is then painted with the first frame, so browsers time the
+     page's main content to when the intro appears rather than to the late fade-in. */
+  opacity: 0.01;
   animation: intro-up 0.5s var(--ease-glaze) 1.85s forwards;
 }
 .intro-tag b {
@@ -204,7 +206,7 @@ html[data-intro="exit"] main {
 }
 @keyframes intro-up {
   from {
-    opacity: 0;
+    opacity: 0.01;
     transform: translateY(12px);
   }
   to {

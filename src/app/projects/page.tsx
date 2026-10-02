@@ -67,12 +67,10 @@ export default function ProjectsPage() {
         <div className="wrap">
           <div className="grid gap-2 rounded-card border border-dashed border-line p-[clamp(20px,3vw,28px)]">
             <h2 id="more-title" className="text-lg">
-              Why there are no client names or dates
+              More countries
             </h2>
             <p className="max-w-[70ch] text-base text-muted sm:text-[15px]">
-              The old project pages showed theme filler in those places (“Company Name”, “clientwebsite.com”). Rather than guess,
-              this page shows only what the photos and SWEILLEM’s files say. Clients, years and lengths are added as SWEILLEM
-              confirms them. SWEILLEM also names customers in more countries; they are on the{" "}
+              SWEILLEM also supplies customers in more countries than the projects shown here. See them on the{" "}
               <Link href="/about#reach" className="link">
                 export map
               </Link>

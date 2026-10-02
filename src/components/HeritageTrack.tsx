@@ -7,7 +7,7 @@ import { ease } from "@/lib/motion";
 export interface Milestone {
   /** Four-digit year when SWEILLEM has published one. */
   year?: string;
-  /** Shown instead of a year, e.g. "Newest launch". Defaults to "Year to confirm". */
+  /** Shown instead of a year, e.g. "Newest launch". Undated milestones show no label. */
   when?: string;
   title: string;
   text: string;
@@ -141,7 +141,7 @@ export function HeritageTrack({ milestones, reach }: { milestones: Milestone[]; 
                   current.year ? "opacity-0" : "opacity-100"
                 }`}
               >
-                {current.year ? "" : (current.when ?? "Year to confirm")}
+                {current.year ? "" : (current.when ?? "")}
               </span>
             </span>
           </div>
@@ -201,9 +201,11 @@ export function HeritageTrack({ milestones, reach }: { milestones: Milestone[]; 
                 {m.visual}
               </div>
               <div className="grid content-start gap-2 p-5">
-                <span className={`font-mono text-xs font-medium tracking-[.1em] uppercase ${m.year ? "text-maroon" : "text-muted"}`}>
-                  {m.year ?? m.when ?? "Year to confirm"}
-                </span>
+                {(m.year ?? m.when) && (
+                  <span className={`font-mono text-xs font-medium tracking-[.1em] uppercase ${m.year ? "text-maroon" : "text-muted"}`}>
+                    {m.year ?? m.when}
+                  </span>
+                )}
                 <h3 className="text-xl">{m.title}</h3>
                 <p className="text-base sm:text-[15px] text-muted">{m.text}</p>
                 <span className="font-mono text-[12px] text-muted">Source: {m.source}</span>

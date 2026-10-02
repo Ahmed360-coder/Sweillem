@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,7 +8,13 @@ import { HeroSlideshow, type HeroSlide } from "@/components/HeroSlideshow";
 import { FamilyGrid } from "@/components/FamilyGrid";
 import { Section } from "@/components/Section";
 import { frameSVG, getChapters, H, W } from "@/lib/journey/frames";
-import { site, siteUrl } from "@/lib/site";
+import { baseOpenGraph } from "@/lib/metadata";
+import { organizationJsonLd } from "@/lib/structured-data";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: { ...baseOpenGraph, url: "/" },
+};
 
 // The journey card shows the kiln mid-firing, drawn by the same code as the Process journey.
 const fire = getChapters("en").find((c) => c.id === "fire")!;
@@ -96,22 +103,10 @@ const featured = [
   { src: "/images/projects/germany-site.jpg", alt: "SWEILLEM pipes on a site in Germany", place: "Germany", region: "Europe", id: "germany" },
 ];
 
-const organizationJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: site.legalName,
-  alternateName: site.name,
-  url: siteUrl,
-  logo: `${siteUrl}/images/brand/sweillem-logo.png`,
-  foundingDate: String(site.founded),
-  foundingLocation: "Cairo, Egypt",
-  slogan: site.slogan,
-};
-
 export default function HomePage() {
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: organizationJsonLd() }} />
 
       <section aria-label="Introduction" className="overflow-x-clip pt-[clamp(20px,4vw,56px)] pb-[clamp(48px,6vw,80px)]">
         <div className="wrap grid items-center gap-[clamp(24px,4vw,64px)] md:grid-cols-[1.25fr_1fr]">

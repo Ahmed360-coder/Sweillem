@@ -91,13 +91,17 @@ export function ProductExplorer({
   items,
   syncUrl = false,
   initial,
+  headingLevel = 3,
 }: {
   items: ExplorerProduct[];
+  /** Level of the result heading: 2 on the explorer page, 3 inside a product page section. */
+  headingLevel?: 2 | 3;
   /** Mirror the choice in the address bar so a size can be shared (explorer page only). */
   syncUrl?: boolean;
   initial?: Partial<State>;
 }) {
   const uid = useId();
+  const Heading = `h${headingLevel}` as const;
   const [want, setWant] = useState<Partial<State>>(initial ?? {});
   const { product, groups, group, table, sizes, size, rows } = useMemo(() => resolve(items, want), [items, want]);
   const strengths = group.tables.map((t) => t.strength).filter((s): s is StrengthClass => !!s);
@@ -194,9 +198,9 @@ export function ProductExplorer({
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4">
           <div className="grid gap-1.5">
             <p className="font-mono text-xs tracking-[.12em] text-muted uppercase">{product.name}</p>
-            <h3 id={`${uid}-result`} className="text-[clamp(26px,3vw,36px)]">
+            <Heading id={`${uid}-result`} className="text-[clamp(26px,3vw,36px)]">
               DN <span className="font-mono text-maroon">{size}</span>
-            </h3>
+            </Heading>
             <p className="text-sm text-muted">{title}</p>
           </div>
           {d1 !== null && (
@@ -260,7 +264,7 @@ export function ProductExplorer({
                 <AddToQuote
                   className="justify-self-start"
                   item={{ product: `${product.name}, ${title}`, size: `DN ${size}`, strengthClass: table.strength ?? undefined }}
-                  label={`Add DN ${size} ${title} to quote`}
+                  label={`Add to quote: DN ${size} ${title}`}
                 />
               </div>
             </details>

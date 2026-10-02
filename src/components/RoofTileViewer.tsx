@@ -97,7 +97,7 @@ export function RoofTileViewer() {
           {view === "roof" ? " tiles laid on a roof. The roof is an illustration built from the tile photo." : ", photographed by SWEILLEM."}
         </p>
         <div className="flex flex-wrap gap-3">
-          <AddToQuote item={{ product: "Clay roof tiles", size: current.name }} label={`Add ${current.name.toLowerCase()} roof tiles to quote`} />
+          <AddToQuote item={{ product: "Clay roof tiles", size: current.name }} label={`Add to quote: ${current.name.toLowerCase()} roof tiles`} />
         </div>
       </div>
     </div>

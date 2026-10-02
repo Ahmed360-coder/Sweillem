@@ -52,7 +52,7 @@ function Chips({ items }: { items: string[] }) {
 const reach = ["Egypt", "Saudi Arabia", "GCC and Europe", "Euro Sweillem"];
 
 // Only dates SWEILLEM has published (site, report, certificate files).
-// Undated milestones read "Year to confirm" (docs/content-gaps.md 2.9).
+// Undated milestones show no year (docs/content-gaps.md 2.9).
 const milestones: Milestone[] = [
   {
     year: "1935",
@@ -235,8 +235,7 @@ export default function AboutPage() {
             From a Cairo plant in 1935 to today
           </h2>
           <p className="lede">
-            Only dates SWEILLEM has published are shown. Milestones without a published year are marked until SWEILLEM
-            confirms them.
+            The main steps in SWEILLEM’s history, with the years SWEILLEM has published.
           </p>
         </div>
         <HeritageTrack milestones={milestones} reach={reach} />

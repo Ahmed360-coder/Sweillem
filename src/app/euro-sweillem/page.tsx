@@ -121,7 +121,6 @@ export default function EuroSweillemPage() {
             <br />
             41379 Brüggen, Germany
           </p>
-          <SourceNote>Euro Sweillem’s own contact details follow once SWEILLEM confirms them.</SourceNote>
         </div>
       </Section>
 
