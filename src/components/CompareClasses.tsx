@@ -59,9 +59,9 @@ export function CompareClasses({ n, h }: { n: SpecTable; h: SpecTable }) {
         ].map(({ t, has, label, long }) => (
           <div key={label} className="grid content-start gap-4 rounded-card border border-line bg-surface p-5">
             <div className="flex items-baseline justify-between gap-3">
-              <h3 className="text-2xl">
+              <h2 className="text-2xl">
                 {label} <span className="text-base font-normal text-muted">{long.toLowerCase()}</span>
-              </h3>
+              </h2>
               <p className="font-mono text-sm text-muted">DN {size}</p>
             </div>
             {has ? (

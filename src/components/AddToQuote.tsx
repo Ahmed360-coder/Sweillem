@@ -14,7 +14,7 @@ export function AddToQuote({
   className = "",
 }: {
   item: Omit<QuoteItem, "qty">;
-  /** Accessible name, e.g. "Add DN 300 H class pipe to quote". */
+  /** Accessible name. It must contain the visible text, e.g. "Add to quote: DN 300 H class pipe" or, compact, "Add DN 300 H class pipe to quote". */
   label: string;
   compact?: boolean;
   className?: string;

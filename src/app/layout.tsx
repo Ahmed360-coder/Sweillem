@@ -8,6 +8,7 @@ import { MotionProvider } from "@/components/MotionProvider";
 import { RevealObserver } from "@/components/RevealObserver";
 import { baseOpenGraph } from "@/lib/metadata";
 import { mapData } from "@/lib/projects-map";
+import { revealEarlyScript } from "@/lib/reveal-early";
 import { site, siteUrl } from "@/lib/site";
 import "./globals.css";
 import "./intro.css";
@@ -67,6 +68,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             {children}
           </main>
           <Footer />
+          <script dangerouslySetInnerHTML={{ __html: revealEarlyScript }} />
           <RevealObserver />
         </MotionProvider>
         <Intro />

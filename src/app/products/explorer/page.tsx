@@ -20,7 +20,7 @@ export default function ExplorerPage() {
         lede="Pick a product, a type, a strength class and a nominal size. The matching row of SWEILLEM’s published table appears with its dimensions, drawn to scale, ready to add to your quote list."
       />
       <div className="wrap grid gap-6 py-10">
-        <ProductExplorer items={explorerProducts} syncUrl />
+        <ProductExplorer items={explorerProducts} syncUrl headingLevel={2} />
         <SourceNote>
           {totalRows} rows from the spec tables on sweillem.net, copied as published. The address bar keeps your choice, so you can share a
           size by sharing the link.
