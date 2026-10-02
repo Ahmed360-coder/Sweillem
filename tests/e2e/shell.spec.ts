@@ -107,6 +107,85 @@ test.describe("header", () => {
   });
 });
 
+test.describe("light and dark mode", () => {
+  test.beforeEach(async ({ page }) => skipIntro(page));
+
+  const theme = (page: import("@playwright/test").Page) => page.evaluate(() => document.documentElement.dataset.theme);
+
+  test("follows the device until the visitor picks, then remembers the pick", async ({ browser }) => {
+    const ctx = await browser.newContext({ colorScheme: "dark" });
+    const page = await ctx.newPage();
+    await skipIntro(page);
+    await page.goto("/products");
+    expect(await theme(page)).toBe("dark");
+
+    const modes = page.getByRole("group", { name: "Colour mode" });
+    await expect(modes.getByRole("button", { name: "Dark" })).toHaveAttribute("aria-pressed", "true");
+    await modes.getByRole("button", { name: "Light" }).click();
+    expect(await theme(page)).toBe("light");
+    await expect(page.locator("body")).toHaveCSS("background-color", "rgb(242, 242, 239)");
+    await page.reload();
+    expect(await theme(page)).toBe("light");
+    await expect(modes.getByRole("button", { name: "Light" })).toHaveAttribute("aria-pressed", "true");
+    await expect(modes.getByRole("button", { name: "Dark" })).toHaveAttribute("aria-pressed", "false");
+
+    // Auto in the side menu hands the choice back to the device.
+    await page.getByRole("button", { name: "Menu", exact: true }).click();
+    await page.getByRole("dialog", { name: "Site menu" }).getByText("Auto", { exact: true }).click();
+    expect(await theme(page)).toBe("dark");
+    expect(await page.evaluate(() => localStorage.getItem("sweillem.theme"))).toBeNull();
+    await ctx.close();
+  });
+
+  test("buttons keep the logo maroon in dark mode", async ({ browser }) => {
+    for (const colorScheme of ["light", "dark"] as const) {
+      const ctx = await browser.newContext({ colorScheme });
+      const page = await ctx.newPage();
+      await skipIntro(page);
+      await page.goto("/");
+      await expect(page.getByRole("link", { name: "Explore the pipes" })).toHaveCSS("background-color", "rgb(122, 4, 4)");
+      await ctx.close();
+    }
+  });
+
+  test("the logo keeps its two colours in both modes", async ({ page }) => {
+    await page.goto("/");
+    const colours = () =>
+      page.locator("header svg[viewBox='0 0 642 217'] path").evaluateAll((paths) => paths.map((p) => getComputedStyle(p).fill));
+    const light = await colours();
+    await page.getByRole("group", { name: "Colour mode" }).getByRole("button", { name: "Dark" }).click();
+    const dark = await colours();
+    expect(new Set(light).size).toBe(2);
+    expect(new Set(dark).size).toBe(2);
+    expect(dark).not.toEqual(light);
+  });
+
+  for (const colorScheme of ["light", "dark"] as const) {
+    test(`the switches pass axe (${colorScheme})`, async ({ browser }) => {
+      const ctx = await browser.newContext({ colorScheme, reducedMotion: "reduce" });
+      const page = await ctx.newPage();
+      await skipIntro(page);
+      await page.goto("/");
+      await page.getByRole("button", { name: "Menu", exact: true }).click();
+      await expect(page.getByRole("dialog", { name: "Site menu" })).toBeVisible();
+      const axe = await new AxeBuilder({ page })
+        .include("[data-theme-toggle]")
+        .include("header")
+        .include("#site-menu")
+        .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+        .analyze();
+      expect(axe.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(", ")}`)).toEqual([]);
+      await ctx.close();
+    });
+  }
+
+  test("the top bar and header fit a 360 px phone", async ({ page, isMobile }) => {
+    test.skip(!isMobile, "phone header");
+    await page.goto("/");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(360);
+  });
+});
+
 test.describe("intro", () => {
   test("plays once per session on the home page and can be skipped", async ({ page }) => {
     await page.goto("/");
@@ -318,6 +397,22 @@ test.describe("projects map", () => {
     await page.getByRole("button", { name: "Close map" }).click();
     await expect(page.locator("#map-panel")).toHaveAttribute("inert", "");
     await expect(page.locator("#main")).not.toHaveAttribute("inert");
+  });
+
+  test("every place and country shows its flag", async ({ page }) => {
+    await page.goto("/");
+    await page.locator("header").getByRole("button", { name: "Map", exact: true }).click();
+    const dialog = page.getByRole("dialog", { name: "Projects and distribution" });
+    await expect(page.locator("#map-panel .pmap")).toHaveAttribute("data-ready", "");
+    for (const name of [/^Haram central area/, /^Cairo/, /^Jeddah/, "Belgium", "Hong Kong"]) {
+      await expect(dialog.getByRole("button", { name }).locator('img[src^="/images/flags/"]')).toHaveCount(1);
+    }
+    const flags = dialog.locator('img[src^="/images/flags/"]');
+    await expect(flags).toHaveCount(7 + 14);
+    for (const img of await flags.all()) {
+      await expect(img).toHaveAttribute("alt", "");
+      expect(await img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
+    }
   });
 
   test("its links close it", async ({ page }) => {

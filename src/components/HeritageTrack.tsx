@@ -159,7 +159,7 @@ export function HeritageTrack({ milestones, reach }: { milestones: Milestone[]; 
                   )}
                   <span
                     data-lit={lit || undefined}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-[12px] font-medium sm:px-3 sm:py-1.5 sm:text-[13px] text-muted transition-[color,border-color,background-color] duration-500 data-lit:border-maroon data-lit:bg-maroon data-lit:text-on-maroon"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-[12px] font-medium sm:px-3 sm:py-1.5 sm:text-[13px] text-muted transition-[color,border-color,background-color] duration-500 data-lit:border-brand data-lit:bg-brand data-lit:text-on-brand"
                   >
                     <span aria-hidden="true" className="hex size-2 bg-current" />
                     {r}

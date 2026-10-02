@@ -37,8 +37,10 @@ export async function generateMetadata({ params }: PageProps<"/products/[slug]">
 function DrawingFigure({ d, priority = false }: { d: Drawing; priority?: boolean }) {
   return (
     <figure className="grid gap-2.5">
-      <div className="overflow-hidden rounded-inner border border-line bg-white p-3">
-        <Image src={d.src} alt={d.alt} width={d.width} height={d.height} priority={priority} sizes="(min-width: 1024px) 560px, 100vw" className="mx-auto h-auto w-full max-w-[640px]" />
+      <div className="overflow-hidden rounded-inner border border-line">
+        <div className="drawing bg-white p-3">
+          <Image src={d.src} alt={d.alt} width={d.width} height={d.height} priority={priority} sizes="(min-width: 1024px) 560px, 100vw" className="mx-auto h-auto w-full max-w-[640px]" />
+        </div>
       </div>
       <figcaption className="text-sm text-muted">{d.caption}</figcaption>
     </figure>
@@ -85,8 +87,8 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
             loose.map((d, i) => <DrawingFigure key={d.src} d={d} priority={i === 0} />)
           ) : drawings.length === 0 ? (
             <figure className="grid gap-2.5">
-              <div className="relative aspect-[3/2] overflow-hidden rounded-inner border border-line bg-white">
-                <Image src={family.picture.src} alt={family.picture.alt} fill priority unoptimized={family.picture.src.endsWith(".svg")} sizes="(min-width: 1024px) 560px, 100vw" className="object-contain" />
+              <div className="relative aspect-[3/2] overflow-hidden rounded-inner border border-line bg-surface">
+                <Image src={family.picture.src} alt={family.picture.alt} fill priority unoptimized={family.picture.src.endsWith(".svg")} sizes="(min-width: 1024px) 560px, 100vw" className="drawing bg-white object-contain" />
               </div>
               {family.picture.drawn && (
                 <figcaption className="text-sm text-muted">Schematic section drawn for this site. SWEILLEM has not published a drawing of this product.</figcaption>

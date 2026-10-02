@@ -106,8 +106,11 @@ test.describe("company pages (Milestone 3)", () => {
     const night = views.getByRole("button", { name: "Night" });
     const day = views.getByRole("button", { name: "Day" });
     await map.scrollIntoViewIfNeeded();
+    // Until the visitor picks a view, it follows the site theme: day in light mode.
+    await expect(map).toHaveAttribute("data-mode", "day");
+    await expect(day).toHaveAttribute("aria-pressed", "true");
+    await page.getByRole("group", { name: "Colour mode" }).getByRole("button", { name: "Dark" }).click();
     await expect(map).toHaveAttribute("data-mode", "night");
-    await expect(night).toHaveAttribute("aria-pressed", "true");
 
     await day.click();
     await expect(map).toHaveAttribute("data-mode", "day");
@@ -115,7 +118,7 @@ test.describe("company pages (Milestone 3)", () => {
     await expect(night).toHaveAttribute("aria-pressed", "false");
     await expect(map.locator(".reach-photo-day")).toHaveCSS("opacity", "1");
 
-    // The choice is kept for the next visit.
+    // The choice is kept for the next visit, whatever the theme.
     await page.reload();
     await expect(page.locator("#reach-map")).toHaveAttribute("data-mode", "day");
   });

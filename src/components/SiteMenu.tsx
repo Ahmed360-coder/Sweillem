@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import { inertOutside } from "@/lib/inert";
 import { siteMap } from "@/lib/site";
 import { MapIcon } from "./icons";
+import { ThemeChoice } from "./ThemeSwitch";
 
 /**
  * Side menu listing every page of the site, grouped by section. It slides in
@@ -76,6 +77,7 @@ export function SiteMenu({
               <span className="text-[13px] font-normal text-muted">Where SWEILLEM pipes go</span>
             </span>
           </button>
+          <ThemeChoice />
           {siteMap.map((group) => (
             <section key={group.title} className="border-b border-line py-4 last:border-b-0">
               <h2 className="mb-1.5 font-mono text-[12px] font-medium tracking-[.12em] text-maroon uppercase">{group.title}</h2>

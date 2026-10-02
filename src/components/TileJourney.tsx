@@ -30,8 +30,11 @@ const seg = (t: number, a: number, b: number) => clamp01((t - a) / (b - a));
 const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
 const pad = (n: number) => String(n).padStart(2, "0");
 
+// Outlines and machinery stay dark in both themes; paper, ground, buildings and
+// labels use the --j-* scene variables so the drawing follows light or dark mode.
 const INK = "#1c1818";
-const MUTED = "#5d5f62";
+const TEXT = "var(--j-ink)";
+const MUTED = "var(--j-muted)";
 const MAROON = "#7a0404";
 const CLAY = "#b07a4b";
 const CLAY_DARK = "#7b5236";
@@ -107,10 +110,10 @@ function ClayTile({ x, y, h, shade, shrink = 0 }: { x: number; y: number; h: num
 function Truck({ x, load }: { x: number; load?: ReactNode }) {
   return (
     <g transform={`translate(${x} 0)`}>
-      <rect x="0" y="470" width="230" height="70" rx="6" fill="#e8e7e3" stroke={INK} strokeWidth="3" />
+      <rect x="0" y="470" width="230" height="70" rx="6" fill="var(--j-band)" stroke={INK} strokeWidth="3" />
       {load}
       <path d="M232 540v-82h56l38 42v40z" fill={MAROON} stroke={INK} strokeWidth="3" />
-      <path d="M248 470h36l26 30h-62z" fill="#cfe3f0" stroke={INK} strokeWidth="2" />
+      <path d="M248 470h36l26 30h-62z" fill="var(--j-sky)" stroke={INK} strokeWidth="2" />
       {[50, 180, 290].map((cx) => (
         <g key={cx}>
           <circle cx={cx} cy="548" r="22" fill={INK} />
@@ -121,7 +124,7 @@ function Truck({ x, load }: { x: number; load?: ReactNode }) {
   );
 }
 
-function Ground({ y = 560, fill = "#d6d4cf" }: { y?: number; fill?: string }) {
+function Ground({ y = 560, fill = "var(--j-floor)" }: { y?: number; fill?: string }) {
   return <rect x="-2000" y={y} width="5000" height="400" fill={fill} />;
 }
 
@@ -142,10 +145,10 @@ function Quarry({ p }: { p: number }) {
   const drive = ease(seg(p, 0.6, 1));
   return (
     <g>
-      <path d="M-600 560 L-100 300 L120 380 L260 250 L420 560Z" fill="#c9925f" />
+      <path d="M-600 560 L-100 300 L120 380 L260 250 L420 560Z" fill="var(--j-quarry)" />
       <path d="M-600 560 L-200 400 L60 450 L180 380 L330 560Z" fill={CLAY} />
       <path d="M40 560 L160 470 L300 560Z" fill={CLAY_DARK} opacity=".55" />
-      <Ground fill="#d9c8b4" />
+      <Ground fill="var(--j-sand)" />
       <Label x={150} y={230} anchor="start">ASWAN QUARRY</Label>
       <g transform="translate(330 0)">
         <rect x="0" y="470" width="150" height="50" rx="8" fill="#e0a21b" stroke={INK} strokeWidth="3" />
@@ -168,16 +171,16 @@ function Lab({ p }: { p: number }) {
       <Ground />
       <path d="M60 560 Q170 420 300 560Z" fill={CLAY} />
       <Label x={180} y={600}>STORED CLAY</Label>
-      <rect x="400" y="300" width="520" height="260" rx="16" fill="#fff" stroke={INK} strokeWidth="3" />
+      <rect x="400" y="300" width="520" height="260" rx="16" fill="var(--j-surface)" stroke={INK} strokeWidth="3" />
       <Label x={660} y={340}>QUALITY CHECKS</Label>
       {checks.map((c, i) => {
         const f = ease(seg(p, 0.1 + i * 0.25, 0.3 + i * 0.25));
         return (
           <g key={c} transform={`translate(440 ${370 + i * 60})`}>
-            <text x="0" y="28" fontFamily="var(--font-body)" fontSize="24" fill={INK}>
+            <text x="0" y="28" fontFamily="var(--font-body)" fontSize="24" fill={TEXT}>
               {c}
             </text>
-            <rect x="200" y="8" width="200" height="22" rx="11" fill="#e8e7e3" />
+            <rect x="200" y="8" width="200" height="22" rx="11" fill="var(--j-band)" />
             <rect x="200" y="8" width={200 * f} height="22" rx="11" fill={MAROON} />
             <path d="M418 18l10 10 20 -22" fill="none" stroke="#1d6b43" strokeWidth="5" strokeLinecap="round" opacity={f >= 1 ? 1 : 0} />
           </g>
@@ -215,7 +218,7 @@ function Drying({ p }: { p: number }) {
   return (
     <g>
       <Ground />
-      <rect x="180" y="150" width="640" height="410" rx="14" fill="#fff" stroke={INK} strokeWidth="3" />
+      <rect x="180" y="150" width="640" height="410" rx="14" fill="var(--j-surface)" stroke={INK} strokeWidth="3" />
       <Label x={500} y={135}>DRYER · COMPUTER CONTROLLED</Label>
       {[0, 1, 2].map((r) => (
         <g key={r}>
@@ -228,7 +231,7 @@ function Drying({ p }: { p: number }) {
       {[0, 1, 2, 3].map((i) => (
         <path key={i} d={`M${120 + ((p * 600 + i * 150) % 600)} 200 q20 -14 40 0 t40 0`} fill="none" stroke="#e4572e" strokeWidth="4" opacity=".6" transform={`translate(${i * 40} ${i * 90})`} />
       ))}
-      <text x="860" y="300" fontFamily="var(--font-data)" fontSize="44" fontWeight="600" fill={INK}>
+      <text x="860" y="300" fontFamily="var(--font-data)" fontSize="44" fontWeight="600" fill={TEXT}>
         {Math.round(100 - t * 100)}%
       </text>
       <Label x={860} y={335} anchor="start" size={18}>
@@ -332,9 +335,9 @@ function Delivery({ p }: { p: number }) {
   const x = -380 + ease(p) * 1500;
   return (
     <g>
-      <Ground fill="#9a9da0" />
+      <Ground fill="var(--j-tarmac)" />
       {Array.from({ length: 30 }, (_, i) => (
-        <rect key={i} x={-1000 + i * 120} y="596" width="60" height="8" fill="#f2f2ef" />
+        <rect key={i} x={-1000 + i * 120} y="596" width="60" height="8" fill="var(--j-tarmac-line)" />
       ))}
       <Truck x={x} load={<g>{[0, 1].map((r) => [0, 1, 2].map((c) => <Tile key={`${r}${c}`} x={20 + c * 70} y={470 - 90 - r * 34} h={90} />))}</g>} />
       <Label x={500} y={260}>ON TIME, TO SITE</Label>
@@ -347,15 +350,15 @@ function Roof({ p }: { p: number }) {
   const laid = ease(seg(p, 0.05, 0.9)) * ROWS;
   return (
     <g>
-      <Ground fill="#b8c9a3" />
-      <rect x="250" y="340" width="500" height="220" fill="#efe6da" stroke={INK} strokeWidth="3" />
+      <Ground fill="var(--j-lawn)" />
+      <rect x="250" y="340" width="500" height="220" fill="var(--j-wall)" stroke={INK} strokeWidth="3" />
       <rect x="450" y="440" width="90" height="120" fill={CLAY_DARK} />
-      <rect x="310" y="400" width="90" height="70" fill="#cfe3f0" stroke={INK} strokeWidth="3" />
-      <rect x="600" y="400" width="90" height="70" fill="#cfe3f0" stroke={INK} strokeWidth="3" />
+      <rect x="310" y="400" width="90" height="70" fill="var(--j-sky)" stroke={INK} strokeWidth="3" />
+      <rect x="600" y="400" width="90" height="70" fill="var(--j-sky)" stroke={INK} strokeWidth="3" />
       <clipPath id="tj-roof">
         <path d="M200 350 L500 130 L800 350Z" />
       </clipPath>
-      <path d="M200 350 L500 130 L800 350Z" fill="#d6c3ad" stroke={INK} strokeWidth="3" />
+      <path d="M200 350 L500 130 L800 350Z" fill="var(--j-roof)" stroke={INK} strokeWidth="3" />
       <g clipPath="url(#tj-roof)">
         {Array.from({ length: ROWS }, (_, r) => {
           const shown = clamp01(laid - r);
@@ -433,7 +436,7 @@ export function TileJourney({ steps }: { steps: TileStep[] }) {
       <ol className="wrap grid gap-4 md:grid-cols-2">
         {steps.map((s, i) => (
           <li key={s.id} className="grid content-start gap-3 overflow-hidden rounded-card border border-line bg-surface">
-            <div className="aspect-[16/9] bg-[#f2f2ef]">
+            <div className="aspect-[16/9] overflow-hidden bg-(--j-bg)">
               <Scene index={i} p={1} />
             </div>
             <div className="grid gap-1 px-5 pb-5">
@@ -449,21 +452,21 @@ export function TileJourney({ steps }: { steps: TileStep[] }) {
 
   return (
     <section ref={sectionRef} aria-label="How a roof tile is made, step by step" className="relative" style={{ height: `calc(100dvh + ${steps.length * VH_PER_STEP}vh)` }}>
-      {/* Stays on the light paper colour in both themes, like the pipe journey: it is a daylight scene. */}
-      <div className="sticky top-0 flex h-[100dvh] flex-col overflow-hidden bg-[#f2f2ef] text-[#1c1818]">
+      {/* Scene colours are --j-* variables, so the drawing follows the light or dark theme. */}
+      <div className="sticky top-0 flex h-[100dvh] flex-col overflow-hidden bg-(--j-bg) text-ink">
         <motion.div aria-hidden="true" className="absolute inset-x-0 top-0 z-10 h-1 origin-left bg-maroon rtl:origin-right" style={{ scaleX: progress }} />
         <div ref={stageRef} className="relative min-h-0 flex-1 pt-6">
           <Scene index={index} p={local} portrait={portrait} />
         </div>
 
         {/* The explanation sits under the picture, on the same screen. */}
-        <div className="relative z-10 border-t border-[#d6d4cf] bg-white">
+        <div className="relative z-10 border-t border-line bg-surface">
           <div key={current.id} className="journey-caption wrap grid max-w-[1180px] gap-1.5 pt-4 pb-3 sm:pt-5">
-            <span className="font-mono text-[12px] font-medium tracking-[.14em] text-[#7a0404] uppercase">
+            <span className="font-mono text-[12px] font-medium tracking-[.14em] text-maroon uppercase">
               Step {pad(index + 1)} of {pad(steps.length)}
             </span>
             <p className="font-display text-[clamp(22px,3.2vw,38px)] leading-[1.05] font-semibold">{current.title}</p>
-            <p className="max-w-[64ch] text-[clamp(15px,1.3vw,17px)] leading-normal text-[#5d5f62]">{current.text}</p>
+            <p className="max-w-[64ch] text-[clamp(15px,1.3vw,17px)] leading-normal text-muted">{current.text}</p>
             {current.fact && <p className="font-mono text-sm font-semibold">{current.fact}</p>}
           </div>
           <p className="sr-only" aria-live="polite">
@@ -476,7 +479,7 @@ export function TileJourney({ steps }: { steps: TileStep[] }) {
                   type="button"
                   onClick={() => jump(i)}
                   aria-current={i === index ? "step" : undefined}
-                  className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-[#d6d4cf] bg-white px-3.5 text-[14px] font-semibold text-[#1c1818] transition-colors hover:border-[#7a0404] aria-[current=step]:border-[#7a0404] aria-[current=step]:bg-[#7a0404] aria-[current=step]:text-white"
+                  className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-line bg-surface px-3.5 text-[14px] font-semibold text-ink transition-colors hover:border-maroon aria-[current=step]:border-brand aria-[current=step]:bg-brand aria-[current=step]:text-on-brand"
                 >
                   <span className="font-mono font-medium">{pad(i + 1)}</span>
                   {s.title}

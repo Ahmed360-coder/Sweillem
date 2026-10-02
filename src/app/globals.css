@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* dark: utilities follow the theme in use, not only the device setting. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, [data-theme="kiln"], [data-theme="kiln"] *));
+
 /* SWEILLEM design tokens, ported from design/tokens.css (redesign prototype).
    Maroon and grey are sampled from the logo in SWEILLEM's deck and still need
    SWEILLEM's confirmation (docs/content-gaps.md 6.1). Change colours here only. */
@@ -13,6 +16,12 @@
   --maroon: #7a0404;
   --maroon-hi: #9c1010;
   --on-maroon: #ffffff;
+  /* The logo maroon for filled controls (buttons, picked chips, badges). It is
+     the same in light and dark mode; --maroon is the red for text and lines,
+     lifted in dark mode so small text stays readable. */
+  --brand: #7a0404;
+  --brand-hi: #9c1010;
+  --on-brand: #ffffff;
   --slate: #7f8285;
   --glaze: #3b2119;
   --glaze-hi: #6b3a26;
@@ -26,6 +35,35 @@
   --shadow: 0 1px 2px rgb(58 50 44 / 0.07), 0 10px 26px -10px rgb(58 50 44 / 0.22);
   --logo-mark: #7f8285;
   --logo-word: #7a0404;
+  /* Scene colours for the drawn journeys (src/lib/journey/frames.js, TileJourney). */
+  --j-bg: #f2f2ef;
+  --j-band: #e8e7e3;
+  --j-surface: #ffffff;
+  --j-ink: #1c1818;
+  --j-muted: #5d5f62;
+  --j-line: #d6d4cf;
+  --j-floor: #d6d4cf;
+  --j-maroon: #7a0404;
+  --j-slate: #7f8285;
+  --j-ground: #e2ddd4;
+  --j-soil: #b48a66;
+  --j-soil-dark: #8f6a4c;
+  --j-steel-dark: #55585c;
+  --j-glass: #9fb6c6;
+  --j-road: #d9d6cf;
+  --j-skyline: #e6e4df;
+  --j-trench: #e6d8c6;
+  --j-grass: #8e9a5b;
+  --j-sky: #cfe3f0;
+  --j-wall: #efe6da;
+  --j-roof: #d6c3ad;
+  --j-lawn: #b8c9a3;
+  --j-quarry: #c9925f;
+  --j-sand: #d9c8b4;
+  --j-tarmac: #9a9da0;
+  --j-tarmac-line: #f2f2ef;
+  /* Line drawings and scanned diagrams on white: inverted to a dark sheet in dark mode. */
+  --drawing-filter: none;
 
   --font-display: var(--font-jost), system-ui, sans-serif;
   --font-body: var(--font-plex-sans), system-ui, sans-serif;
@@ -47,8 +85,10 @@
   color-scheme: light;
 }
 
-/* Dark theme: follows the device unless a page sets data-theme. The redesign
-   thread's "dark kiln" theme plugs in here by overriding these tokens. */
+/* Dark theme. The theme script in <head> (src/lib/theme.ts) sets data-theme to
+   light or dark from the visitor's choice or the device setting; the media query
+   only matters when scripts are off. The redesign thread's "dark kiln" theme
+   plugs in here by overriding these tokens. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]):not([data-theme="kiln"]) {
     --paper: #141011;
@@ -57,11 +97,14 @@
     --ink: #f1ebe8;
     --muted: #aaa19d;
     --line: #382e2d;
-    --maroon: #ea6a62;
-    --maroon-hi: #f4857d;
+    --maroon: #ec5a5a;
+    --maroon-hi: #f27474;
     --on-maroon: #1a0706;
+    --brand: #7a0404;
+    --brand-hi: #9c1010;
+    --on-brand: #ffffff;
     --slate: #9a9da0;
-    --glaze: #5a3325;
+    --glaze: #3b2119;
     --glaze-hi: #8a5238;
     --clay: #d08a58;
     --fire: #ff7a45;
@@ -70,8 +113,35 @@
     --warn: #e5a24a;
     --err: #ff8a80;
     --shadow: 0 1px 2px rgb(10 5 5 / 0.45), 0 10px 30px -10px rgb(10 5 5 / 0.75);
-    --logo-mark: #f1ebe8;
-    --logo-word: #f1ebe8;
+    --logo-mark: #9a9da0;
+    --logo-word: #e0473d;
+    --j-bg: #171213;
+    --j-band: #1f191a;
+    --j-surface: #251e1e;
+    --j-ink: #f1ebe8;
+    --j-muted: #aaa19d;
+    --j-line: #4a3e3c;
+    --j-floor: #2e2726;
+    --j-maroon: #ec5a5a;
+    --j-slate: #5d6064;
+    --j-ground: #2a2220;
+    --j-soil: #5e4332;
+    --j-soil-dark: #47311f;
+    --j-steel-dark: #3c3e42;
+    --j-glass: #4f6878;
+    --j-road: #2f2a29;
+    --j-skyline: #241e1e;
+    --j-trench: #3a2c22;
+    --j-grass: #4f5a32;
+    --j-sky: #33495a;
+    --j-wall: #3a302a;
+    --j-roof: #4d3c2e;
+    --j-lawn: #3c4a32;
+    --j-quarry: #7a5233;
+    --j-sand: #3b3026;
+    --j-tarmac: #3a3a3d;
+    --j-tarmac-line: #8c8a86;
+    --drawing-filter: invert(0.9) hue-rotate(180deg) saturate(1.15);
     color-scheme: dark;
   }
 }
@@ -82,11 +152,14 @@
   --ink: #f1ebe8;
   --muted: #aaa19d;
   --line: #382e2d;
-  --maroon: #ea6a62;
-  --maroon-hi: #f4857d;
+  --maroon: #ec5a5a;
+  --maroon-hi: #f27474;
   --on-maroon: #1a0706;
+  --brand: #7a0404;
+  --brand-hi: #9c1010;
+  --on-brand: #ffffff;
   --slate: #9a9da0;
-  --glaze: #5a3325;
+  --glaze: #3b2119;
   --glaze-hi: #8a5238;
   --clay: #d08a58;
   --fire: #ff7a45;
@@ -95,8 +168,35 @@
   --warn: #e5a24a;
   --err: #ff8a80;
   --shadow: 0 1px 2px rgb(10 5 5 / 0.45), 0 10px 30px -10px rgb(10 5 5 / 0.75);
-  --logo-mark: #f1ebe8;
-  --logo-word: #f1ebe8;
+  --logo-mark: #9a9da0;
+  --logo-word: #e0473d;
+  --j-bg: #171213;
+  --j-band: #1f191a;
+  --j-surface: #251e1e;
+  --j-ink: #f1ebe8;
+  --j-muted: #aaa19d;
+  --j-line: #4a3e3c;
+  --j-floor: #2e2726;
+  --j-maroon: #ec5a5a;
+  --j-slate: #5d6064;
+  --j-ground: #2a2220;
+  --j-soil: #5e4332;
+  --j-soil-dark: #47311f;
+  --j-steel-dark: #3c3e42;
+  --j-glass: #4f6878;
+  --j-road: #2f2a29;
+  --j-skyline: #241e1e;
+  --j-trench: #3a2c22;
+  --j-grass: #4f5a32;
+  --j-sky: #33495a;
+  --j-wall: #3a302a;
+  --j-roof: #4d3c2e;
+  --j-lawn: #3c4a32;
+  --j-quarry: #7a5233;
+  --j-sand: #3b3026;
+  --j-tarmac: #3a3a3d;
+  --j-tarmac-line: #8c8a86;
+  --drawing-filter: invert(0.9) hue-rotate(180deg) saturate(1.15);
   color-scheme: dark;
 }
 
@@ -136,6 +236,9 @@
   --color-maroon: var(--maroon);
   --color-maroon-hi: var(--maroon-hi);
   --color-on-maroon: var(--on-maroon);
+  --color-brand: var(--brand);
+  --color-brand-hi: var(--brand-hi);
+  --color-on-brand: var(--on-brand);
   --color-slate: var(--slate);
   --color-glaze: var(--glaze);
   --color-glaze-hi: var(--glaze-hi);
@@ -161,6 +264,31 @@
   --ease-glaze: var(--ease-glaze);
   --ease-kiln: var(--ease-kiln);
   --ease-set: var(--ease-set);
+}
+
+/* Show something in one theme only (pictures with a version per theme, icons).
+   Without the theme script, the device setting decides. */
+:root[data-theme="dark"] .only-light,
+:root[data-theme="kiln"] .only-light,
+:root[data-theme="light"] .only-dark {
+  display: none !important;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .only-light {
+    display: none !important;
+  }
+}
+@media not (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .only-dark {
+    display: none !important;
+  }
+}
+
+/* A line drawing or diagram drawn on white. In dark mode it becomes a dark
+   sheet with light lines; the hue turn keeps clay brown and seal red close to
+   their own colours. Put it on the picture and its white frame together. */
+.drawing {
+  filter: var(--drawing-filter);
 }
 
 @layer base {
@@ -774,9 +902,9 @@ html[data-intro="exit"] .hero-progress {
   color: var(--maroon);
 }
 .reach-chip[aria-pressed="true"] {
-  border-color: var(--maroon);
-  background: var(--maroon);
-  color: var(--on-maroon);
+  border-color: var(--brand);
+  background: var(--brand);
+  color: var(--on-brand);
 }
 .reach-mode {
   cursor: pointer;

@@ -233,6 +233,16 @@
       "status": "in-repo"
     },
     {
+      "path": "public/images/brand/sweillem-logo-dark.svg",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image2.png (redrawn as vector)",
+      "slide": 2,
+      "notes": "Dark-mode logo: the same drawing as sweillem-logo.svg with lifted colours (S mark #9a9da0, wordmark #e0473d) so it reads on the dark theme. Used by the How it's made journey.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
       "path": "public/images/brand/sweillem-logo-white.svg",
       "source": "deck",
       "deckFile": "Sweillem vitrified clay pipes.pptx",
@@ -249,6 +259,16 @@
       "deckMedia": "image2.png (redrawn as vector)",
       "slide": 2,
       "notes": "Vector S mark on its own (grey).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/brand/sweillem-mark-dark.svg",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image2.png (redrawn as vector)",
+      "slide": 2,
+      "notes": "Dark-mode S mark (#9a9da0), same drawing as sweillem-mark.svg.",
       "publish": "yes",
       "status": "in-repo"
     },
@@ -499,6 +519,118 @@
       "source": "generated",
       "origin": "public/images/roof-tiles/tile-black.jpg (deck image24.jpeg)",
       "notes": "Tile cut out of its white slide background with the badge removed, by scripts/cut-roof-tiles.mjs. Used by the roof tiles colour viewer and production process.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/eg.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/sa.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/de.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/be.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/nl.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/cz.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/it.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/pl.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/ro.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/hu.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/qa.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/gr.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/sg.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/hk.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/bn.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/LICENSE.txt",
+      "source": "generated",
+      "notes": "MIT licence of flag-icons, which the flag SVGs come from.",
       "publish": "yes",
       "status": "in-repo"
     }

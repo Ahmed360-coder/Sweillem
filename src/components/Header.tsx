@@ -89,7 +89,8 @@ export function Header({ mapData }: { mapData: MapData }) {
 
   return (
     <>
-      <div ref={sentinelRef} aria-hidden="true" className="pointer-events-none absolute top-6 left-0 h-px w-px" />
+      {/* 24 px below the 44 px top bar, so the header condenses once it is pinned. */}
+      <div ref={sentinelRef} aria-hidden="true" className="pointer-events-none absolute top-[68px] left-0 h-px w-px" />
       <header data-stuck={stuck && !overlay ? "" : undefined} className="site-header group/hdr sticky top-0 z-40 py-3.5">
         {/* Condensed ground: fades in, so only opacity animates. */}
         <div
@@ -167,7 +168,7 @@ export function Header({ mapData }: { mapData: MapData }) {
               <span
                 aria-hidden="true"
                 data-quote-count
-                className="min-w-5 rounded-full bg-maroon px-[5px] text-center font-mono text-[12px] leading-5 font-semibold text-on-maroon"
+                className="min-w-5 rounded-full bg-brand px-[5px] text-center font-mono text-[12px] leading-5 font-semibold text-on-brand"
               >
                 {quoteCount}
               </span>

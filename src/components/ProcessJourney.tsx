@@ -75,7 +75,7 @@ export function ProcessJourney({ steps }: { steps: ProcessStep[] }) {
                 fill
                 sizes="(min-width: 1180px) 560px, 50vw"
                 className={`transition-[opacity,transform] duration-[900ms] ease-kiln ${
-                  s.image.contain ? "bg-white object-contain p-6" : "object-cover"
+                  s.image.contain ? "drawing bg-white object-contain p-6" : "object-cover"
                 } ${i === active ? "scale-100 opacity-100" : "scale-[1.06] opacity-0"}`}
               />
             ))}
@@ -145,7 +145,7 @@ export function ProcessJourney({ steps }: { steps: ProcessStep[] }) {
                 alt={s.image.alt}
                 fill
                 sizes="100vw"
-                className={s.image.contain ? "bg-white object-contain p-4" : "object-cover"}
+                className={s.image.contain ? "drawing bg-white object-contain p-4" : "object-cover"}
               />
             </div>
             <p className="font-mono text-xs font-medium tracking-[.12em] text-maroon uppercase">

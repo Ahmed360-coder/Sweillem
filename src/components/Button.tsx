@@ -8,7 +8,7 @@ const base =
   "group inline-flex min-h-11 items-center justify-center gap-2.5 whitespace-nowrap rounded-full border px-5 py-3 font-semibold no-underline transition-transform duration-200 ease-glaze active:translate-y-px";
 const variants: Record<Variant, string> = {
   primary:
-    "border-transparent bg-maroon text-on-maroon hover:bg-maroon-hi hover:shadow-[0_8px_20px_-8px_color-mix(in_srgb,var(--maroon)_70%,transparent)]",
+    "border-transparent bg-brand text-on-brand hover:bg-brand-hi hover:shadow-[0_8px_20px_-8px_color-mix(in_srgb,var(--brand)_70%,transparent)]",
   ghost: "border-line bg-surface text-ink hover:border-ink",
 };
 

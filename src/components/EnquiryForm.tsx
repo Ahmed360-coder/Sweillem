@@ -335,7 +335,7 @@ export function EnquiryForm({
         <button
           type="submit"
           disabled={sending}
-          className="inline-flex min-h-12 cursor-pointer items-center justify-center gap-2.5 rounded-full border border-transparent bg-maroon px-6 py-3 font-semibold text-on-maroon transition-colors duration-200 ease-glaze hover:bg-maroon-hi active:translate-y-px disabled:cursor-wait disabled:opacity-70"
+          className="inline-flex min-h-12 cursor-pointer items-center justify-center gap-2.5 rounded-full border border-transparent bg-brand px-6 py-3 font-semibold text-on-brand transition-colors duration-200 ease-glaze hover:bg-brand-hi active:translate-y-px disabled:cursor-wait disabled:opacity-70"
         >
           {sending && <span className="size-4 animate-spin rounded-full border-2 border-current border-e-transparent" aria-hidden="true" />}
           {sending ? "Sending…" : isQuote ? (enabled ? "Send quote request" : "Prepare quote request") : enabled ? "Send message" : "Prepare message"}

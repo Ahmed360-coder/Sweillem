@@ -20,18 +20,23 @@ export const W = 1920;
 export const H = 1080;
 const BAND = 810; // top of the caption band
 
+// Scene colours that change with the site theme are CSS variables (set in
+// globals.css, with the daylight value as fallback), so the same SVG string
+// suits light and dark mode without redrawing. Material colours stay hex because
+// mix() blends them.
+const v = (name, light) => `var(--j-${name}, ${light})`;
 const C = {
-  bg: '#f2f2ef', // --paper
-  band: '#e8e7e3', // --sunk
-  surface: '#ffffff',
-  ink: '#1c1818',
-  muted: '#5d5f62',
-  line: '#d6d4cf',
-  maroon: '#7a0404',
-  slate: '#7f8285',
-  ground: '#e2ddd4',
-  soil: '#b48a66',
-  soilDark: '#8f6a4c',
+  bg: v('bg', '#f2f2ef'), // --paper
+  band: v('band', '#e8e7e3'), // --sunk
+  surface: v('surface', '#ffffff'),
+  ink: v('ink', '#1c1818'),
+  muted: v('muted', '#5d5f62'),
+  line: v('line', '#d6d4cf'),
+  maroon: v('maroon', '#7a0404'),
+  slate: v('slate', '#7f8285'),
+  ground: v('ground', '#e2ddd4'),
+  soil: v('soil', '#b48a66'),
+  soilDark: v('soil-dark', '#8f6a4c'),
   clay: '#c07a4a', // --clay
   clayWet: '#9a5a36',
   clayDry: '#d9b48c',
@@ -39,12 +44,16 @@ const C = {
   fired: '#3b2119', // --glaze
   ring: '#d24a2c',
   steel: '#8a8d90',
-  steelDark: '#55585c',
+  steelDark: v('steel-dark', '#55585c'),
   fire: '#e4572e', // --fire
   heat: '#f39a5b',
   water: '#5f87a3',
-  glass: '#9fb6c6',
+  glass: v('glass', '#9fb6c6'),
   loader: '#e0a526',
+  road: v('road', '#d9d6cf'),
+  skyline: v('skyline', '#e6e4df'),
+  trench: v('trench', '#e6d8c6'),
+  grass: v('grass', '#8e9a5b'),
 };
 
 const FONT = {
@@ -312,7 +321,7 @@ function pictureCard(ch, lt) {
   const sd = ch.end - ch.start - ch.lead;
   const vw = fw / z, vh = fh / z;
   const vx = clamp(x - vw / 2, 0, W - vw), vy = clamp(y - vh / 2, 0, BAND - vh);
-  s += `<rect x="${fx}" y="${fy}" width="${fw}" height="${fh}" fill="#fff"/>`;
+  s += `<rect x="${fx}" y="${fy}" width="${fw}" height="${fh}" fill="${C.surface}"/>`;
   s += `<g transform="translate(${f(cx)} ${f(cy)}) scale(${f(kb * 1000) / 1000}) translate(${f(-cx)} ${f(-cy)}) translate(${fx} ${fy}) scale(${z}) translate(${f(-vx)} ${f(-vy)})">${SCENES[ch.id](at * sd, sd)}</g></g></g>`;
   // Step number and title.
   const a = eOut(seg(lt, 0.1, 0.7));
@@ -334,7 +343,7 @@ function sceneIntro(lt) {
   const b = eOut(seg(lt, 0.9, 2.1));
   const p = ease(seg(lt, 1.2, 3.6));
   const title = (I18N[LANG] || I18N.en).chapters.intro[0];
-  let s = `<image href="${LOGO}" x="${f(W / 2 - 330)}" y="${f(150 - 30 * (1 - a))}" width="660" height="224" opacity="${o(a)}"/>`;
+  let s = themedImage(LOGO, `x="${f(W / 2 - 330)}" y="${f(150 - 30 * (1 - a))}" width="660" height="224" opacity="${o(a)}"`);
   s += text(W / 2, 500, title, { size: 64, weight: 600, font: 'head', anchor: 'middle', op: b });
   s += text(W / 2, 562, L().subtitle, { size: 32, weight: 400, fill: C.muted, anchor: 'middle', op: b });
   if (p > 0) s += pipe(lerp(-900, W / 2 - 450, p), 700, 900, 90, C.fired, { gloss: 1, ring: 1 });
@@ -641,11 +650,11 @@ function sceneJoint(lt) {
 
 function sceneDeliver(lt) {
   const gy = 690;
-  let s = ground(gy, '#d9d6cf');
+  let s = ground(gy, C.road);
   for (let x = -((lt * 400) % 160); x < W; x += 160) s += `<rect x="${f(x)}" y="${gy + 50}" width="80" height="8" fill="#fff" opacity=".7"/>`;
   for (let i = 0; i < 14; i++) {
     const h = 80 + rnd(i) * 180, w = 90 + rnd(i + 7) * 60;
-    s += `<rect x="${f(i * 140 - 20)}" y="${f(gy - h)}" width="${f(w)}" height="${f(h)}" fill="#e6e4df"/>`;
+    s += `<rect x="${f(i * 140 - 20)}" y="${f(gy - h)}" width="${f(w)}" height="${f(h)}" fill="${C.skyline}"/>`;
   }
   const dests = [L().egypt, L().ksa, L().germany];
   const order = rtl() ? [2, 1, 0] : [0, 1, 2];
@@ -671,9 +680,9 @@ function sceneDeliver(lt) {
 function sceneInstall(lt) {
   const sy = 360, ty = 720; // surface, trench bottom
   let s = `<rect x="0" y="${sy}" width="${W}" height="${BAND - sy}" fill="${C.soil}"/>`;
-  s += `<rect x="0" y="${sy}" width="${W}" height="16" fill="#8e9a5b"/>`;
+  s += `<rect x="0" y="${sy}" width="${W}" height="16" fill="${C.grass}"/>`;
   const tx0 = 180, tx1 = 1740;
-  s += `<rect x="${tx0}" y="${sy}" width="${tx1 - tx0}" height="${ty - sy}" fill="#e6d8c6"/>`;
+  s += `<rect x="${tx0}" y="${sy}" width="${tx1 - tx0}" height="${ty - sy}" fill="${C.trench}"/>`;
   s += `<rect x="${tx0}" y="${ty}" width="${tx1 - tx0}" height="${BAND - ty}" fill="${C.soilDark}"/>`;
   const fill = ease(seg(lt, 7.8, 9.6));
   if (fill > 0) s += `<rect x="${tx0}" y="${f(ty - (ty - sy) * fill)}" width="${tx1 - tx0}" height="${f((ty - sy) * fill)}" fill="${C.soilDark}" opacity=".9"/>`;
@@ -729,7 +738,7 @@ function sceneOutro(lt) {
     s += `<g transform="translate(${x} ${f(160 + 40 * (1 - a))})" opacity="${o(a)}">${c}</g>`;
   });
   const lg = eOut(seg(lt, 2.2, 3.2));
-  s += `<image href="${LOGO}" x="${W / 2 - 280}" y="${f(480 + 20 * (1 - lg))}" width="560" height="190" opacity="${o(lg)}"/>`;
+  s += themedImage(LOGO, `x="${W / 2 - 280}" y="${f(480 + 20 * (1 - lg))}" width="560" height="190" opacity="${o(lg)}"`);
   s += text(W / 2, 740, L().since, { size: 30, weight: 500, fill: C.ink, anchor: 'middle', op: seg(lt, 2.8, 3.6) });
   return s;
 }
@@ -751,7 +760,7 @@ function chrome(t, ch) {
   cap += text(x0, 878, ch.title, { size: 44, weight: 600, font: 'head', anchor });
   wrap(ch.caption, R ? 104 : 96).slice(0, 2).forEach((l, i) => { cap += text(x0, 930 + i * 40, l, { size: 28, weight: 400, fill: C.muted, anchor }); });
   s += `<g transform="translate(0 ${f(16 * (1 - a))})" opacity="${o(op)}">${cap}</g>`;
-  s += `<image href="${MARK}" x="${R ? 90 : W - 90 - 44}" y="846" width="44" height="64" opacity=".85"/>`;
+  s += themedImage(MARK, `x="${R ? 90 : W - 90 - 44}" y="846" width="44" height="64" opacity=".85"`);
   // Progress: one segment per numbered chapter, in reading order.
   const list = getChapters(LANG).filter((c) => c.n);
   const gap = 10, x = 90, w = W - 180, sw = (w - gap * (list.length - 1)) / list.length;
@@ -766,7 +775,12 @@ function chrome(t, ch) {
 
 const LOGO = '/images/brand/sweillem-logo.svg';
 const MARK = '/images/brand/sweillem-mark.svg';
-export const assetUrls = () => [LOGO, MARK];
+// An SVG <image> can't read the page's colours, so the logo comes in a light and
+// a dark file (same drawing, lifted colours) and CSS shows the one for the theme.
+const darkFile = (src) => src.replace(/\.svg$/, '-dark.svg');
+const themedImage = (src, attrs) =>
+  `<image class="only-light" href="${src}" ${attrs}/><image class="only-dark" href="${darkFile(src)}" ${attrs}/>`;
+export const assetUrls = () => [LOGO, MARK, darkFile(LOGO), darkFile(MARK)];
 
 // One complete frame as SVG markup (without the outer <svg>).
 //   compact: drop the caption band (narrow screens, where the player shows the caption as HTML).

@@ -32,7 +32,7 @@ function Photo({ src, alt, contain }: { src: string; alt: string; contain?: bool
       alt={alt}
       fill
       sizes="(min-width: 900px) 400px, 100vw"
-      className={contain ? "bg-white object-contain p-4" : "object-cover"}
+      className={contain ? "drawing bg-white object-contain p-4" : "object-cover"}
     />
   );
 }

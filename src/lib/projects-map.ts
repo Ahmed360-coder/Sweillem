@@ -25,12 +25,48 @@ export interface MapPlace {
   image?: { src: string; alt: string; pos?: string };
   /** The place the export routes start from. */
   origin?: boolean;
+  /** Country flag, by ISO 3166-1 alpha-2 code (public/images/flags). */
+  flag: Flag;
 }
 
 export interface MapMarket {
   id: string;
   name: string;
   region: Exclude<MapRegion, "world">;
+  flag: Flag;
+}
+
+/**
+ * The flags the map uses, from the flag-icons set (MIT, public/images/flags/LICENSE.txt),
+ * copied into the site so nothing is loaded from elsewhere.
+ */
+export type Flag = "eg" | "sa" | "de" | "be" | "nl" | "cz" | "it" | "pl" | "ro" | "hu" | "qa" | "gr" | "sg" | "hk" | "bn";
+
+/** Flag of each project's country (content/company.ts). */
+const countryFlag: Record<string, Flag> = { Egypt: "eg", "Saudi Arabia": "sa", Germany: "de" };
+
+/** Flag of each export market, by its ISO 3166-1 numeric id (reach-map.json). */
+const marketFlag: Record<string, Flag> = {
+  "276": "de",
+  "056": "be",
+  "528": "nl",
+  "203": "cz",
+  "380": "it",
+  "616": "pl",
+  "642": "ro",
+  "348": "hu",
+  "682": "sa",
+  "634": "qa",
+  "300": "gr",
+  "702": "sg",
+  "344": "hk",
+  "096": "bn",
+};
+
+function flagOf(table: Record<string, Flag>, key: string): Flag {
+  const flag = table[key];
+  if (!flag) throw new Error(`The projects map has no flag for ${key} (src/lib/projects-map.ts)`);
+  return flag;
 }
 
 export interface MapData {
@@ -102,7 +138,7 @@ export const mapData: MapData = {
       const copy = projectCopy[p.slug];
       const pin = at(p.slug as keyof typeof pins.places);
       if (!copy || !pin) throw new Error(`The projects map has no pin for ${p.slug} (scripts/build-map-places.mjs)`);
-      return { id: p.slug, layer: "projects", region: regionOf[p.slug], ...pin, ...copy };
+      return { id: p.slug, layer: "projects", region: regionOf[p.slug], flag: flagOf(countryFlag, p.country), ...pin, ...copy };
     }),
     {
       id: "cairo",
@@ -114,6 +150,7 @@ export const mapData: MapData = {
       region: "middle-east",
       side: "right",
       origin: true,
+      flag: "eg",
       ...at("cairo"),
     },
     {
@@ -125,6 +162,7 @@ export const mapData: MapData = {
       text: "SWEILLEM’s address in Germany, as listed on sweillem.net. Euro Sweillem, the European central stock, has its warehouses in Germany.",
       region: "europe",
       side: "right",
+      flag: "de",
       ...at("brueggen"),
     },
     {
@@ -136,8 +174,14 @@ export const mapData: MapData = {
       text: "SWEILLEM’s address in Saudi Arabia, as listed on sweillem.net. Saudi Arabia was SWEILLEM’s first successful market outside Egypt.",
       region: "middle-east",
       side: "left",
+      flag: "sa",
       ...at("jeddah"),
     },
   ],
-  markets: reach.markets.map((m) => ({ id: m.id, name: m.name, region: marketRegion[m.name] ?? "europe" })),
+  markets: reach.markets.map((m) => ({
+    id: m.id,
+    name: m.name,
+    region: marketRegion[m.name] ?? "europe",
+    flag: flagOf(marketFlag, m.id),
+  })),
 };
