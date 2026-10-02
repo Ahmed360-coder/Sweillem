@@ -96,7 +96,7 @@ function Field({
  */
 export function EnquiryForm({
   kind,
-  enabled,
+  enabled: builtEnabled,
   items = [],
   onSent,
 }: {
@@ -116,8 +116,23 @@ export function EnquiryForm({
   const problemRef = useRef<HTMLDivElement>(null);
   const honeypot = useRef<HTMLInputElement>(null);
 
+  // The page is built ahead of time; ask the server whether sending is on now,
+  // so adding the keys on Vercel takes effect without rebuilding the page.
+  const [liveEnabled, setLiveEnabled] = useState<boolean | null>(null);
+  const enabled = liveEnabled ?? builtEnabled;
+
   useEffect(() => {
     startedAt.current = Date.now();
+    let cancelled = false;
+    fetch("/api/enquiry", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: { enabled?: unknown } | null) => {
+        if (!cancelled && typeof d?.enabled === "boolean") setLiveEnabled(d.enabled);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const set = (f: keyof Values) => (e: { target: { value: string } }) => {

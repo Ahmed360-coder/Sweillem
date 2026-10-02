@@ -168,3 +168,14 @@ test.describe("enquiry API", () => {
     expect((await res.json()).error).toBe("not-configured");
   });
 });
+
+test("the form asks the server whether sending is on", async ({ page, request }) => {
+  const res = await request.get("/api/enquiry");
+  expect(await res.json()).toEqual({ enabled: !!process.env.SUPABASE_URL });
+  await page.route("/api/enquiry", (route) =>
+    route.request().method() === "GET" ? route.fulfill({ json: { enabled: true } }) : route.fulfill({ json: { ok: true, reference: "Q-TEST01" } }),
+  );
+  await page.goto("/contact");
+  await expect(page.getByRole("button", { name: "Send message" })).toBeVisible();
+  await expect(page.getByText("Online sending is being set up")).toHaveCount(0);
+});

@@ -29,6 +29,11 @@ const json = (body: EnquiryResponse, status = 200) => Response.json(body, { stat
 /** Short reference the visitor can quote back, e.g. "Q-7F3A2C". */
 const reference = (kind: "quote" | "contact", id: string) => `${kind === "quote" ? "Q" : "M"}-${id.replace(/-/g, "").slice(0, 6).toUpperCase()}`;
 
+/** Whether online sending is switched on, for forms on pages built before the keys were added. */
+export function GET() {
+  return Response.json({ enabled: formsEnabled() }, { headers: { "Cache-Control": "no-store" } });
+}
+
 export async function POST(req: Request) {
   let raw: unknown;
   try {
