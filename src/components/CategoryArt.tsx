@@ -19,9 +19,9 @@ function Shadow({ cx, cy, rx }: { cx: number; cy: number; rx: number }) {
  * shows the wall thickness (outer radius r, bore radius bore), the far end
  * carries the wider socket.
  */
-function Pipe({ x, y, len, r, bore, socket = true }: { x: number; y: number; len: number; r: number; bore: number; socket?: boolean }) {
+function Pipe({ x, y, len, r, bore, socket = true, k = 0.34 }: { x: number; y: number; len: number; r: number; bore: number; socket?: boolean; k?: number }) {
   const id = useId();
-  const k = 0.34; // ellipse squash for the end faces
+  // k squashes the end faces: higher shows more of the open end.
   const sr = r * 1.18;
   return (
     <g>
@@ -89,23 +89,55 @@ export function ExplorerArt({ className }: { className?: string }) {
   );
 }
 
+export interface ClassFacts {
+  /** Crushing strength FN in kN/m. */
+  fn: number;
+  /** Wall thickness in mm. */
+  wall: number;
+}
+
 /**
- * N and H class side by side: the same bore, the H pipe with the thicker wall.
- * Proportions from the DN 300 rows (d3 355 for N, 376 for H, bore 300).
+ * N and H class as two pictures in one: the same DN pipe drawn twice, each in
+ * its own panel, with the H pipe's thicker wall and higher crushing strength
+ * (the arrow) called out. Sizes come from the DN 300 rows of the pipe tables.
  */
-export function CompareArt({ className }: { className?: string }) {
-  const bore = 30;
+export function CompareArt({ n, h, dn, className }: { n: ClassFacts; h: ClassFacts; dn: number; className?: string }) {
+  const bore = 34;
+  const panels = [
+    { cls: "N", name: "Normal strength", facts: n, cx: 80 },
+    { cls: "H", name: "Extra strength", facts: h, cx: 240 },
+  ];
+  const maxFn = Math.max(n.fn, h.fn);
   return (
     <svg viewBox="0 0 320 180" className={className} aria-hidden="true">
-      <Shadow cx={175} cy={170} rx={120} />
-      <Pipe x={70} y={50} len={210} r={bore * (355 / 300)} bore={bore} />
-      <Pipe x={70} y={128} len={210} r={bore * (376 / 300)} bore={bore} />
-      <Tag x={28} y={50}>
-        N
-      </Tag>
-      <Tag x={28} y={128}>
-        H
-      </Tag>
+      <path d="M160 14V166" stroke="currentColor" strokeOpacity=".25" strokeDasharray="3 4" />
+      {panels.map(({ cls, name, facts, cx }) => {
+        const r = (bore * (dn + 2 * facts.wall)) / dn;
+        const y = 108;
+        const fx = cx - 26;
+        const arrowW = 2 + (4 * facts.fn) / maxFn;
+        return (
+          <g key={cls}>
+            <Tag x={cx - 44} y={20}>
+              {cls}
+            </Tag>
+            <text x={cx - 24} y={25} fontFamily="var(--font-body)" fontSize="13" fill="currentColor">
+              {name}
+            </text>
+            {/* the load the pipe is rated to carry */}
+            <path d={`M${cx - 10} 36V${y - r - 9}`} stroke="var(--maroon)" strokeWidth={arrowW} />
+            <path d={`M${cx - 10 - 4 - arrowW} ${y - r - 12}h${8 + 2 * arrowW}l${-4 - arrowW} 8z`} fill="var(--maroon)" />
+            <text x={cx} y={50} fontFamily="var(--font-data)" fontSize="12" fill="currentColor">
+              FN {facts.fn} kN/m
+            </text>
+            <Shadow cx={cx + 4} cy={y + r + 6} rx={62} />
+            <Pipe x={fx} y={y} len={70} r={r} bore={bore} socket={false} k={0.62} />
+            <text x={cx + 4} y={174} textAnchor="middle" fontFamily="var(--font-data)" fontSize="12" fill="currentColor">
+              Wall {facts.wall} mm
+            </text>
+          </g>
+        );
+      })}
     </svg>
   );
 }

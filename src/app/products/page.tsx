@@ -18,6 +18,13 @@ export const metadata = pageMetadata({
 
 const [nPipes, hPipes] = productSpecs.pipes.tables;
 
+/** Crushing strength and wall thickness of one class at the given DN, from its table. */
+function classFacts(t: typeof nPipes, dn: string) {
+  const row = t.rows.find((r) => r[0] === dn)!;
+  const num = (key: string) => parseFloat(row[t.columns.findIndex((c) => c.key === key)]);
+  return { fn: num("crushingStrength"), wall: num("wallThickness") };
+}
+
 export default function ProductsPage() {
   const tools = [
     {
@@ -29,8 +36,8 @@ export default function ProductsPage() {
     {
       href: "/products/compare",
       title: "Compare N and H class",
-      text: `Normal strength DN ${nPipes.rows[0][0]} to ${nPipes.rows.at(-1)![0]} beside extra strength DN ${hPipes.rows[0][0]} to ${hPipes.rows.at(-1)![0]}, size by size.`,
-      art: <CompareArt className="h-full w-full" />,
+      text: `Same bore, different strength. H class pipes have a thicker wall and carry a higher load. N is made from DN ${nPipes.rows[0][0]} to ${nPipes.rows.at(-1)![0]}, H from DN ${hPipes.rows[0][0]} to ${hPipes.rows.at(-1)![0]}.`,
+      art: <CompareArt dn={300} n={classFacts(nPipes, "300")} h={classFacts(hPipes, "300")} className="h-full w-full text-ink" />,
     },
     {
       href: "/roof-tiles",
