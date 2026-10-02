@@ -399,6 +399,22 @@ test.describe("projects map", () => {
     await expect(page.locator("#main")).not.toHaveAttribute("inert");
   });
 
+  test("every place and country shows its flag", async ({ page }) => {
+    await page.goto("/");
+    await page.locator("header").getByRole("button", { name: "Map", exact: true }).click();
+    const dialog = page.getByRole("dialog", { name: "Projects and distribution" });
+    await expect(page.locator("#map-panel .pmap")).toHaveAttribute("data-ready", "");
+    for (const name of [/^Haram central area/, /^Cairo/, /^Jeddah/, "Belgium", "Hong Kong"]) {
+      await expect(dialog.getByRole("button", { name }).locator('img[src^="/images/flags/"]')).toHaveCount(1);
+    }
+    const flags = dialog.locator('img[src^="/images/flags/"]');
+    await expect(flags).toHaveCount(7 + 14);
+    for (const img of await flags.all()) {
+      await expect(img).toHaveAttribute("alt", "");
+      expect(await img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
+    }
+  });
+
   test("its links close it", async ({ page }) => {
     await page.goto("/");
     await page.locator("header").getByRole("button", { name: "Map", exact: true }).click();
