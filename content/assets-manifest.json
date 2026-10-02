@@ -233,6 +233,16 @@
       "status": "in-repo"
     },
     {
+      "path": "public/images/brand/sweillem-logo-dark.svg",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image2.png (redrawn as vector)",
+      "slide": 2,
+      "notes": "Dark-mode logo: the same drawing as sweillem-logo.svg with lifted colours (S mark #9a9da0, wordmark #e0473d) so it reads on the dark theme. Used by the How it's made journey.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
       "path": "public/images/brand/sweillem-logo-white.svg",
       "source": "deck",
       "deckFile": "Sweillem vitrified clay pipes.pptx",
@@ -249,6 +259,16 @@
       "deckMedia": "image2.png (redrawn as vector)",
       "slide": 2,
       "notes": "Vector S mark on its own (grey).",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/brand/sweillem-mark-dark.svg",
+      "source": "deck",
+      "deckFile": "Sweillem vitrified clay pipes.pptx",
+      "deckMedia": "image2.png (redrawn as vector)",
+      "slide": 2,
+      "notes": "Dark-mode S mark (#9a9da0), same drawing as sweillem-mark.svg.",
       "publish": "yes",
       "status": "in-repo"
     },

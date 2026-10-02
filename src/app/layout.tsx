@@ -6,10 +6,12 @@ import { Header } from "@/components/Header";
 import { Intro, introGateScript } from "@/components/Intro";
 import { MotionProvider } from "@/components/MotionProvider";
 import { RevealObserver } from "@/components/RevealObserver";
+import { TopBar } from "@/components/TopBar";
 import { baseOpenGraph } from "@/lib/metadata";
 import { mapData } from "@/lib/projects-map";
 import { revealEarlyScript } from "@/lib/reveal-early";
 import { site, siteUrl } from "@/lib/site";
+import { THEME_COLORS, themeScript } from "@/lib/theme-script";
 import "./globals.css";
 import "./intro.css";
 
@@ -38,9 +40,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  // The theme script repaints both to the chosen theme's colour when a visitor picks one.
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f2f2ef" },
-    { media: "(prefers-color-scheme: dark)", color: "#141011" },
+    { media: "(prefers-color-scheme: light)", color: THEME_COLORS.light },
+    { media: "(prefers-color-scheme: dark)", color: THEME_COLORS.dark },
   ],
 };
 
@@ -53,6 +56,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       suppressHydrationWarning
     >
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script dangerouslySetInnerHTML={{ __html: introGateScript }} />
         <noscript>
           <style>{".reveal,.joint-spigot{opacity:1!important;transform:none!important}.joint-seal{opacity:1!important}.grow-x{transform:scaleX(var(--v,1))!important}"}</style>
@@ -63,6 +67,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           Skip to content
         </a>
         <MotionProvider>
+          <TopBar />
           <Header mapData={mapData} />
           <main id="main" tabIndex={-1} className="flex-1 outline-none">
             {children}

@@ -81,15 +81,20 @@ export function alertEmail(e: EnquiryInput, reference: string) {
     "Reply to this email to answer the sender directly.",
   ].join("\n");
 
-  const html = `<div style="font-family:system-ui,sans-serif;font-size:15px;line-height:1.5;color:#1c1818">
+  // Light and dark: the colour-scheme meta tells mail apps both are supported, and
+  // the media query swaps the colours in apps that read <style> (Apple Mail, iOS).
+  // Gmail ignores both and adjusts the colours itself.
+  const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="color-scheme" content="light dark"><meta name="supported-color-schemes" content="light dark">
+<style>:root{color-scheme:light dark}@media (prefers-color-scheme:dark){.sw-body{background:#141011!important;color:#f1ebe8!important}.sw-muted{color:#aaa19d!important}}</style></head>
+<body class="sw-body" style="margin:0;padding:16px;background:#ffffff;color:#1c1818"><div style="font-family:system-ui,sans-serif;font-size:15px;line-height:1.5">
 <p>${e.kind === "quote" ? "New quote request" : "New message"} from the ${company.shortName} website. Reference <strong>${reference}</strong>.</p>
 <table style="border-collapse:collapse">${lines
     .filter(([, v]) => v)
-    .map(([k, v]) => `<tr><td style="padding:2px 16px 2px 0;color:#5d5f62">${k}</td><td>${escapeHtml(v)}</td></tr>`)
+    .map(([k, v]) => `<tr><td class="sw-muted" style="padding:2px 16px 2px 0;color:#5d5f62">${k}</td><td>${escapeHtml(v)}</td></tr>`)
     .join("")}</table>
 ${items.length ? `<p style="margin-top:16px"><strong>Items</strong></p><ul>${items.map((i) => `<li>${escapeHtml(i)}</li>`).join("")}</ul>` : ""}
 ${e.message ? `<p style="margin-top:16px"><strong>Message</strong></p><p style="white-space:pre-wrap">${escapeHtml(e.message)}</p>` : ""}
-<p style="color:#5d5f62;margin-top:20px">Reply to this email to answer the sender directly.</p></div>`;
+<p class="sw-muted" style="color:#5d5f62;margin-top:20px">Reply to this email to answer the sender directly.</p></div></body></html>`;
 
   return { subject, text, html };
 }

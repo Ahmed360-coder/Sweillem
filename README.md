@@ -38,7 +38,8 @@ The repo is linked to the Vercel project `sweillem`. Every push to a branch gets
 | Path | What it is |
 |---|---|
 | `src/app/` | Routes. `layout.tsx` holds the shell; `template.tsx` is the page transition (M01). |
-| `src/app/globals.css` | Design tokens from the redesign (colour, type, motion, shape) mapped into Tailwind. Light and dark themes; `data-theme` on `<html>` forces one. |
+| `src/app/globals.css` | Design tokens from the redesign (colour, type, motion, shape) mapped into Tailwind. Light and dark themes, plus `--j-*` scene colours for the drawn journeys and `--drawing-filter` for line drawings on white. `.only-light` / `.only-dark` show something in one theme. |
+| `src/lib/theme-script.ts`, `src/lib/theme.ts`, `src/components/ThemeSwitch.tsx` | Light and dark mode: a head script sets `<html data-theme>` from the visitor's choice (localStorage `sweillem.theme`) or the device setting before the first paint; the header button swaps modes and the side menu offers Auto, Light and Dark. |
 | `src/app/intro.css`, `src/components/Intro.tsx` | The 3-second intro (M00), shown once per session when a visitor lands on `/`. |
 | `src/components/` | Header, mobile menu, footer, page header, buttons and shared pieces. |
 | `src/lib/site.ts` | Navigation, footer links and the route list used by the sitemap and tests. |

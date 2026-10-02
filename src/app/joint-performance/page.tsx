@@ -81,7 +81,7 @@ export default function JointPerformancePage() {
               className="reveal grid content-start gap-3 rounded-card border border-line bg-surface p-5"
               style={{ "--dl": `${i * 100}ms` } as CSSProperties}
             >
-              <span className="hex grid size-9 place-content-center bg-maroon font-mono text-sm font-semibold text-on-maroon">
+              <span className="hex grid size-9 place-content-center bg-brand font-mono text-sm font-semibold text-on-brand">
                 {i + 1}
               </span>
               <p>{t}</p>

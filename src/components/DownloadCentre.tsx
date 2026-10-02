@@ -93,7 +93,7 @@ export function DownloadCentre({ items, kinds }: { items: DownloadItem[]; kinds:
             ))}
           </div>
           <label className="flex min-h-11 cursor-pointer items-center gap-2.5 text-[14px]">
-            <input type="checkbox" checked={onlyFiles} onChange={(e) => setOnlyFiles(e.target.checked)} className="size-5 accent-maroon" />
+            <input type="checkbox" checked={onlyFiles} onChange={(e) => setOnlyFiles(e.target.checked)} className="size-5 accent-brand" />
             Only what can be opened now
           </label>
         </div>

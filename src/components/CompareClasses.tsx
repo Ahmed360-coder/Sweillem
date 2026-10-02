@@ -40,7 +40,7 @@ export function CompareClasses({ n, h }: { n: SpecTable; h: SpecTable }) {
           {all.map((s) => (
             <label
               key={s}
-              className="relative inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-full border border-line bg-surface px-4 font-mono text-sm font-semibold tabular-nums transition-colors select-none hover:border-ink has-checked:border-maroon has-checked:bg-maroon has-checked:text-on-maroon has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-maroon"
+              className="relative inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-full border border-line bg-surface px-4 font-mono text-sm font-semibold tabular-nums transition-colors select-none hover:border-ink has-checked:border-brand has-checked:bg-brand has-checked:text-on-brand has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-maroon"
             >
               <input type="radio" name={`${uid}-dn`} value={s} checked={s === size} onChange={() => setSize(s)} className="sr-only" />
               {s}
