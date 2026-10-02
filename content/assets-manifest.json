@@ -501,6 +501,118 @@
       "notes": "Tile cut out of its white slide background with the badge removed, by scripts/cut-roof-tiles.mjs. Used by the roof tiles colour viewer and production process.",
       "publish": "yes",
       "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/eg.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/sa.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/de.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/be.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/nl.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/cz.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/it.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/pl.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/ro.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/hu.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/qa.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/gr.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/sg.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/hk.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/bn.svg",
+      "source": "generated",
+      "notes": "Country flag from flag-icons 7.5.0 (MIT, see public/images/flags/LICENSE.txt), shown beside country names on the projects map.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/flags/LICENSE.txt",
+      "source": "generated",
+      "notes": "MIT licence of flag-icons, which the flag SVGs come from.",
+      "publish": "yes",
+      "status": "in-repo"
     }
   ],
   "liveSite": [
