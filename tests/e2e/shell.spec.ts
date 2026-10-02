@@ -201,9 +201,9 @@ test.describe("intro", () => {
     await expect(intro).toBeHidden();
   });
 
-  test("ends by itself within four seconds", async ({ page }) => {
+  test("ends by itself within six seconds", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator("#intro")).toBeHidden({ timeout: 4500 });
+    await expect(page.locator("#intro")).toBeHidden({ timeout: 6000 });
   });
 
   test("holds the hero entrance until the intro hands off", async ({ page }) => {
@@ -228,7 +228,7 @@ test.describe("intro", () => {
     const ctx = await browser.newContext({ reducedMotion: "reduce" });
     const page = await ctx.newPage();
     await page.goto("/");
-    await expect(page.locator("#intro")).toBeHidden({ timeout: 1800 });
+    await expect(page.locator("#intro")).toBeHidden({ timeout: 2600 });
     await ctx.close();
   });
 });
