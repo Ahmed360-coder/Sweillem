@@ -136,7 +136,7 @@ export default function HomePage() {
             </svg>
             <HeroSlideshow slides={heroSlides} />
             <div
-              className="badge-1935 hex pointer-events-none absolute end-2 top-[6%] z-10 grid h-24 w-[84px] place-content-center bg-maroon text-center text-on-maroon md:-end-[3%] md:h-32 md:w-28"
+              className="badge-1935 hex pointer-events-none absolute end-2 top-[6%] z-10 grid h-24 w-[84px] place-content-center bg-brand text-center text-on-brand md:-end-[3%] md:h-32 md:w-28"
               aria-hidden="true"
             >
               <span className="font-mono text-[10px] font-medium tracking-[.14em] uppercase">Since</span>
@@ -214,7 +214,7 @@ export default function HomePage() {
               dangerouslySetInnerHTML={{ __html: teaserFrame }}
             />
             <span className="absolute end-3 bottom-3 flex items-center gap-3 rounded-full bg-ink/85 py-1 ps-1 pe-4 text-paper shadow-card backdrop-blur-sm sm:end-4 sm:bottom-4 sm:py-1.5 sm:ps-1.5 sm:pe-5">
-              <span className="hex grid size-10 place-content-center bg-maroon text-on-maroon transition-transform duration-300 ease-set group-hover:scale-110 sm:size-12">
+              <span className="hex grid size-10 place-content-center bg-brand text-on-brand transition-transform duration-300 ease-set group-hover:scale-110 sm:size-12">
                 <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
                   <path d="M12 5v14M6 13l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>

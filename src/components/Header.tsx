@@ -97,8 +97,8 @@ export function Header({ mapData }: { mapData: MapData }) {
           aria-hidden="true"
           className="absolute inset-0 -z-10 bg-[color-mix(in_srgb,var(--paper)_86%,transparent)] opacity-0 shadow-[0_1px_0_var(--line)] backdrop-blur-md transition-opacity duration-300 ease-glaze group-data-stuck/hdr:opacity-100"
         />
-        {/* Under 400 px the gaps tighten and the quote list is a round button with its count on the corner, so the theme switch fits beside the map button on a 360 px phone. */}
-        <div className="wrap flex items-center gap-2 min-[400px]:gap-3 min-[1100px]:gap-5">
+        {/* Under 400 px the gaps tighten, the logo is a little smaller and the quote list is a round button with its count on the corner, so the light/dark switch fits beside the map button on a 360 px phone. */}
+        <div className="wrap flex items-center gap-1.5 min-[400px]:gap-3 min-[980px]:gap-2 min-[1100px]:gap-5">
           <button
             ref={burgerRef}
             type="button"
@@ -122,7 +122,7 @@ export function Header({ mapData }: { mapData: MapData }) {
           <Link
             href="/"
             aria-label="SWEILLEM home"
-            className="relative z-50 block h-11 flex-none py-0.5 origin-left transition-transform duration-300 ease-glaze group-data-stuck/hdr:scale-[.8] rtl:origin-right"
+            className="relative z-50 block h-10 flex-none py-0.5 origin-left min-[400px]:h-11 transition-transform duration-300 ease-glaze group-data-stuck/hdr:scale-[.8] rtl:origin-right"
           >
             <Logo title={null} />
           </Link>
@@ -170,7 +170,7 @@ export function Header({ mapData }: { mapData: MapData }) {
               <span
                 aria-hidden="true"
                 data-quote-count
-                className="absolute -end-1 -top-1 min-w-5 rounded-full bg-maroon px-[5px] text-center font-mono text-[12px] leading-5 font-semibold text-on-maroon ring-2 ring-paper min-[400px]:static min-[400px]:ring-0"
+                className="absolute -end-1 -top-1 min-w-5 rounded-full bg-brand px-[5px] text-center font-mono text-[12px] leading-5 font-semibold text-on-brand ring-2 ring-paper min-[400px]:static min-[400px]:ring-0"
               >
                 {quoteCount}
               </span>

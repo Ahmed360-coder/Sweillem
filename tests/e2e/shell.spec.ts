@@ -119,12 +119,14 @@ test.describe("light and dark mode", () => {
     await page.goto("/products");
     expect(await theme(page)).toBe("dark");
 
-    await page.getByRole("button", { name: "Switch to light mode" }).click();
+    const toggle = page.locator("header").getByRole("switch", { name: "Dark mode" });
+    await expect(toggle).toHaveAttribute("aria-checked", "true");
+    await toggle.click();
     expect(await theme(page)).toBe("light");
     await expect(page.locator("body")).toHaveCSS("background-color", "rgb(242, 242, 239)");
     await page.reload();
     expect(await theme(page)).toBe("light");
-    await expect(page.getByRole("button", { name: "Switch to dark mode" })).toBeVisible();
+    await expect(toggle).toHaveAttribute("aria-checked", "false");
 
     // Auto in the side menu hands the choice back to the device.
     await page.getByRole("button", { name: "Menu", exact: true }).click();
@@ -134,12 +136,23 @@ test.describe("light and dark mode", () => {
     await ctx.close();
   });
 
+  test("buttons keep the logo maroon in dark mode", async ({ browser }) => {
+    for (const colorScheme of ["light", "dark"] as const) {
+      const ctx = await browser.newContext({ colorScheme });
+      const page = await ctx.newPage();
+      await skipIntro(page);
+      await page.goto("/");
+      await expect(page.getByRole("link", { name: "Explore the pipes" })).toHaveCSS("background-color", "rgb(122, 4, 4)");
+      await ctx.close();
+    }
+  });
+
   test("the logo keeps its two colours in both modes", async ({ page }) => {
     await page.goto("/");
     const colours = () =>
       page.locator("header svg[viewBox='0 0 642 217'] path").evaluateAll((paths) => paths.map((p) => getComputedStyle(p).fill));
     const light = await colours();
-    await page.getByRole("button", { name: "Switch to dark mode" }).click();
+    await page.locator("header").getByRole("switch", { name: "Dark mode" }).click();
     const dark = await colours();
     expect(new Set(light).size).toBe(2);
     expect(new Set(dark).size).toBe(2);

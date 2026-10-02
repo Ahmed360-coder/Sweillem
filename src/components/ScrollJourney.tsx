@@ -247,7 +247,7 @@ export function ScrollJourney() {
                   type="button"
                   onClick={() => jump(c)}
                   aria-current={c.id === active ? "step" : undefined}
-                  className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-line bg-surface/90 px-3.5 text-[14px] font-semibold text-ink shadow-sm backdrop-blur-sm transition-colors hover:border-maroon aria-[current=step]:border-maroon aria-[current=step]:bg-maroon aria-[current=step]:text-on-maroon"
+                  className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-line bg-surface/90 px-3.5 text-[14px] font-semibold text-ink shadow-sm backdrop-blur-sm transition-colors hover:border-maroon aria-[current=step]:border-brand aria-[current=step]:bg-brand aria-[current=step]:text-on-brand"
                 >
                   <span className="font-mono font-medium">{pad(c.n!)}</span>
                   {c.title}

@@ -402,7 +402,7 @@ export function ProjectsMap({
                           type="button"
                           aria-pressed={picked === `market:${m.id}`}
                           onClick={(e) => pickFromList(e, `market:${m.id}`, m.region)}
-                          className="min-h-11 cursor-pointer rounded-full border border-line bg-surface px-3.5 text-[14px] transition-[background-color,transform] duration-100 hover:bg-sunk active:translate-y-px aria-pressed:border-maroon aria-pressed:bg-maroon aria-pressed:text-on-maroon"
+                          className="min-h-11 cursor-pointer rounded-full border border-line bg-surface px-3.5 text-[14px] transition-[background-color,transform] duration-100 hover:bg-sunk active:translate-y-px aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-on-brand"
                         >
                           {m.name}
                         </button>

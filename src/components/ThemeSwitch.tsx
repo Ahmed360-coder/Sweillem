@@ -4,24 +4,36 @@ import { setThemePref, useTheme, useThemePref, type ThemePref } from "@/lib/them
 import { DeviceIcon, MoonIcon, SunIcon } from "./icons";
 
 /**
- * Header button: one tap swaps light and dark, and the choice is remembered.
- * Both icons are rendered and CSS shows the one for the theme in use, so the
- * first paint is right before hydration.
+ * Header switch, on every page: a sun and a moon on a track, with the logo-red
+ * knob over the mode in use. One tap swaps light and dark, and the choice is
+ * remembered. The knob position comes from CSS (the dark: variant reads
+ * <html data-theme>), so the first paint is right before hydration.
  */
 export function ThemeToggle({ className = "" }: { className?: string }) {
   const theme = useTheme();
-  const next = theme === "dark" ? "light" : "dark";
+  const dark = theme === "dark";
   return (
     <button
       type="button"
-      onClick={() => setThemePref(next)}
-      aria-label={`Switch to ${next} mode`}
-      title={`Switch to ${next} mode`}
+      role="switch"
+      aria-checked={dark}
+      aria-label="Dark mode"
+      title={dark ? "Switch to light mode" : "Switch to dark mode"}
+      onClick={() => setThemePref(dark ? "light" : "dark")}
       data-theme-toggle
-      className={`group/theme relative inline-flex size-11 flex-none cursor-pointer items-center justify-center rounded-full border border-line text-ink transition-[background-color,transform] duration-100 hover:bg-sunk active:translate-y-px ${className}`}
+      className={`group/theme relative inline-flex h-11 w-[60px] flex-none cursor-pointer items-center ${className}`}
     >
-      <MoonIcon className="only-light transition-transform duration-500 ease-glaze group-hover/theme:-rotate-[20deg]" />
-      <SunIcon className="only-dark text-[var(--fire)] transition-transform duration-500 ease-glaze group-hover/theme:rotate-45" />
+      <span
+        aria-hidden="true"
+        className="relative flex h-8 w-full items-center justify-between rounded-full border border-line bg-sunk px-[7px] text-muted transition-colors duration-200 group-hover/theme:border-ink"
+      >
+        <SunIcon className="size-4" />
+        <MoonIcon className="size-4" />
+        <span className="absolute start-[3px] top-[3px] grid size-6 place-items-center rounded-full bg-brand text-on-brand shadow-[0_1px_3px_rgb(0_0_0/0.35)] transition-transform duration-300 ease-set dark:translate-x-[26px] rtl:dark:-translate-x-[26px]">
+          <SunIcon className="size-3.5 dark:hidden" />
+          <MoonIcon className="hidden size-3.5 dark:block" />
+        </span>
+      </span>
     </button>
   );
 }
@@ -45,7 +57,7 @@ export function ThemeChoice() {
         {options.map(({ value, label, Icon }) => (
           <label
             key={value}
-            className="relative flex min-h-11 cursor-pointer items-center justify-center gap-1.5 rounded-pill text-[14px] font-semibold text-muted transition-colors duration-200 has-checked:bg-maroon has-checked:text-on-maroon has-focus-visible:outline-2 has-focus-visible:outline-maroon"
+            className="relative flex min-h-11 cursor-pointer items-center justify-center gap-1.5 rounded-pill text-[14px] font-semibold text-muted transition-colors duration-200 has-checked:bg-brand has-checked:text-on-brand has-focus-visible:outline-2 has-focus-visible:outline-maroon"
           >
             <input
               type="radio"

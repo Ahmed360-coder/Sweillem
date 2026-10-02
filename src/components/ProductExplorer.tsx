@@ -68,7 +68,7 @@ function ChipGroup<T extends string>({
         {options.map((o) => (
           <label
             key={o.value}
-            className={`relative inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-full border border-line bg-surface px-4 text-sm font-semibold transition-colors duration-200 ease-glaze select-none hover:border-ink has-checked:border-maroon has-checked:bg-maroon has-checked:text-on-maroon has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-maroon ${mono ? "font-mono tabular-nums" : ""}`}
+            className={`relative inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-full border border-line bg-surface px-4 text-sm font-semibold transition-colors duration-200 ease-glaze select-none hover:border-ink has-checked:border-brand has-checked:bg-brand has-checked:text-on-brand has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-maroon ${mono ? "font-mono tabular-nums" : ""}`}
           >
             <input
               type="radio"

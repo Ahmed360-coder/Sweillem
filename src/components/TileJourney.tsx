@@ -479,7 +479,7 @@ export function TileJourney({ steps }: { steps: TileStep[] }) {
                   type="button"
                   onClick={() => jump(i)}
                   aria-current={i === index ? "step" : undefined}
-                  className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-line bg-surface px-3.5 text-[14px] font-semibold text-ink transition-colors hover:border-maroon aria-[current=step]:border-maroon aria-[current=step]:bg-maroon aria-[current=step]:text-on-maroon"
+                  className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-line bg-surface px-3.5 text-[14px] font-semibold text-ink transition-colors hover:border-maroon aria-[current=step]:border-brand aria-[current=step]:bg-brand aria-[current=step]:text-on-brand"
                 >
                   <span className="font-mono font-medium">{pad(i + 1)}</span>
                   {s.title}

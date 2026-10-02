@@ -38,7 +38,7 @@ export function AddToQuote({
       className={`no-print inline-flex min-h-11 items-center justify-center gap-2 rounded-full border font-semibold whitespace-nowrap transition-colors duration-200 ease-glaze active:translate-y-px data-added:border-ok data-added:text-ok ${
         compact
           ? "min-w-11 border-line bg-surface px-3 text-sm text-ink hover:border-ink"
-          : "border-transparent bg-maroon px-5 py-3 text-on-maroon hover:bg-maroon-hi data-added:bg-surface"
+          : "border-transparent bg-brand px-5 py-3 text-on-brand hover:bg-brand-hi data-added:bg-surface"
       } ${className}`}
     >
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" aria-hidden="true" className="size-4 flex-none">

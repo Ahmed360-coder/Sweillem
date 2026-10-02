@@ -16,6 +16,12 @@
   --maroon: #7a0404;
   --maroon-hi: #9c1010;
   --on-maroon: #ffffff;
+  /* The logo maroon for filled controls (buttons, picked chips, badges). It is
+     the same in light and dark mode; --maroon is the red for text and lines,
+     lifted in dark mode so small text stays readable. */
+  --brand: #7a0404;
+  --brand-hi: #9c1010;
+  --on-brand: #ffffff;
   --slate: #7f8285;
   --glaze: #3b2119;
   --glaze-hi: #6b3a26;
@@ -91,11 +97,14 @@
     --ink: #f1ebe8;
     --muted: #aaa19d;
     --line: #382e2d;
-    --maroon: #ea6a62;
-    --maroon-hi: #f4857d;
+    --maroon: #ec5a5a;
+    --maroon-hi: #f27474;
     --on-maroon: #1a0706;
+    --brand: #7a0404;
+    --brand-hi: #9c1010;
+    --on-brand: #ffffff;
     --slate: #9a9da0;
-    --glaze: #5a3325;
+    --glaze: #3b2119;
     --glaze-hi: #8a5238;
     --clay: #d08a58;
     --fire: #ff7a45;
@@ -113,7 +122,7 @@
     --j-muted: #aaa19d;
     --j-line: #4a3e3c;
     --j-floor: #2e2726;
-    --j-maroon: #ea6a62;
+    --j-maroon: #ec5a5a;
     --j-slate: #5d6064;
     --j-ground: #2a2220;
     --j-soil: #5e4332;
@@ -143,11 +152,14 @@
   --ink: #f1ebe8;
   --muted: #aaa19d;
   --line: #382e2d;
-  --maroon: #ea6a62;
-  --maroon-hi: #f4857d;
+  --maroon: #ec5a5a;
+  --maroon-hi: #f27474;
   --on-maroon: #1a0706;
+  --brand: #7a0404;
+  --brand-hi: #9c1010;
+  --on-brand: #ffffff;
   --slate: #9a9da0;
-  --glaze: #5a3325;
+  --glaze: #3b2119;
   --glaze-hi: #8a5238;
   --clay: #d08a58;
   --fire: #ff7a45;
@@ -165,7 +177,7 @@
   --j-muted: #aaa19d;
   --j-line: #4a3e3c;
   --j-floor: #2e2726;
-  --j-maroon: #ea6a62;
+  --j-maroon: #ec5a5a;
   --j-slate: #5d6064;
   --j-ground: #2a2220;
   --j-soil: #5e4332;
@@ -224,6 +236,9 @@
   --color-maroon: var(--maroon);
   --color-maroon-hi: var(--maroon-hi);
   --color-on-maroon: var(--on-maroon);
+  --color-brand: var(--brand);
+  --color-brand-hi: var(--brand-hi);
+  --color-on-brand: var(--on-brand);
   --color-slate: var(--slate);
   --color-glaze: var(--glaze);
   --color-glaze-hi: var(--glaze-hi);
@@ -887,9 +902,9 @@ html[data-intro="exit"] .hero-progress {
   color: var(--maroon);
 }
 .reach-chip[aria-pressed="true"] {
-  border-color: var(--maroon);
-  background: var(--maroon);
-  color: var(--on-maroon);
+  border-color: var(--brand);
+  background: var(--brand);
+  color: var(--on-brand);
 }
 .reach-mode {
   cursor: pointer;

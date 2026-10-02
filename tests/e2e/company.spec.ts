@@ -109,7 +109,7 @@ test.describe("company pages (Milestone 3)", () => {
     // Until the visitor picks a view, it follows the site theme: day in light mode.
     await expect(map).toHaveAttribute("data-mode", "day");
     await expect(day).toHaveAttribute("aria-pressed", "true");
-    await page.getByRole("button", { name: "Switch to dark mode" }).click();
+    await page.locator("header").getByRole("switch", { name: "Dark mode" }).click();
     await expect(map).toHaveAttribute("data-mode", "night");
 
     await day.click();
