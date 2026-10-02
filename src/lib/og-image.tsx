@@ -4,10 +4,12 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
+import sharp from "sharp";
 import { site } from "./site";
 
 export const ogSize = { width: 1200, height: 630 };
-export const ogContentType = "image/png";
+// JPEG keeps each picture well under the 300 KB that WhatsApp accepts for link previews.
+export const ogContentType = "image/jpeg";
 
 const root = process.cwd();
 const dataUri = async (file: string, type: string) =>
@@ -22,7 +24,7 @@ export async function ogImage({ title, kicker, photo }: { title: string; kicker:
     dataUri(`public${photo}`, photo.endsWith(".png") ? "image/png" : "image/jpeg"),
   ]);
 
-  return new ImageResponse(
+  const png = new ImageResponse(
     (
       <div style={{ display: "flex", width: "100%", height: "100%", background: "#f2f2ef", fontFamily: "Jost" }}>
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", width: 690, padding: "56px 56px 52px 64px", borderLeft: "16px solid #7a0404" }}>
@@ -32,7 +34,7 @@ export async function ogImage({ title, kicker, photo }: { title: string; kicker:
             <div style={{ fontSize: 26, color: "#7a0404", letterSpacing: 2, textTransform: "uppercase" }}>{kicker}</div>
             <div style={{ fontSize: title.length > 28 ? 58 : 70, fontWeight: 600, lineHeight: 1.05, color: "#1c1818" }}>{title}</div>
           </div>
-          <div style={{ fontSize: 24, color: "#5b5757" }}>{`${site.legalName} · since ${site.founded}`}</div>
+          <div style={{ fontSize: 24, color: "#5b5757" }}>{`${site.legalName} · Cairo, Egypt`}</div>
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element -- rendered to PNG, not a page */}
         <img src={picture} width={494} height={630} alt="" style={{ objectFit: "cover" }} />
@@ -46,4 +48,6 @@ export async function ogImage({ title, kicker, photo }: { title: string; kicker:
       ],
     },
   );
+  const jpeg = await sharp(Buffer.from(await png.arrayBuffer())).jpeg({ quality: 82, mozjpeg: true }).toBuffer();
+  return new Response(new Uint8Array(jpeg), { headers: { "Content-Type": ogContentType } });
 }

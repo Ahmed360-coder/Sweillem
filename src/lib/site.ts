@@ -1,7 +1,20 @@
 import { company } from "@content/company";
 import { products } from "@content/products";
 
-export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://sweillem.net").replace(/\/$/, "");
+/**
+ * Where this build is served, for canonical URLs, share pictures, the sitemap and
+ * structured data. Set NEXT_PUBLIC_SITE_URL=https://sweillem.net when the domain
+ * moves over (Milestone 8). Until then Vercel builds use their own address, so
+ * links shared from sweillem.vercel.app or a preview show their picture.
+ */
+function resolveSiteUrl() {
+  const env = process.env;
+  if (env.NEXT_PUBLIC_SITE_URL) return env.NEXT_PUBLIC_SITE_URL;
+  const host = env.VERCEL_ENV === "production" ? env.VERCEL_PROJECT_PRODUCTION_URL : (env.VERCEL_BRANCH_URL ?? env.VERCEL_URL);
+  return host ? `https://${host}` : "https://sweillem.net";
+}
+
+export const siteUrl = resolveSiteUrl().replace(/\/$/, "");
 
 export const site = {
   name: company.shortName,

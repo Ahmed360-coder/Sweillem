@@ -33,10 +33,11 @@ for (const path of staticRoutes) {
     expect(head.twitterCard).toBe("summary_large_image");
     expect(head.text).not.toMatch(placeholder);
 
-    // The share picture is a real 1200 × 630 PNG served by this site.
+    // The share picture is a JPEG served by this site, small enough for WhatsApp.
     const og = await request.get(new URL(head.ogImage!).pathname);
     expect(og.status()).toBe(200);
-    expect(og.headers()["content-type"]).toBe("image/png");
+    expect(og.headers()["content-type"]).toBe("image/jpeg");
+    expect((await og.body()).length).toBeLessThan(300_000);
   });
 }
 

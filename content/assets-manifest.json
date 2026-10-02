@@ -435,6 +435,14 @@
       "status": "in-repo"
     },
     {
+      "path": "public/images/company/export-map-borders.svg",
+      "source": "generated",
+      "origin": "Natural Earth 50m country borders (world-atlas package)",
+      "notes": "Coast and border lines for the export map on About, drawn from Natural Earth 50m by scripts/build-export-map.mjs.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
       "path": "public/images/company/export-map-day.webp",
       "source": "generated",
       "origin": "NASA “Blue Marble”, as shipped in the three-globe package (scripts/assets/earth-day.jpg)",
