@@ -37,7 +37,7 @@ test("add to quote counts up in the quote list", async ({ page }) => {
   await page.getByRole("button", { name: "Add DN 300 Half channels 180° to quote" }).click();
   await expect(page.getByRole("status").filter({ hasText: "Added" }).first()).toBeAttached();
   await page.goto("/quote");
-  await expect(page.getByText(/Half Channels, Half channels 180° · DN 300/)).toBeVisible();
+  await expect(page.getByRole("spinbutton", { name: /Quantity: Half Channels, Half channels 180°, DN 300/ })).toHaveValue("1");
 });
 
 test("compare shows both classes for a shared size and says when a class is missing", async ({ page }) => {
