@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useId, useRef, useState, useSyncExternalStore, type CSSProperties, type MouseEvent, type PointerEvent } from "react";
 import { loadMapGeo, type MapGeo } from "@/lib/map-geo";
 import pins from "@/lib/map-places.json";
-import type { MapData, MapLayer, MapMarket, MapPlace, MapRegion } from "@/lib/projects-map";
+import type { Flag, MapData, MapLayer, MapMarket, MapPlace, MapRegion } from "@/lib/projects-map";
 import { ArrowIcon } from "./icons";
 
 const regions: { id: MapRegion; label: string }[] = [
@@ -353,7 +353,10 @@ export function ProjectsMap({
           ) : pickedMarket ? (
             <div className="grid gap-1.5 rounded-card border border-line bg-paper p-4">
               <p className="font-mono text-[12px] font-medium tracking-[.12em] text-maroon uppercase">Export market</p>
-              <h3 className="text-lg">{pickedMarket.name}</h3>
+              <h3 className="flex items-center gap-2.5 text-lg">
+                <CountryFlag flag={pickedMarket.flag} size="lg" />
+                {pickedMarket.name}
+              </h3>
               <p className="text-[15px] text-muted">
                 One of the {data.markets.length} countries SWEILLEM names as customers, reached from Cairo.
               </p>
@@ -402,8 +405,9 @@ export function ProjectsMap({
                           type="button"
                           aria-pressed={picked === `market:${m.id}`}
                           onClick={(e) => pickFromList(e, `market:${m.id}`, m.region)}
-                          className="min-h-11 cursor-pointer rounded-full border border-line bg-surface px-3.5 text-[14px] transition-[background-color,transform] duration-100 hover:bg-sunk active:translate-y-px aria-pressed:border-maroon aria-pressed:bg-maroon aria-pressed:text-on-maroon"
+                          className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-line bg-surface ps-3 pe-3.5 text-[14px] transition-[background-color,transform] duration-100 hover:bg-sunk active:translate-y-px aria-pressed:border-maroon aria-pressed:bg-maroon aria-pressed:text-on-maroon"
                         >
+                          <CountryFlag flag={m.flag} />
                           {m.name}
                         </button>
                       </li>
@@ -485,7 +489,10 @@ function PlaceButton({ place, pressed, onPick }: { place: MapPlace; pressed: boo
       )}
       <span className="grid min-w-0">
         <span className="text-[15px] leading-snug font-semibold">{place.name}</span>
-        <span className="text-[14px] text-muted">{place.place}</span>
+        <span className="flex items-center gap-1.5 text-[14px] text-muted">
+          <CountryFlag flag={place.flag} />
+          {place.place}
+        </span>
       </span>
     </button>
   );
@@ -506,7 +513,8 @@ function PlaceCard({ place, onLeave }: { place: MapPlace; onLeave?: () => void }
         </div>
       )}
       <div className="grid gap-1.5 p-4">
-        <p className="font-mono text-[12px] font-medium tracking-[.12em] text-maroon uppercase">
+        <p className="flex items-center gap-2 font-mono text-[12px] font-medium tracking-[.12em] text-maroon uppercase">
+          <CountryFlag flag={place.flag} />
           {place.layer === "projects" ? "Project" : "SWEILLEM address"} · {place.place}
         </p>
         <h3 className="text-lg">{place.name}</h3>
@@ -522,5 +530,21 @@ function PlaceCard({ place, onLeave }: { place: MapPlace; onLeave?: () => void }
         )}
       </div>
     </div>
+  );
+}
+
+/**
+ * A country's flag beside its name. The name is always written next to it, so the
+ * flag is decorative. A thin ring keeps white and pale flags visible on any background.
+ */
+function CountryFlag({ flag, size = "sm" }: { flag: Flag; size?: "sm" | "lg" }) {
+  return (
+    <Image
+      src={`/images/flags/${flag}.svg`}
+      alt=""
+      width={size === "lg" ? 24 : 20}
+      height={size === "lg" ? 18 : 15}
+      className="flex-none rounded-[2px] object-cover shadow-[0_0_0_1px_var(--line)]"
+    />
   );
 }
