@@ -7,6 +7,7 @@ import { loadMapGeo } from "@/lib/map-geo";
 import type { MapData } from "@/lib/projects-map";
 import { mainNav } from "@/lib/site";
 import { useQuoteCount } from "@/lib/quote";
+import { useSwipeMenu } from "@/lib/swipe-menu";
 import { Logo } from "./Logo";
 import { MapPanel } from "./MapPanel";
 import { SiteMenu } from "./SiteMenu";
@@ -64,6 +65,10 @@ export function Header({ mapData }: { mapData: MapData }) {
   }, []);
 
   // Close the menu and the map after navigating (adjusting state during render, not in an effect).
+  // A sideways swipe opens and closes the side menu on touch screens.
+  const openMenu = useCallback(() => setOpen(true), []);
+  useSwipeMenu({ open, disabled: mapOpen, onOpen: openMenu, onClose: close });
+
   const [lastPath, setLastPath] = useState(pathname);
   if (pathname !== lastPath) {
     setLastPath(pathname);

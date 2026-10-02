@@ -78,6 +78,37 @@ test.describe("header", () => {
     await expect(menu.getByRole("link", { name: "Certificates" })).toHaveAttribute("aria-current", "page");
   });
 
+  test("a sideways swipe opens and closes the side menu on phones", async ({ page, isMobile }) => {
+    test.skip(!isMobile, "touch swipe");
+    await page.goto("/products");
+    const burger = page.getByRole("button", { name: "Menu", exact: true });
+    const cdp = await page.context().newCDPSession(page);
+    // A real touch drag, in steps, so the page sees touchmove as a finger makes it.
+    const swipe = async (from: number, to: number, y = 420) => {
+      await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: from, y }] });
+      for (let i = 1; i <= 8; i++) {
+        await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: from + ((to - from) * i) / 8, y }] });
+      }
+      await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+    };
+
+    // The swipe listener attaches once the page hydrates, so swipe again until it does.
+    await expect(async () => {
+      await swipe(40, 260);
+      await expect(burger).toHaveAttribute("aria-expanded", "true", { timeout: 1000 });
+    }).toPass();
+    await expect(page).toHaveURL(/\/products$/);
+    await swipe(300, 60);
+    await expect(burger).toHaveAttribute("aria-expanded", "false");
+
+    // A mostly vertical drag scrolls the page and leaves the menu shut.
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: 60, y: 600 }] });
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: 90, y: 500 }] });
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: 140, y: 300 }] });
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+    await expect(burger).toHaveAttribute("aria-expanded", "false");
+  });
+
   test("side menu links to every page", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "Menu", exact: true }).click();

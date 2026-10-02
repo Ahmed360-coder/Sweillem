@@ -294,6 +294,8 @@
 @layer base {
   html {
     scroll-padding-top: calc(var(--header-h) + 16px);
+    /* No overscroll back/forward navigation in browsers that offer it: a sideways swipe opens the menu. */
+    overscroll-behavior-x: none;
     -webkit-text-size-adjust: 100%;
   }
   body {
