@@ -10,7 +10,6 @@ import { useQuoteCount } from "@/lib/quote";
 import { Logo } from "./Logo";
 import { MapPanel } from "./MapPanel";
 import { SiteMenu } from "./SiteMenu";
-import { ThemeToggle } from "./ThemeSwitch";
 import { MapIcon, QuoteIcon } from "./icons";
 
 /** Pages that sit under a main nav item without being inside its path. */
@@ -90,15 +89,15 @@ export function Header({ mapData }: { mapData: MapData }) {
 
   return (
     <>
-      <div ref={sentinelRef} aria-hidden="true" className="pointer-events-none absolute top-6 left-0 h-px w-px" />
+      {/* 24 px below the 44 px top bar, so the header condenses once it is pinned. */}
+      <div ref={sentinelRef} aria-hidden="true" className="pointer-events-none absolute top-[68px] left-0 h-px w-px" />
       <header data-stuck={stuck && !overlay ? "" : undefined} className="site-header group/hdr sticky top-0 z-40 py-3.5">
         {/* Condensed ground: fades in, so only opacity animates. */}
         <div
           aria-hidden="true"
           className="absolute inset-0 -z-10 bg-[color-mix(in_srgb,var(--paper)_86%,transparent)] opacity-0 shadow-[0_1px_0_var(--line)] backdrop-blur-md transition-opacity duration-300 ease-glaze group-data-stuck/hdr:opacity-100"
         />
-        {/* Under 400 px the gaps tighten, the logo is a little smaller and the quote list is a round button with its count on the corner, so the light/dark switch fits beside the map button on a 360 px phone. */}
-        <div className="wrap flex items-center gap-1.5 min-[400px]:gap-3 min-[980px]:gap-2 min-[1100px]:gap-5">
+        <div className="wrap flex items-center gap-3 min-[1100px]:gap-5">
           <button
             ref={burgerRef}
             type="button"
@@ -106,7 +105,7 @@ export function Header({ mapData }: { mapData: MapData }) {
             aria-expanded={open}
             aria-controls="site-menu"
             onClick={() => setOpen(true)}
-            className="group/burger relative z-50 -ms-3 size-11 flex-none cursor-pointer rounded-full transition-colors duration-200 hover:bg-sunk"
+            className="group/burger relative z-50 -ms-2.5 size-11 flex-none cursor-pointer rounded-full transition-colors duration-200 hover:bg-sunk"
           >
             {[14, 20, 26].map((top, i) => (
               <span
@@ -122,7 +121,7 @@ export function Header({ mapData }: { mapData: MapData }) {
           <Link
             href="/"
             aria-label="SWEILLEM home"
-            className="relative z-50 block h-10 flex-none py-0.5 origin-left min-[400px]:h-11 transition-transform duration-300 ease-glaze group-data-stuck/hdr:scale-[.8] rtl:origin-right"
+            className="relative z-50 block h-11 flex-none py-0.5 origin-left transition-transform duration-300 ease-glaze group-data-stuck/hdr:scale-[.8] rtl:origin-right"
           >
             <Logo title={null} />
           </Link>
@@ -158,19 +157,18 @@ export function Header({ mapData }: { mapData: MapData }) {
           </nav>
 
           <div className="ms-auto flex items-center gap-2 min-[980px]:ms-0">
-            <ThemeToggle className="relative z-50" />
             <Link
               href="/quote"
               aria-current={pathname === "/quote" ? "page" : undefined}
               aria-label={`Quote list, ${quoteCount} ${quoteCount === 1 ? "item" : "items"}`}
-              className="relative z-50 inline-flex size-11 items-center justify-center gap-2 rounded-full bg-ink text-sm font-semibold text-paper no-underline transition-transform duration-100 active:translate-y-px min-[400px]:h-auto min-[400px]:min-h-11 min-[400px]:w-auto min-[400px]:px-4 min-[400px]:py-2"
+              className="relative z-50 inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-paper no-underline transition-transform duration-100 active:translate-y-px"
             >
               <QuoteIcon />
               <span className="hidden whitespace-nowrap min-[1240px]:inline">Quote list</span>
               <span
                 aria-hidden="true"
                 data-quote-count
-                className="absolute -end-1 -top-1 min-w-5 rounded-full bg-brand px-[5px] text-center font-mono text-[12px] leading-5 font-semibold text-on-brand ring-2 ring-paper min-[400px]:static min-[400px]:ring-0"
+                className="min-w-5 rounded-full bg-brand px-[5px] text-center font-mono text-[12px] leading-5 font-semibold text-on-brand"
               >
                 {quoteCount}
               </span>

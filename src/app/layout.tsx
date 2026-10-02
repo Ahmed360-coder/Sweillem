@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { Intro, introGateScript } from "@/components/Intro";
 import { MotionProvider } from "@/components/MotionProvider";
 import { RevealObserver } from "@/components/RevealObserver";
+import { TopBar } from "@/components/TopBar";
 import { baseOpenGraph } from "@/lib/metadata";
 import { mapData } from "@/lib/projects-map";
 import { revealEarlyScript } from "@/lib/reveal-early";
@@ -66,6 +67,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           Skip to content
         </a>
         <MotionProvider>
+          <TopBar />
           <Header mapData={mapData} />
           <main id="main" tabIndex={-1} className="flex-1 outline-none">
             {children}

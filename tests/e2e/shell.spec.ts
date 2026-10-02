@@ -119,14 +119,15 @@ test.describe("light and dark mode", () => {
     await page.goto("/products");
     expect(await theme(page)).toBe("dark");
 
-    const toggle = page.locator("header").getByRole("switch", { name: "Dark mode" });
-    await expect(toggle).toHaveAttribute("aria-checked", "true");
-    await toggle.click();
+    const modes = page.getByRole("group", { name: "Colour mode" });
+    await expect(modes.getByRole("button", { name: "Dark" })).toHaveAttribute("aria-pressed", "true");
+    await modes.getByRole("button", { name: "Light" }).click();
     expect(await theme(page)).toBe("light");
     await expect(page.locator("body")).toHaveCSS("background-color", "rgb(242, 242, 239)");
     await page.reload();
     expect(await theme(page)).toBe("light");
-    await expect(toggle).toHaveAttribute("aria-checked", "false");
+    await expect(modes.getByRole("button", { name: "Light" })).toHaveAttribute("aria-pressed", "true");
+    await expect(modes.getByRole("button", { name: "Dark" })).toHaveAttribute("aria-pressed", "false");
 
     // Auto in the side menu hands the choice back to the device.
     await page.getByRole("button", { name: "Menu", exact: true }).click();
@@ -152,7 +153,7 @@ test.describe("light and dark mode", () => {
     const colours = () =>
       page.locator("header svg[viewBox='0 0 642 217'] path").evaluateAll((paths) => paths.map((p) => getComputedStyle(p).fill));
     const light = await colours();
-    await page.locator("header").getByRole("switch", { name: "Dark mode" }).click();
+    await page.getByRole("group", { name: "Colour mode" }).getByRole("button", { name: "Dark" }).click();
     const dark = await colours();
     expect(new Set(light).size).toBe(2);
     expect(new Set(dark).size).toBe(2);
@@ -168,6 +169,7 @@ test.describe("light and dark mode", () => {
       await page.getByRole("button", { name: "Menu", exact: true }).click();
       await expect(page.getByRole("dialog", { name: "Site menu" })).toBeVisible();
       const axe = await new AxeBuilder({ page })
+        .include("[data-theme-toggle]")
         .include("header")
         .include("#site-menu")
         .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
@@ -177,7 +179,7 @@ test.describe("light and dark mode", () => {
     });
   }
 
-  test("the header fits a 360 px phone with the theme switch", async ({ page, isMobile }) => {
+  test("the top bar and header fit a 360 px phone", async ({ page, isMobile }) => {
     test.skip(!isMobile, "phone header");
     await page.goto("/");
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(360);

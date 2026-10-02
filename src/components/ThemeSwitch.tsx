@@ -4,37 +4,36 @@ import { setThemePref, useTheme, useThemePref, type ThemePref } from "@/lib/them
 import { DeviceIcon, MoonIcon, SunIcon } from "./icons";
 
 /**
- * Header switch, on every page: a sun and a moon on a track, with the logo-red
- * knob over the mode in use. One tap swaps light and dark, and the choice is
- * remembered. The knob position comes from CSS (the dark: variant reads
- * <html data-theme>), so the first paint is right before hydration.
+ * Light / Dark switch for the top bar of every page. The filled segment shows
+ * the mode in use; a tap picks the other and the choice is remembered. Which
+ * segment is filled comes from CSS (the dark: variant reads <html data-theme>),
+ * so the first paint is right before hydration.
  */
 export function ThemeToggle({ className = "" }: { className?: string }) {
   const theme = useTheme();
-  const dark = theme === "dark";
+  const segment =
+    "tap relative inline-flex h-7 cursor-pointer items-center gap-1.5 rounded-full px-2.5 text-[13px] font-semibold transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-1";
   return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={dark}
-      aria-label="Dark mode"
-      title={dark ? "Switch to light mode" : "Switch to dark mode"}
-      onClick={() => setThemePref(dark ? "light" : "dark")}
-      data-theme-toggle
-      className={`group/theme relative inline-flex h-11 w-[60px] flex-none cursor-pointer items-center ${className}`}
-    >
-      <span
-        aria-hidden="true"
-        className="relative flex h-8 w-full items-center justify-between rounded-full border border-line bg-sunk px-[7px] text-muted transition-colors duration-200 group-hover/theme:border-ink"
+    <div role="group" aria-label="Colour mode" data-theme-toggle className={`inline-flex items-center gap-0.5 rounded-full border border-line bg-surface p-[3px] ${className}`}>
+      <button
+        type="button"
+        aria-pressed={theme === "light"}
+        onClick={() => setThemePref("light")}
+        className={`${segment} bg-brand text-on-brand dark:bg-transparent dark:text-muted dark:hover:text-ink`}
       >
         <SunIcon className="size-4" />
+        Light
+      </button>
+      <button
+        type="button"
+        aria-pressed={theme === "dark"}
+        onClick={() => setThemePref("dark")}
+        className={`${segment} text-muted hover:text-ink dark:bg-brand dark:text-on-brand dark:hover:text-on-brand`}
+      >
         <MoonIcon className="size-4" />
-        <span className="absolute start-[3px] top-[3px] grid size-6 place-items-center rounded-full bg-brand text-on-brand shadow-[0_1px_3px_rgb(0_0_0/0.35)] transition-transform duration-300 ease-set dark:translate-x-[26px] rtl:dark:-translate-x-[26px]">
-          <SunIcon className="size-3.5 dark:hidden" />
-          <MoonIcon className="hidden size-3.5 dark:block" />
-        </span>
-      </span>
-    </button>
+        Dark
+      </button>
+    </div>
   );
 }
 
