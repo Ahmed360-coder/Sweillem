@@ -22,7 +22,8 @@ export interface MapPlace {
   y: number;
   /** Which side of the pin its label sits on, so neighbours do not overlap. */
   side: "left" | "right";
-  image?: { src: string; alt: string; pos?: string };
+  /** A photo, or a drawing where SWEILLEM's material has no photo of the place. */
+  image?: { src: string; alt: string; pos?: string } | { drawn: "port"; alt: string };
   /** The place the export routes start from. */
   origin?: boolean;
   /** Country flag, by ISO 3166-1 alpha-2 code (public/images/flags). */
@@ -151,6 +152,7 @@ export const mapData: MapData = {
       side: "right",
       origin: true,
       flag: "eg",
+      image: { src: "/images/site/glazed.webp", alt: "Glazed SWEILLEM pipes at the factory near Cairo, after the final firing" },
       ...at("cairo"),
     },
     {
@@ -163,6 +165,7 @@ export const mapData: MapData = {
       region: "europe",
       side: "right",
       flag: "de",
+      image: { src: "/images/logistics/germany-warehouses-crop.webp", alt: "SWEILLEM’s warehouses in Germany, in the snow" },
       ...at("brueggen"),
     },
     {
@@ -175,6 +178,7 @@ export const mapData: MapData = {
       region: "middle-east",
       side: "left",
       flag: "sa",
+      image: { drawn: "port", alt: "Drawing of SWEILLEM pipes stacked on a quay by the Red Sea. There is no photo of the Jeddah address yet." },
       ...at("jeddah"),
     },
   ],

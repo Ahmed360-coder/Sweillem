@@ -415,6 +415,20 @@ test.describe("projects map", () => {
     }
   });
 
+  test("every distribution place shows a picture", async ({ page }) => {
+    await page.goto("/");
+    await page.locator("header").getByRole("button", { name: "Map", exact: true }).click();
+    const dialog = page.getByRole("dialog", { name: "Projects and distribution" });
+    await expect(page.locator("#map-panel .pmap")).toHaveAttribute("data-ready", "");
+    await dialog.getByRole("button", { name: "Distribution", exact: true }).click();
+    for (const name of [/^Cairo/, /^Brüggen/]) {
+      await expect(dialog.getByRole("button", { name }).locator('img:not([src^="/images/flags/"])')).toHaveCount(1);
+    }
+    await expect(dialog.getByRole("button", { name: /^Jeddah/ }).locator("svg[aria-hidden]")).not.toHaveCount(0);
+    await dialog.getByRole("button", { name: /^Jeddah/ }).click();
+    await expect(dialog.getByRole("img", { name: /^Drawing of SWEILLEM pipes/ })).toBeVisible();
+  });
+
   test("its links close it", async ({ page }) => {
     await page.goto("/");
     await page.locator("header").getByRole("button", { name: "Map", exact: true }).click();
