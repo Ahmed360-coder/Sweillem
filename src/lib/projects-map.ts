@@ -2,7 +2,7 @@
 // the server in the root layout and handed to the panel as props, so the
 // content files stay out of the browser bundle.
 import { projects } from "@content/company";
-import reach from "./reach-map.json";
+import exportMap from "./export-map.json";
 import pins from "./map-places.json";
 
 export type MapRegion = keyof typeof pins.views;
@@ -35,18 +35,22 @@ export interface MapMarket {
   name: string;
   region: Exclude<MapRegion, "world">;
   flag: Flag;
+  /** "about": named on SWEILLEM's About Us page; "map": filled red on SWEILLEM's own export map. */
+  source: "about" | "map";
 }
 
 /**
  * The flags the map uses, from the flag-icons set (MIT, public/images/flags/LICENSE.txt),
  * copied into the site so nothing is loaded from elsewhere.
  */
-export type Flag = "eg" | "sa" | "de" | "be" | "nl" | "cz" | "it" | "pl" | "ro" | "hu" | "qa" | "gr" | "sg" | "hk" | "bn";
+export type Flag =
+  | "eg" | "sa" | "de" | "be" | "nl" | "cz" | "it" | "pl" | "ro" | "hu" | "qa" | "gr" | "sg" | "hk" | "bn"
+  | "fr" | "es" | "at" | "bg" | "sy" | "lb" | "jo" | "kw";
 
 /** Flag of each project's country (content/company.ts). */
 const countryFlag: Record<string, Flag> = { Egypt: "eg", "Saudi Arabia": "sa", Germany: "de" };
 
-/** Flag of each export market, by its ISO 3166-1 numeric id (reach-map.json). */
+/** Flag of each export market, by its ISO 3166-1 numeric id (export-map.json). */
 const marketFlag: Record<string, Flag> = {
   "276": "de",
   "056": "be",
@@ -62,6 +66,14 @@ const marketFlag: Record<string, Flag> = {
   "702": "sg",
   "344": "hk",
   "096": "bn",
+  "250": "fr",
+  "724": "es",
+  "040": "at",
+  "100": "bg",
+  "760": "sy",
+  "422": "lb",
+  "400": "jo",
+  "414": "kw",
 };
 
 function flagOf(table: Record<string, Flag>, key: string): Flag {
@@ -115,10 +127,14 @@ const projectCopy: Record<string, Pick<MapPlace, "name" | "short" | "place" | "t
   },
 };
 
-/** Where the market list on About puts each country. */
+/** Which part of the map each market is in (the rest are in Europe). */
 const marketRegion: Record<string, MapMarket["region"]> = {
   "Saudi Arabia": "middle-east",
   Qatar: "middle-east",
+  Syria: "middle-east",
+  Lebanon: "middle-east",
+  Jordan: "middle-east",
+  Kuwait: "middle-east",
   Singapore: "far-east",
   "Hong Kong": "far-east",
   Brunei: "far-east",
@@ -182,10 +198,11 @@ export const mapData: MapData = {
       ...at("jeddah"),
     },
   ],
-  markets: reach.markets.map((m) => ({
+  markets: exportMap.markets.map((m) => ({
     id: m.id,
     name: m.name,
     region: marketRegion[m.name] ?? "europe",
     flag: flagOf(marketFlag, m.id),
+    source: m.source === "map" ? "map" : "about",
   })),
 };

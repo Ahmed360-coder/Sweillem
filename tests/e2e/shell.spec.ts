@@ -358,8 +358,15 @@ test.describe("projects map", () => {
     await expect(dialog).toBeVisible();
     const map = panel.locator(".pmap");
     await expect(map).toHaveAttribute("data-ready", "");
-    await expect(map.locator("path.pmap-country")).toHaveCount(14);
+    // The export map from About: its 22 red countries, their routes and the Night / Day switch.
+    await expect(map.locator("g.pmap-country")).toHaveCount(22);
+    await expect(map.locator("path.pmap-arc")).toHaveCount(22);
     await expect(map.locator(".pmap-place")).toHaveCount(7);
+    const views = dialog.getByRole("group", { name: "Map view" });
+    await views.getByRole("button", { name: "Day" }).click();
+    await expect(map).toHaveAttribute("data-mode", "day");
+    await views.getByRole("button", { name: "Night" }).click();
+    await expect(map).toHaveAttribute("data-mode", "night");
 
     await dialog.getByRole("button", { name: /^Haram central area/ }).click();
     await expect(map).toHaveAttribute("data-view", "middle-east");
@@ -439,10 +446,12 @@ test.describe("projects map", () => {
       await expect(dialog.getByRole("button", { name }).locator('img[src^="/images/flags/"]')).toHaveCount(1);
     }
     const flags = dialog.locator('img[src^="/images/flags/"]');
-    await expect(flags).toHaveCount(7 + 14);
+    await expect(flags).toHaveCount(7 + 22);
     for (const img of await flags.all()) {
       await expect(img).toHaveAttribute("alt", "");
-      expect(await img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
+      // Flags further down the list load as they scroll into view.
+      await img.scrollIntoViewIfNeeded();
+      await expect.poll(() => img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
     }
   });
 
@@ -483,6 +492,7 @@ test.describe("projects map", () => {
       await expect(page.locator(".pmap")).toHaveAttribute("data-ready", "");
       await dialog.getByRole("button", { name: /^New Alamein City/ }).click();
       await expect(dialog.getByRole("heading", { name: "New Alamein City" })).toBeVisible();
+      await page.waitForTimeout(600);
       const axe = await new AxeBuilder({ page })
         .include("#map-panel")
         .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])

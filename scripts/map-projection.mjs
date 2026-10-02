@@ -1,26 +1,49 @@
-// The projection shared by the export map on About (build-reach-map.mjs) and
-// the projects map in the header (build-map-places.mjs), so a point placed by
-// one script lines up with the shapes drawn by the other.
-import { geoAzimuthalEqualArea } from "d3-geo";
+// The projections of the export map (build-export-map.mjs), shared with the
+// projects map in the header (build-map-places.mjs), so a point placed by one
+// script lines up with the shapes and pictures drawn by the other.
+import { geoMercator } from "d3-geo";
 
-export const W = 1000;
-export const H = 620;
+export const W = 1400;
+/** The frame About shows. */
+export const H = 820;
+/**
+ * The full picture runs a little further south, so the projects map in the
+ * header also reaches Sharurah. About crops it to H from the top.
+ */
+export const FULL_H = 900;
 /** Cairo, where the pipes leave from. */
 export const ORIGIN = [31.24, 30.04];
+/** The Far East inset, in map pixels. */
+export const INSET = { x: 1092, y: 18, w: 290, h: 330 };
 
-/** Equal-area view centred near Egypt, fitted so Europe and the Far East both fit. */
-export function makeProjection() {
-  const projection = geoAzimuthalEqualArea().rotate([-52, -34]);
-  projection.fitExtent(
+/** Main view: Spain to the Gulf, Poland to the Red Sea, like SWEILLEM's map. */
+export function makeMainProjection() {
+  const main = geoMercator().fitExtent(
     [
-      [24, 24],
-      [W - 24, H - 24],
+      [0, 0],
+      [W, H],
     ],
-    { type: "MultiPoint", coordinates: [[-9.5, 56], [24, 58], [118, 23], [104, 0.5], [116, 3.5], [5, 37], [52, 15]] },
+    { type: "MultiPoint", coordinates: [[-10.2, 44], [24, 56.2], [57.5, 30], [44, 20.5], [-9, 36]] },
   );
-  projection.clipExtent([
+  main.clipExtent([
     [0, 0],
-    [W, H],
+    [W, FULL_H],
   ]);
-  return projection;
+  return main;
+}
+
+/** Inset: Hong Kong, Brunei and Singapore. */
+export function makeInsetProjection() {
+  const inset = geoMercator().fitExtent(
+    [
+      [INSET.x + 18, INSET.y + 44],
+      [INSET.x + INSET.w - 18, INSET.y + INSET.h - 18],
+    ],
+    { type: "MultiPoint", coordinates: [[102.5, 23.5], [117.5, 23.5], [102.5, 0.4], [117.5, 0.4]] },
+  );
+  inset.clipExtent([
+    [INSET.x, INSET.y],
+    [INSET.x + INSET.w, INSET.y + INSET.h],
+  ]);
+  return inset;
 }
