@@ -15,7 +15,7 @@ for (const path of staticRoutes) {
     expect(res?.status()).toBe(200);
     await expect(page.locator("h1")).toHaveCount(1);
     await expect(page).toHaveTitle(/SWEILLEM/);
-    await expect(page.locator('link[rel="canonical"]')).toHaveCount(path === "/" ? 0 : 1);
+    await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
 
     // Let entrance animations settle before measuring contrast.
     await page.waitForTimeout(1200);

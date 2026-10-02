@@ -82,6 +82,8 @@ export function ReachMap() {
               sizes="(min-width: 1240px) 1180px, (min-width: 768px) 100vw, 820px"
               className="reach-photo reach-photo-day"
             />
+            {/* Coast and border lines: a static file that loads with the map, instead of 110 KB of paths in the page. */}
+            <Image src="/images/company/export-map-borders.svg" alt="" fill unoptimized className="pointer-events-none" />
             <svg
               viewBox={`0 0 ${map.width} ${map.height}`}
               className="absolute inset-0 block h-full w-full"
@@ -96,8 +98,6 @@ export function ReachMap() {
                   <feDropShadow dx="0" dy="2" stdDeviation="2" floodColor="#000" floodOpacity="0.55" />
                 </filter>
               </defs>
-              <path d={map.borders} className="reach-borders" />
-              <path d={map.insetBorders} className="reach-borders" />
               <g filter="url(#reach-lift)">
                 {markets.map((m, i) => (
                   <g key={m.id} data-id={m.id} className="reach-country" style={{ "--i": i } as CSSProperties}>

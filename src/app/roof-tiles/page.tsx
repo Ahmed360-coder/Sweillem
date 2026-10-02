@@ -10,7 +10,7 @@ import { pageMetadata } from "@/lib/metadata";
 export const metadata = pageMetadata({
   title: "Clay roof tiles in terracotta, blue and black",
   description:
-    "SWEILLEM clay roof tiles, made in Egypt, in terracotta, blue and black. Switch colours in the viewer and see how a tile is made, from Aswan clay to the 1200 °C kiln.",
+    "SWEILLEM clay roof tiles in terracotta, blue and black. Switch colours in the viewer and follow a tile from Aswan clay to the 1200 °C kiln.",
   path: "/roof-tiles",
 });
 
@@ -89,7 +89,7 @@ export default function RoofTilesPage() {
         <div className="wrap pt-8">
           <SourceNote>
             Steps from SWEILLEM’s published manufacturing process (About and the company deck), which SWEILLEM describes for its clay
-            products. Tile-specific details, such as how each colour is applied, are being confirmed with SWEILLEM. Before firing the tile is
+            products. Before firing the tile is
             drawn; the photo of the finished tile appears from packing onwards, and the roof scene is an illustration. See the{" "}
             <Link href="/process" className="link">
               pipe journey

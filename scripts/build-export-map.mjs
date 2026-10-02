@@ -1,5 +1,7 @@
 // Builds the export map on About:
-//   src/lib/export-map.json                  vector layer (countries, borders, labels, routes)
+//   src/lib/export-map.json                  vector layer (countries, labels, routes)
+//   public/images/company/export-map-borders.svg  coast and border lines (a static file, so the
+//                                                About page doesn't carry 110 KB of paths twice)
 //   public/images/company/export-map-night.webp  night satellite background
 // Run: node scripts/build-export-map.mjs
 //
@@ -148,14 +150,18 @@ const out = {
   width: W,
   height: H,
   inset: INSET,
-  borders,
-  insetBorders,
   egypt: mainPath(byId.get("818")),
   origin: { x: r1(ox), y: r1(oy) },
   markets,
 };
 writeFileSync("src/lib/export-map.json", JSON.stringify(out));
 console.log(`export-map.json: ${(JSON.stringify(out).length / 1024).toFixed(0)} KB`);
+writeFileSync("public/images/company/export-map-borders.svg", bordersSvg(W, H, [borders, insetBorders]));
+
+/** White coast and border lines on a transparent ground, drawn over the photo. */
+export function bordersSvg(width, height, paths) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}"><g fill="none" stroke="#fff" stroke-opacity=".55" stroke-width=".7" stroke-linejoin="round">${paths.map((d) => `<path d="${d}"/>`).join("")}</g></svg>\n`;
+}
 
 // ---- Backgrounds: reproject the equirectangular NASA images ----
 /** Renders one background: every map pixel is looked up in the source image. */

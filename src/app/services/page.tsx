@@ -10,7 +10,7 @@ import { pageMetadata } from "@/lib/metadata";
 export const metadata = pageMetadata({
   title: "Services: how SWEILLEM supports a project",
   description:
-    "How SWEILLEM supports engineers, contractors and buyers: pipes and fittings in N and H classes, stock in Germany, short delivery times, a technical team and certificates for approvals.",
+    "How SWEILLEM supports engineers, contractors and buyers: N and H class pipes and fittings, stock in Germany, quick delivery and certificates for approvals.",
   path: "/services",
 });
 

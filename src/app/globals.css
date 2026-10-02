@@ -648,13 +648,6 @@ html[data-intro="exit"] .hero-progress {
 .reach[data-mode="day"] .reach-photo-day {
   opacity: 1;
 }
-.reach-borders {
-  fill: none;
-  stroke: #fff;
-  stroke-opacity: 0.55;
-  stroke-width: 0.7;
-  stroke-linejoin: round;
-}
 .reach-country {
   fill: #a50d07;
   stroke: #fff;

@@ -10,7 +10,7 @@ import { cellText, rowSize } from "@/lib/specs";
 export const metadata = pageMetadata({
   title: "Compare N and H class pipes",
   description:
-    "SWEILLEM vitrified clay pipes in N (normal strength) and H (extra strength) class, side by side: strength class, crushing strength, diameters and wall thickness for each size.",
+    "SWEILLEM vitrified clay pipes in N (normal) and H (extra strength) class side by side: crushing strength, diameters and wall thickness for each size.",
   path: "/products/compare",
 });
 

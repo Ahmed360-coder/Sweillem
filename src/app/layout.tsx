@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { Intro, introGateScript } from "@/components/Intro";
 import { MotionProvider } from "@/components/MotionProvider";
 import { RevealObserver } from "@/components/RevealObserver";
+import { baseOpenGraph } from "@/lib/metadata";
 import { mapData } from "@/lib/projects-map";
 import { site, siteUrl } from "@/lib/site";
 import "./globals.css";
@@ -13,7 +14,8 @@ import "./intro.css";
 
 const jost = Jost({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-jost" });
 const plexSans = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-plex-sans" });
-const plexMono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-plex-mono" });
+// Mono is only used for small labels and spec values, so it is not preloaded ahead of the body fonts.
+const plexMono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-plex-mono", preload: false });
 
 const isProduction = process.env.VERCEL_ENV === "production";
 
@@ -27,12 +29,9 @@ export const metadata: Metadata = {
   applicationName: site.name,
   // The name under the icon on an iPhone home screen; the page title would be cut to "SWEILLEM·Vitri…".
   appleWebApp: { title: site.name },
-  openGraph: {
-    type: "website",
-    siteName: site.legalName,
-    locale: "en",
-    images: [{ url: "/images/site/hero.webp", width: 1227, height: 920, alt: "SWEILLEM vitrified clay pipes on a site in Germany" }],
-  },
+  // Pages set their own title, description and canonical; the share picture is each route's opengraph-image.tsx.
+  openGraph: { ...baseOpenGraph, url: "/" },
+  twitter: { card: "summary_large_image" },
   // Previews stay out of search engines until launch (Milestone 8).
   robots: isProduction ? undefined : { index: false, follow: false },
 };
