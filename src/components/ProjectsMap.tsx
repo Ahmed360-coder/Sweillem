@@ -7,6 +7,7 @@ import { loadMapGeo, type MapGeo } from "@/lib/map-geo";
 import pins from "@/lib/map-places.json";
 import type { Flag, MapData, MapLayer, MapMarket, MapPlace, MapRegion } from "@/lib/projects-map";
 import { ArrowIcon } from "./icons";
+import { PortDrawing } from "./PlaceDrawing";
 
 const regions: { id: MapRegion; label: string }[] = [
   { id: "world", label: "World" },
@@ -480,7 +481,11 @@ function PlaceButton({ place, pressed, onPick }: { place: MapPlace; pressed: boo
     >
       {place.image ? (
         <span className="relative size-12 flex-none overflow-hidden rounded-[10px] bg-sunk">
-          <Image src={place.image.src} alt="" fill sizes="48px" className={`object-cover ${place.image.pos ?? ""}`} />
+          {"drawn" in place.image ? (
+            <PortDrawing className="absolute inset-0 size-full" />
+          ) : (
+            <Image src={place.image.src} alt="" fill sizes="48px" className={`object-cover ${place.image.pos ?? ""}`} />
+          )}
         </span>
       ) : (
         <span aria-hidden="true" className="grid size-12 flex-none place-items-center rounded-[10px] bg-sunk">
@@ -503,13 +508,22 @@ function PlaceCard({ place, onLeave }: { place: MapPlace; onLeave?: () => void }
     <div className="overflow-hidden rounded-card border border-line bg-paper">
       {place.image && (
         <div className="relative aspect-[16/9] bg-sunk">
-          <Image
-            src={place.image.src}
-            alt={place.image.alt}
-            fill
-            sizes="(min-width: 1024px) 380px, 100vw"
-            className={`object-cover ${place.image.pos ?? ""}`}
-          />
+          {"drawn" in place.image ? (
+            <>
+              <PortDrawing title={place.image.alt} className="absolute inset-0 size-full" />
+              <span className="absolute end-2.5 bottom-2.5 rounded-full bg-surface/90 px-2.5 py-0.5 font-mono text-[11px] font-medium tracking-[.1em] text-muted uppercase">
+                Drawing
+              </span>
+            </>
+          ) : (
+            <Image
+              src={place.image.src}
+              alt={place.image.alt}
+              fill
+              sizes="(min-width: 1024px) 380px, 100vw"
+              className={`object-cover ${place.image.pos ?? ""}`}
+            />
+          )}
         </div>
       )}
       <div className="grid gap-1.5 p-4">
