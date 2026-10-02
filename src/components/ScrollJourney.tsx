@@ -155,7 +155,7 @@ export function ScrollJourney() {
               <li key={c.id} className="grid content-start gap-3 overflow-hidden rounded-card border border-line bg-surface">
                 <svg
                   viewBox={`0 0 ${W} ${COMPACT_H}`}
-                  className="block w-full bg-[#f2f2ef]"
+                  className="block w-full bg-(--j-bg)"
                   aria-hidden="true"
                   dangerouslySetInnerHTML={{ __html: frameSVG(settled(c), { compact: true, uid: `j${c.id}` }) }}
                 />
@@ -184,8 +184,8 @@ export function ScrollJourney() {
       <h2 id="journey-title" className="sr-only">
         From Aswan clay to the trench
       </h2>
-      {/* On purpose, the journey stays on the light paper colour in both themes: frameSVG draws a daylight scene. */}
-      <div ref={stageRef} className="sticky top-0 h-[100dvh] overflow-hidden bg-[#f2f2ef] text-[#1c1818]">
+      {/* The scene colours are --j-* variables, so the journey follows the light or dark theme. */}
+      <div ref={stageRef} className="sticky top-0 h-[100dvh] overflow-hidden bg-(--j-bg) text-ink">
         <svg
           ref={svgRef}
           viewBox={`0 0 ${W} ${COMPACT_H}`}
@@ -203,7 +203,7 @@ export function ScrollJourney() {
         />
 
         {/* The explanation for the current step, in the open sky above the scene. */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 bg-gradient-to-b from-[#f2f2ef] via-[#f2f2ef]/85 to-transparent pb-10">
+        <div className="pointer-events-none absolute inset-x-0 top-0 bg-gradient-to-b from-(--j-bg) via-(--j-bg)/85 to-transparent pb-10">
           <div
             key={current.id}
             className="journey-caption wrap grid max-w-[1180px] gap-2 pt-[clamp(20px,5vh,56px)]"
@@ -211,21 +211,21 @@ export function ScrollJourney() {
           >
             {current.n ? (
               <>
-                <span className="font-mono text-[12px] font-medium tracking-[.14em] text-[#7a0404] uppercase">
+                <span className="font-mono text-[12px] font-medium tracking-[.14em] text-maroon uppercase">
                   Step {pad(current.n)} of {pad(steps.length)}
                 </span>
                 <p className="font-display text-[clamp(26px,4vw,48px)] leading-[1.05] font-semibold">{current.title}</p>
-                <p className="max-w-[54ch] text-[clamp(15px,1.4vw,18px)] leading-normal text-[#5d5f62]">{current.caption}</p>
+                <p className="max-w-[54ch] text-[clamp(15px,1.4vw,18px)] leading-normal text-muted">{current.caption}</p>
               </>
             ) : current.id === "intro" ? (
               // The intro scene carries its own title; this only says how it works.
-              <p className="text-[clamp(15px,1.4vw,18px)] font-medium text-[#5d5f62]">
+              <p className="text-[clamp(15px,1.4vw,18px)] font-medium text-muted">
                 <span aria-hidden="true">↓ </span>Scroll to move the pipe along. Stop, and it waits for you.
               </p>
             ) : (
               <>
                 <p className="font-display text-[clamp(26px,4vw,48px)] leading-[1.05] font-semibold">{current.title}</p>
-                <p className="max-w-[54ch] text-[clamp(15px,1.4vw,18px)] text-[#5d5f62]">{current.caption}</p>
+                <p className="max-w-[54ch] text-[clamp(15px,1.4vw,18px)] text-muted">{current.caption}</p>
               </>
             )}
           </div>
@@ -247,7 +247,7 @@ export function ScrollJourney() {
                   type="button"
                   onClick={() => jump(c)}
                   aria-current={c.id === active ? "step" : undefined}
-                  className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-[#d6d4cf] bg-white/90 px-3.5 text-[14px] font-semibold text-[#1c1818] shadow-sm backdrop-blur-sm transition-colors hover:border-[#7a0404] aria-[current=step]:border-[#7a0404] aria-[current=step]:bg-[#7a0404] aria-[current=step]:text-white"
+                  className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-line bg-surface/90 px-3.5 text-[14px] font-semibold text-ink shadow-sm backdrop-blur-sm transition-colors hover:border-maroon aria-[current=step]:border-maroon aria-[current=step]:bg-maroon aria-[current=step]:text-on-maroon"
                 >
                   <span className="font-mono font-medium">{pad(c.n!)}</span>
                   {c.title}

@@ -205,7 +205,7 @@ export default function HomePage() {
           </div>
           <Link
             href="/process#journey"
-            className="reveal group relative block overflow-hidden rounded-card bg-[#f2f2ef] shadow-card"
+            className="reveal group relative block overflow-hidden rounded-card bg-(--j-bg) shadow-card"
           >
             <svg
               viewBox={`0 0 ${W} ${H}`}
@@ -279,7 +279,7 @@ export default function HomePage() {
                 SWEILLEM’s newest launch: a European central stock with warehouses in Germany, so contractors in Europe can draw
                 on local supply.
               </p>
-              <ButtonLink href="/euro-sweillem" arrow className="w-fit bg-white! text-glaze! hover:bg-white/90!">
+              <ButtonLink href="/euro-sweillem" arrow className="w-fit bg-white! text-glaze! hover:bg-surface/90!">
                 Visit Euro Sweillem
               </ButtonLink>
             </div>

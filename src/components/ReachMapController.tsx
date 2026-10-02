@@ -71,9 +71,20 @@ export function ReachMapController() {
       root.dataset.mode = mode;
       modes.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
     };
-    try {
-      setMode(window.localStorage.getItem(MODE_KEY) ?? "night");
-    } catch {}
+    // Until the visitor picks a view, it follows the site theme: day in light mode, night in dark.
+    const themeMode = () => (document.documentElement.dataset.theme === "light" ? "day" : "night");
+    const picked = () => {
+      try {
+        return window.localStorage.getItem(MODE_KEY);
+      } catch {
+        return null;
+      }
+    };
+    setMode(picked() ?? themeMode());
+    const themeWatch = new MutationObserver(() => {
+      if (!picked()) setMode(themeMode());
+    });
+    themeWatch.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
     const onMode = (e: MouseEvent) => {
       const mode = (e.currentTarget as HTMLButtonElement).dataset.mode!;
       setMode(mode);
@@ -142,6 +153,7 @@ export function ReachMapController() {
       scroller.removeEventListener("pointerdown", onGrab);
       scroller.removeEventListener("wheel", onGrab);
       modes.forEach((b) => b.removeEventListener("click", onMode));
+      themeWatch.disconnect();
     };
   }, []);
   return null;

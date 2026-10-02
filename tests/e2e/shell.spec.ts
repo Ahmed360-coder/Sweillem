@@ -107,6 +107,70 @@ test.describe("header", () => {
   });
 });
 
+test.describe("light and dark mode", () => {
+  test.beforeEach(async ({ page }) => skipIntro(page));
+
+  const theme = (page: import("@playwright/test").Page) => page.evaluate(() => document.documentElement.dataset.theme);
+
+  test("follows the device until the visitor picks, then remembers the pick", async ({ browser }) => {
+    const ctx = await browser.newContext({ colorScheme: "dark" });
+    const page = await ctx.newPage();
+    await skipIntro(page);
+    await page.goto("/products");
+    expect(await theme(page)).toBe("dark");
+
+    await page.getByRole("button", { name: "Switch to light mode" }).click();
+    expect(await theme(page)).toBe("light");
+    await expect(page.locator("body")).toHaveCSS("background-color", "rgb(242, 242, 239)");
+    await page.reload();
+    expect(await theme(page)).toBe("light");
+    await expect(page.getByRole("button", { name: "Switch to dark mode" })).toBeVisible();
+
+    // Auto in the side menu hands the choice back to the device.
+    await page.getByRole("button", { name: "Menu", exact: true }).click();
+    await page.getByRole("dialog", { name: "Site menu" }).getByText("Auto", { exact: true }).click();
+    expect(await theme(page)).toBe("dark");
+    expect(await page.evaluate(() => localStorage.getItem("sweillem.theme"))).toBeNull();
+    await ctx.close();
+  });
+
+  test("the logo keeps its two colours in both modes", async ({ page }) => {
+    await page.goto("/");
+    const colours = () =>
+      page.locator("header svg[viewBox='0 0 642 217'] path").evaluateAll((paths) => paths.map((p) => getComputedStyle(p).fill));
+    const light = await colours();
+    await page.getByRole("button", { name: "Switch to dark mode" }).click();
+    const dark = await colours();
+    expect(new Set(light).size).toBe(2);
+    expect(new Set(dark).size).toBe(2);
+    expect(dark).not.toEqual(light);
+  });
+
+  for (const colorScheme of ["light", "dark"] as const) {
+    test(`the switches pass axe (${colorScheme})`, async ({ browser }) => {
+      const ctx = await browser.newContext({ colorScheme, reducedMotion: "reduce" });
+      const page = await ctx.newPage();
+      await skipIntro(page);
+      await page.goto("/");
+      await page.getByRole("button", { name: "Menu", exact: true }).click();
+      await expect(page.getByRole("dialog", { name: "Site menu" })).toBeVisible();
+      const axe = await new AxeBuilder({ page })
+        .include("header")
+        .include("#site-menu")
+        .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+        .analyze();
+      expect(axe.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(", ")}`)).toEqual([]);
+      await ctx.close();
+    });
+  }
+
+  test("the header fits a 360 px phone with the theme switch", async ({ page, isMobile }) => {
+    test.skip(!isMobile, "phone header");
+    await page.goto("/");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(360);
+  });
+});
+
 test.describe("intro", () => {
   test("plays once per session on the home page and can be skipped", async ({ page }) => {
     await page.goto("/");
