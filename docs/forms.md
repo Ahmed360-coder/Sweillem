@@ -18,12 +18,15 @@ stores it in Supabase and emails an alert through Resend.
    |---|---|
    | `SUPABASE_URL` | Project URL, e.g. `https://abcd.supabase.co` |
    | `SUPABASE_PUBLISHABLE_KEY` | The `sb_publishable_…` key (a legacy `anon` key also works, as `SUPABASE_ANON_KEY`) |
-   | `RESEND_API_KEY` | From resend.com → API Keys |
+   | `RESEND_API_KEY` | From resend.com → API Keys, with **Sending access** only (store it as a Secret) |
    | `ENQUIRY_ALERT_TO` | Inbox for alerts; several addresses separated by commas |
    | `ENQUIRY_ALERT_FROM` | Optional. Defaults to `SWEILLEM website <onboarding@resend.dev>`, which Resend only delivers to the Resend account's own address. To send to anyone else, verify a domain in Resend and use e.g. `SWEILLEM website <website@sweillem.net>` |
 
-3. **Redeploy.** The pages read whether the database is set at build time,
-   so redeploy after adding the keys.
+3. **Rebuild.** Vercel only gives a deployment the variables that existed
+   when it was built, so rebuild the branch you are testing (push a commit,
+   or Redeploy *that branch's* latest deployment; redeploying another
+   deployment rebuilds other code). The forms ask `GET /api/enquiry` whether
+   sending is on, so the pages follow the server without their own rebuild.
 
 Without the database keys the forms still check every field, say plainly that
 online sending is not switched on, and offer to open the same request in the
