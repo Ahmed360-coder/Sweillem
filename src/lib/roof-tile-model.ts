@@ -131,15 +131,16 @@ function blur(src: Float32Array, w: number, h: number, r: number) {
  * Normal map (fine relief) and colour map (mottling, darker glaze in hollows)
  * for the tile face, at `res` pixels per drawing unit.
  */
-export function tileTextures(T: Three, wordPath: string, res = 6) {
+export function tileTextures(T: Three, wordPath: string, res = 10) {
   const W = TILE_W * res;
   const H = TILE_H * res;
   const stamp = stampMask(res, wordPath);
-  const stampSoft = blur(stamp.mask, stamp.w, stamp.h, 1);
+  const stampSoft = blur(stamp.mask, stamp.w, stamp.h, Math.max(1, Math.round(res / 6)));
   const rand = seeded(7);
   // Value noise for grain: a coarse and a fine grid of random heights.
   const grid = (n: number) => Array.from({ length: (n + 1) * (n + 1) }, rand);
   const coarse = grid(48);
+  const fine = grid(160);
   const noise = (g: number[], n: number, u: number, v: number) => {
     const x = u * n;
     const y = v * n;
@@ -174,7 +175,7 @@ export function tileTextures(T: Three, wordPath: string, res = 6) {
       const sy = Math.floor((y - STAMP.y) * res);
       if (sx >= 0 && sy >= 0 && sx < stamp.w && sy < stamp.h) d += 0.55 * stampSoft[sy * stamp.w + sx];
       // Grain of fired clay.
-      d += 0.12 * noise(coarse, 48, x / TILE_W, y / TILE_H) + 0.05 * rand();
+      d += 0.12 * noise(coarse, 48, x / TILE_W, y / TILE_H) + 0.03 * noise(fine, 160, x / TILE_W, y / TILE_H);
       detail[py * W + px] = d;
       form[py * W + px] = formHeight(x, y);
     }
@@ -198,7 +199,7 @@ export function tileTextures(T: Three, wordPath: string, res = 6) {
       // Colour: soft mottling, glaze pooling darker in hollows and paler on the rolls.
       const f = form[i];
       const m = noise(mottle, 12, px / W, py / H);
-      const v = 0.8 + 0.1 * ss(-1.4, 4.2, f) + 0.08 * m + 0.03 * rand() - 0.04 * Math.max(0, -detail[i]);
+      const v = 0.8 + 0.1 * ss(-1.4, 4.2, f) + 0.08 * m + 0.04 * noise(fine, 160, px / W, py / H) - 0.04 * Math.max(0, -detail[i]);
       colour[i * 4] = colour[i * 4 + 1] = colour[i * 4 + 2] = Math.min(255, v * 255);
       colour[i * 4 + 3] = 255;
     }
@@ -208,7 +209,7 @@ export function tileTextures(T: Three, wordPath: string, res = 6) {
     // Rows run from the head down, matching v in the geometry.
     t.flipY = false;
     t.colorSpace = srgb ? T.SRGBColorSpace : T.NoColorSpace;
-    t.anisotropy = 8;
+    t.anisotropy = 16;
     t.generateMipmaps = true;
     t.minFilter = T.LinearMipmapLinearFilter;
     t.magFilter = T.LinearFilter;
@@ -224,10 +225,11 @@ export function tileTextures(T: Three, wordPath: string, res = 6) {
  * head (v = 0, the first texture row) to the tail.
  */
 export function tileGeometry(T: Three) {
-  // A 2-unit grid that also breaks at the outline's steps, so cells follow the outline exactly.
-  const steps = (size: number, breaks: number[]) => [...new Set([...Array.from({ length: size / 2 + 1 }, (_, k) => k * 2), ...breaks])].sort((a, b) => a - b);
-  const X = steps(TILE_W, [4, 14, 68]);
-  const Y = steps(TILE_H, [5, 139]);
+  // A grid (fine across the rolls, coarser along them) that also breaks at the outline's steps, so cells follow the outline exactly.
+  const steps = (size: number, step: number, breaks: number[]) =>
+    [...new Set([...Array.from({ length: size / step + 1 }, (_, k) => k * step), ...breaks])].sort((a, b) => a - b);
+  const X = steps(TILE_W, 1, [4, 14, 68]);
+  const Y = steps(TILE_H, 2, [5, 139]);
   const nx = X.length - 1;
   const ny = Y.length - 1;
   const pos: number[] = [];

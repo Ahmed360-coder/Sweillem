@@ -35,7 +35,7 @@ const GLAZE: Partial<Record<TileColour, string>> = { blue: "#2b80cc" };
 
 const ORBIT = {
   target: [0, -0.12, 0] as [number, number, number],
-  radius: 6.3,
+  radius: 6.1,
   theta: 0.32,
   phi: 1.02,
   minPhi: 0.62,
@@ -47,6 +47,7 @@ const ORBIT = {
   // A low sun from the upper left, so the rolls and ribs throw shade across the roof.
   key: { position: [-3.2, 4.2, 3.4] as [number, number, number], intensity: 2.6 },
   shadows: 2.4,
+  maxPixelRatio: 3,
 };
 
 interface Tile {

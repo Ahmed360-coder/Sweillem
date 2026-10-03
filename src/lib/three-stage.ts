@@ -26,6 +26,8 @@ export interface OrbitOptions {
   maxTheta?: number;
   /** Soft shadows from the key light (for models with relief), cast within this half-size around the target. */
   shadows?: number;
+  /** Sharpest drawing resolution, in device pixels per CSS pixel (default 2). */
+  maxPixelRatio?: number;
   /** Key light position and strength, if not the default studio key. */
   key?: { position: [number, number, number]; intensity: number };
 }
@@ -54,17 +56,13 @@ const IDLE_MS = 2500;
 
 export function createStage(THREE: Three, canvas: HTMLCanvasElement, orbit: OrbitOptions, reduceMotion: boolean): Stage {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "low-power" });
-  let ratio = Math.min(window.devicePixelRatio || 1, 2);
-  renderer.setPixelRatio(ratio);
-  // A slow device draws at a lower resolution rather than stutter (average frame time, in seconds).
-  let frameTime = 0;
-  let slowFrames = 0;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, orbit.maxPixelRatio ?? 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
   if (orbit.shadows) {
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFShadowMap;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   }
 
   const scene = new THREE.Scene();
@@ -84,9 +82,10 @@ export function createStage(THREE: Three, canvas: HTMLCanvasElement, orbit: Orbi
     cam.near = 0.1;
     cam.far = key.position.distanceTo(target) + orbit.shadows * 2;
     cam.updateProjectionMatrix();
-    key.shadow.mapSize.set(1024, 1024);
-    key.shadow.bias = -0.0004;
-    key.shadow.normalBias = 0.01;
+    key.shadow.mapSize.set(2048, 2048);
+    key.shadow.bias = -0.001;
+    key.shadow.radius = 3;
+    key.shadow.normalBias = 0.035;
   }
   scene.add(key, key.target);
   const rim = new THREE.DirectionalLight(0xffe2cc, 1.1);
@@ -140,20 +139,8 @@ export function createStage(THREE: Three, canvas: HTMLCanvasElement, orbit: Orbi
   const tick = (now: number) => {
     frame = 0;
 
-    const gap = last ? (now - last) / 1000 : 0;
-    const dt = Math.min(0.1, gap);
+    const dt = Math.min(0.1, last ? (now - last) / 1000 : 0);
     last = now;
-    if (gap) {
-      frameTime = frameTime ? frameTime * 0.9 + gap * 0.1 : gap;
-      slowFrames = frameTime > 0.045 ? slowFrames + 1 : 0;
-      if (slowFrames > 20 && ratio > 1) {
-        ratio = Math.max(1, ratio - 0.5);
-        renderer.setPixelRatio(ratio);
-        renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
-        slowFrames = 0;
-        frameTime = 0;
-      }
-    }
     let more = false;
     if (Math.abs(vTheta) > 1e-4 || Math.abs(vPhi) > 1e-4) {
       theta = clampTheta(theta + vTheta);
