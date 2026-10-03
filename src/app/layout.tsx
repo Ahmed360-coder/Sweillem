@@ -22,6 +22,8 @@ const plexSans = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "500", "600
 const plexMono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-plex-mono", preload: false });
 
 const isProduction = process.env.VERCEL_ENV === "production";
+// The analytics script is served by Vercel itself, so it would 404 on a local or CI build.
+const onVercel = process.env.VERCEL === "1";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -79,7 +81,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </MotionProvider>
         <Intro />
         {/* Vercel Web Analytics: page views per address, no cookies. Turned on in the Vercel dashboard. */}
-        <Analytics />
+        {onVercel && <Analytics />}
       </body>
     </html>
   );
