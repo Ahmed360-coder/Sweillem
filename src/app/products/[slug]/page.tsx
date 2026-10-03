@@ -6,6 +6,7 @@ import { products } from "@content/products";
 import { ButtonLink } from "@/components/Button";
 import { CtaBand } from "@/components/CtaBand";
 import { FamilyGrid } from "@/components/FamilyGrid";
+import { JointDemo } from "@/components/JointDemo";
 import { Logo } from "@/components/Logo";
 import { PageHeader } from "@/components/PageHeader";
 import { PrintButton } from "@/components/PrintButton";
@@ -140,6 +141,18 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
           {slug === "jointing-systems" && <JointingFacts />}
         </div>
       </div>
+
+      {slug === "jointing-systems" && (
+        <Section
+          id="try-the-joint"
+          eyebrow="Try it"
+          title="Push a joint home"
+          lede="Drag the pipes together and watch the polyurethane seal squeeze into place, then test it at the published pressures."
+          className="no-print bg-sunk/50"
+        >
+          <JointDemo className="mx-auto max-w-[760px]" />
+        </Section>
+      )}
 
       {spec && (
         <Section id="find" eyebrow="Find a size" title="Pick a size" className="no-print bg-sunk/50">
