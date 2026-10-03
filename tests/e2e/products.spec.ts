@@ -40,6 +40,29 @@ test("add to quote counts up in the quote list", async ({ page }) => {
   await expect(page.getByRole("spinbutton", { name: /Quantity: Half Channels, Half channels 180°, DN 300/ })).toHaveValue("1");
 });
 
+test("add to quote flies a pipe to the header count, which counts it on landing", async ({ page }) => {
+  await page.goto("/products/half-channels");
+  await page.getByRole("radio", { name: "300", exact: true }).check({ force: true });
+  const count = page.locator("[data-quote-count]");
+  await expect(count).toHaveText("0");
+  await page.getByRole("button", { name: "Add to quote: DN 300 Half channels 180°" }).click();
+  // Saved at once (the link's name says so), but the badge waits for the pipe.
+  await expect(page.locator("[data-quote-flyer]")).toHaveCount(1);
+  await expect(page.getByRole("link", { name: "Quote list, 1 item" })).toBeAttached();
+  await expect(count).toHaveText("0");
+  await expect(page.locator("[data-quote-flyer]")).toHaveCount(0);
+  await expect(count).toHaveText("1");
+});
+
+test("add to quote with reduced motion counts straight away and flies nothing", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/products/half-channels");
+  await page.getByRole("radio", { name: "300", exact: true }).check({ force: true });
+  await page.getByRole("button", { name: "Add to quote: DN 300 Half channels 180°" }).click();
+  await expect(page.locator("[data-quote-count]")).toHaveText("1", { timeout: 300 });
+  await expect(page.locator("[data-quote-flyer]")).toHaveCount(0);
+});
+
 test("compare shows both classes for a shared size and says when a class is missing", async ({ page }) => {
   await page.goto("/products/compare");
   await page.locator("label", { hasText: /^400/ }).click();

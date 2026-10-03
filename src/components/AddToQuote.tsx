@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { flyToQuote } from "@/lib/fly-to-quote";
 import { addToQuote, type QuoteItem } from "@/lib/quote";
 
 /**
  * Adds one size to the visitor's quote list (kept on their device until the
- * request is sent from /quote). Says "Added" for a moment, out loud too.
+ * request is sent from /quote). Says "Added" for a moment, out loud too, and
+ * sends a pipe flying to the header's quote count (M12).
  */
 export function AddToQuote({
   item,
@@ -29,9 +31,10 @@ export function AddToQuote({
   return (
     <button
       type="button"
-      onClick={() => {
+      onClick={(e) => {
         addToQuote(item);
         setAdded(true);
+        flyToQuote(e.currentTarget);
       }}
       aria-label={label}
       data-added={added || undefined}
