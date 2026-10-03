@@ -6,6 +6,7 @@ import { AnimatePresence, animate, motion, useMotionValue, useMotionValueEvent, 
 import { duration, ease } from "@/lib/motion";
 import type { PipeClass, SizeStop } from "@/lib/size-finder";
 import { AddToQuote } from "./AddToQuote";
+import { Pipe3D } from "./Pipe3D";
 
 // Pipe size slider (M10 pipe tween). Drag from DN 125 to 1000: the glazed pipe
 // is redrawn to true scale on a fixed 100 mm grid, the published figures for
@@ -62,7 +63,7 @@ function PipeDrawing({ d1, d3, maxD3, label }: { d1: number; d3: number; maxD3: 
   const grid = (to: number, step: number) => Array.from({ length: Math.floor(to / step) + 1 }, (_, i) => i * step);
 
   return (
-    <svg viewBox={`${-PAD} ${-height - PAD} ${width + 2 * PAD} ${height + 2 * PAD}`} role="img" aria-label={label} className="block h-auto w-full">
+    <svg viewBox={`${-PAD} ${-height - PAD} ${width + 2 * PAD} ${height + 2 * PAD}`} role="img" aria-label={label} className="block h-full w-full">
       <defs>
         <linearGradient id={`${id}g`} gradientUnits="userSpaceOnUse" x1={-NX} y1={-NY} x2={NX} y2={NY}>
           <stop offset="0" stopColor={GLAZE.dark} />
@@ -128,6 +129,9 @@ export function PipeSizeSlider({ stops, initialDn = 300 }: { stops: SizeStop[]; 
   const stop = stops[index];
   const pipe = stop.pipes.find((p) => p.strength === want) ?? stop.pipes[0];
   const reduce = useReducedMotion();
+  const [view, setView] = useState<"3d" | "flat">("3d");
+  const [no3d, setNo3d] = useState(false);
+  const show3d = view === "3d" && !no3d;
 
   const maxD3 = useMemo(() => Math.max(...stops.flatMap((s) => s.pipes.map((p) => p.d3))), [stops]);
   const largest = stops.at(-1)!;
@@ -154,14 +158,50 @@ export function PipeSizeSlider({ stops, initialDn = 300 }: { stops: SizeStop[]; 
               </motion.span>
             </p>
           </div>
-          <PipeDrawing
-            d1={pipe.d1}
-            d3={pipe.d3}
-            maxD3={maxD3}
-            label={`DN ${stop.dn} ${pipe.strength} class pipe drawn to scale on a 100 mm grid: outer ø ${pipe.d3} mm, inner ø ${pipe.d1} mm. The dashed outline is DN ${largest.dn}.`}
-          />
+          {!no3d && (
+            <div role="group" aria-label="View" className="absolute top-3 right-3 z-10 flex rounded-full border border-line bg-surface/90 p-0.5 backdrop-blur-sm sm:top-4 sm:right-4">
+              {(
+                [
+                  ["3d", "3D"],
+                  ["flat", "To scale"],
+                ] as const
+              ).map(([v, text]) => (
+                <button
+                  key={v}
+                  type="button"
+                  aria-pressed={view === v}
+                  onClick={() => setView(v)}
+                  className="relative min-h-9 rounded-full px-3.5 text-[13px] font-semibold text-muted transition-colors duration-200 ease-glaze aria-pressed:bg-brand aria-pressed:text-on-brand"
+                >
+                  <span className="tap" />
+                  {text}
+                </button>
+              ))}
+            </div>
+          )}
+          <div className="aspect-[6/5]">
+            {show3d ? (
+              <Pipe3D
+                d1={pipe.d1}
+                d3={pipe.d3}
+                length={pipe.length}
+                onFail={() => setNo3d(true)}
+                className="h-full"
+                label={`3D model of the DN ${stop.dn} ${pipe.strength} class pipe on a 100 mm floor grid: outer ø ${pipe.d3} mm, inner ø ${pipe.d1} mm, ${pipe.length} m long.`}
+              />
+            ) : (
+              <PipeDrawing
+                d1={pipe.d1}
+                d3={pipe.d3}
+                maxD3={maxD3}
+                label={`DN ${stop.dn} ${pipe.strength} class pipe drawn to scale on a 100 mm grid: outer ø ${pipe.d3} mm, inner ø ${pipe.d1} mm. The dashed outline is DN ${largest.dn}.`}
+              />
+            )}
+          </div>
           <figcaption className="border-t border-line px-4 py-2.5 text-[13px] text-muted sm:px-6">
-            End face to scale on a 100 mm grid. Dashed: DN {largest.dn}, the largest size.
+            {show3d
+              ? `To scale on a 100 mm grid, bold every 500 mm: ${pipe.d3} mm across and ${pipe.length} m long, the longest published length.`
+              : `End face to scale on a 100 mm grid. Dashed: DN ${largest.dn}, the largest size.`}
           </figcaption>
         </figure>
 

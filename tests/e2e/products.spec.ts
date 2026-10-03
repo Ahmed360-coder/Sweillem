@@ -99,6 +99,9 @@ test("size slider redraws the pipe and lists the fittings made at that size", as
   await expect(slider).toHaveAttribute("aria-valuetext", "DN 125");
   await expect(finder).toContainText("126 ± 4");
   await expect(finder.getByRole("radio", { name: /H class/ })).toBeDisabled();
+  await expect(finder.getByRole("img", { name: /DN 125 N class pipe/ })).toBeVisible();
+  // The flat drawing is one tap away (and the fallback where WebGL is missing).
+  if (await finder.getByRole("button", { name: "To scale" }).isVisible()) await finder.getByRole("button", { name: "To scale" }).click();
   await expect(finder.getByRole("img", { name: /DN 125 N class pipe drawn to scale/ })).toBeVisible();
   await expect(finder.getByRole("link", { name: /^Enlarger 125/ })).toHaveAttribute("href", /product=enlarger-reducer.*dn=125%2F150/);
 
@@ -121,4 +124,21 @@ test("the side menu's Size finder link opens the slider, from another page and f
     await expect(menu).toHaveAttribute("inert", "");
     await expect(heading).toBeInViewport();
   }
+});
+
+test("the pipe and the roof tile can be turned in 3D on /products", async ({ page }) => {
+  await page.goto("/products");
+  const pipe = page.locator("#size").getByRole("img", { name: /3D model of the DN 300 N class pipe/ });
+  await pipe.scrollIntoViewIfNeeded();
+  await expect(pipe).toBeVisible();
+  // Arrow keys turn the model; the hint goes once the visitor has used it.
+  await pipe.focus();
+  await page.keyboard.press("ArrowLeft");
+  await expect(page.locator("#size").getByText("Drag to turn")).toHaveClass(/opacity-0/);
+
+  const tiles = page.locator("#tile-3d");
+  await tiles.scrollIntoViewIfNeeded();
+  await tiles.getByText("Blue", { exact: true }).click();
+  await expect(tiles.getByRole("img", { name: /roof tile in blue/ })).toBeVisible();
+  await expect(tiles.getByRole("button", { name: "Add to quote: blue roof tiles" })).toBeVisible();
 });

@@ -16,6 +16,8 @@ export interface PipeAtSize {
   /** Leading numbers for the drawing (mm). */
   d1: number;
   d3: number;
+  /** Longest published length (m), for the 3D model. */
+  length: number;
   /** Published figures, label plus cell text (unit in the label). */
   figures: { key: string; label: string; value: string }[];
   /** The full row in the product explorer. */
@@ -68,7 +70,10 @@ function pipeAt(table: SpecTable, group: string, dn: number): PipeAtSize | null 
   };
   const d1 = num("d1");
   const d3 = num("d3");
-  if (d1 === null || d3 === null) return null;
+  // Length cells list one or more lengths in metres ("2.0, 2.5").
+  const li = table.columns.findIndex((c) => c.key === "length");
+  const lengths = li < 0 ? [] : rows.flatMap((r) => (r[li].match(/\d+(?:\.\d+)?/g) ?? []).map(Number));
+  if (d1 === null || d3 === null || !lengths.length) return null;
   const figures = FIGURES.flatMap(([key, label]) => {
     const value = values(table, rows, key);
     const col = table.columns.find((c) => c.key === key);
@@ -76,7 +81,7 @@ function pipeAt(table: SpecTable, group: string, dn: number): PipeAtSize | null 
     const unit = columnUnit(col);
     return [{ key, label: unit ? `${label} (${unit})` : label, value }];
   });
-  return { strength: table.strength, title: tableTitle(table), d1, d3, figures, href: explorerHref("pipes", group, table.strength, String(dn)) };
+  return { strength: table.strength, title: tableTitle(table), d1, d3, length: Math.max(...lengths), figures, href: explorerHref("pipes", group, table.strength, String(dn)) };
 }
 
 function explorerHref(slug: string, group: string, strength: StrengthClass | null, size: string) {

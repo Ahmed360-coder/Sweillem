@@ -5,6 +5,7 @@ import { CtaBand } from "@/components/CtaBand";
 import { FamilyGrid } from "@/components/FamilyGrid";
 import { PageHeader } from "@/components/PageHeader";
 import { PipeSizeSlider } from "@/components/PipeSizeSlider";
+import { TileRotator } from "@/components/TileRotator";
 import { Section } from "@/components/Section";
 import { pageMetadata } from "@/lib/metadata";
 import { sizeStops } from "@/lib/size-finder";
@@ -84,9 +85,12 @@ export default function ProductsPage() {
         id="size"
         eyebrow="Size finder"
         title="Slide to your pipe size"
-        lede={`Drag from DN ${stops[0].dn} to ${stops.at(-1)!.dn}. The pipe is redrawn to scale, with its published figures and every fitting SWEILLEM makes at that size.`}
+        lede={`Drag from DN ${stops[0].dn} to ${stops.at(-1)!.dn} and turn the pipe in 3D. It is redrawn to scale, with its published figures and every fitting SWEILLEM makes at that size.`}
       >
         <PipeSizeSlider stops={stops} />
+      </Section>
+      <Section id="tile-3d" eyebrow="Clay roof tiles" title="Turn a roof tile" className="bg-sunk/50">
+        <TileRotator />
       </Section>
       <Section id="families" eyebrow="Ten product families" title="Choose a product">
         <FamilyGrid />
