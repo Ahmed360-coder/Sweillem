@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { loadMapGeo } from "@/lib/map-geo";
 import type { MapData } from "@/lib/projects-map";
 import { mainNav } from "@/lib/site";
+import { usePendingFlights } from "@/lib/fly-to-quote";
 import { useQuoteCount } from "@/lib/quote";
 import { useSwipeMenu } from "@/lib/swipe-menu";
 import { Logo } from "./Logo";
@@ -33,6 +34,8 @@ const preloadMap = () => void loadMapGeo().catch(() => {});
 export function Header({ mapData }: { mapData: MapData }) {
   const pathname = usePathname();
   const quoteCount = useQuoteCount();
+  // The badge waits for any add-to-quote flight to land before counting it (M12).
+  const shownCount = Math.max(0, quoteCount - usePendingFlights());
   const [stuck, setStuck] = useState(false);
   const [open, setOpen] = useState(false);
   const [mapOpen, setMapOpen] = useState(false);
@@ -173,9 +176,10 @@ export function Header({ mapData }: { mapData: MapData }) {
               <span
                 aria-hidden="true"
                 data-quote-count
+                data-quote-target
                 className="min-w-5 rounded-full bg-brand px-[5px] text-center font-mono text-[12px] leading-5 font-semibold text-on-brand"
               >
-                {quoteCount}
+                {shownCount}
               </span>
             </Link>
           </div>
