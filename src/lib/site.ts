@@ -86,6 +86,7 @@ export const siteMap: { title: string; items: NavItem[] }[] = [
     title: "Products",
     items: [
       { href: "/products", label: "All products" },
+      { href: "/products#size", label: "Size finder" },
       { href: "/products/explorer", label: "Product explorer" },
       { href: "/products/compare", label: "Compare N and H class" },
       ...products.map((p) => ({ href: `/products/${p.slug}`, label: p.name })),
