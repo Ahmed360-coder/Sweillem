@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { CtaBand } from "@/components/CtaBand";
-import { JointDiagram } from "@/components/JointDiagram";
+import { JointDemo } from "@/components/JointDemo";
 import { PageHeader } from "@/components/PageHeader";
 import { Section } from "@/components/Section";
 import { SourceNote } from "@/components/SourceNote";
@@ -45,7 +45,7 @@ export default function JointPerformancePage() {
 
       <Section id="watertight" title="Water tightness">
         <div className="grid gap-[clamp(28px,5vw,64px)] md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] md:items-center">
-          <JointDiagram />
+          <JointDemo />
           <div className="grid gap-4">
             <p className="text-[17px] leading-relaxed">
               Jointing systems C and F are designed so that the spigot and socket, and the interference between them, give a
