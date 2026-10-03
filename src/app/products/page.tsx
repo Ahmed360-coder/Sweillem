@@ -4,8 +4,10 @@ import { CompareArt, ExplorerArt, RoofTilesArt } from "@/components/CategoryArt"
 import { CtaBand } from "@/components/CtaBand";
 import { FamilyGrid } from "@/components/FamilyGrid";
 import { PageHeader } from "@/components/PageHeader";
+import { PipeSizeSlider } from "@/components/PipeSizeSlider";
 import { Section } from "@/components/Section";
 import { pageMetadata } from "@/lib/metadata";
+import { sizeStops } from "@/lib/size-finder";
 import { explorerProducts, totalRows } from "@/lib/specs";
 import { ArrowIcon } from "@/components/icons";
 
@@ -17,6 +19,7 @@ export const metadata = pageMetadata({
 });
 
 const [nPipes, hPipes] = productSpecs.pipes.tables;
+const stops = sizeStops();
 
 /** Crushing strength and wall thickness of one class at the given DN, from its table. */
 function classFacts(t: typeof nPipes, dn: string) {
@@ -77,6 +80,14 @@ export default function ProductsPage() {
           ))}
         </ul>
       </section>
+      <Section
+        id="size"
+        eyebrow="Size finder"
+        title="Slide to your pipe size"
+        lede={`Drag from DN ${stops[0].dn} to ${stops.at(-1)!.dn}. The pipe is redrawn to scale, with its published figures and every fitting SWEILLEM makes at that size.`}
+      >
+        <PipeSizeSlider stops={stops} />
+      </Section>
       <Section id="families" eyebrow="Ten product families" title="Choose a product">
         <FamilyGrid />
       </Section>
