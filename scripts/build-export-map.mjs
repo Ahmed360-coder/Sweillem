@@ -11,23 +11,17 @@
 // Far East markets sit in an inset box with its own projection.
 import { readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
-import { geoArea, geoMercator, geoPath } from "d3-geo";
+import { geoArea, geoPath } from "d3-geo";
 import { feature, mesh } from "topojson-client";
 import { presimplify, simplify } from "topojson-simplify";
 import sharp from "sharp";
+import { FULL_H, H, INSET, ORIGIN, W, makeInsetProjection, makeMainProjection } from "./map-projection.mjs";
 
 const require = createRequire(import.meta.url);
 const raw = JSON.parse(readFileSync(require.resolve("world-atlas/countries-50m.json"), "utf8"));
 // Drop detail finer than the map can show: at about 20 px a degree, triangles
 // under 0.0015 square degrees are well under a pixel.
 const world = simplify(presimplify(raw), 0.0015);
-
-const W = 1400;
-const H = 820;
-/** Cairo, where the pipes leave from. */
-const ORIGIN = [31.24, 30.04];
-/** The Far East inset, in map pixels. */
-const INSET = { x: 1092, y: 18, w: 290, h: 330 };
 
 // SWEILLEM's markets. "about" = named on the About Us page (in its order);
 // "map" = filled red on the map SWEILLEM publishes on its site.
@@ -61,31 +55,8 @@ const all = feature(world, world.objects.countries).features;
 const byId = new Map(all.map((f) => [String(f.id).padStart(3, "0"), f]));
 for (const m of MARKETS) if (!byId.has(m.id)) throw new Error(`No shape for ${m.name}`);
 
-// Main view: Spain to the Gulf, Poland to the Red Sea, like SWEILLEM's map.
-const main = geoMercator().fitExtent(
-  [
-    [0, 0],
-    [W, H],
-  ],
-  { type: "MultiPoint", coordinates: [[-10.2, 44], [24, 56.2], [57.5, 30], [44, 20.5], [-9, 36]] },
-);
-main.clipExtent([
-  [0, 0],
-  [W, H],
-]);
-
-// Inset: Hong Kong, Brunei and Singapore.
-const inset = geoMercator().fitExtent(
-  [
-    [INSET.x + 18, INSET.y + 44],
-    [INSET.x + INSET.w - 18, INSET.y + INSET.h - 18],
-  ],
-  { type: "MultiPoint", coordinates: [[102.5, 23.5], [117.5, 23.5], [102.5, 0.4], [117.5, 0.4]] },
-);
-inset.clipExtent([
-  [INSET.x, INSET.y],
-  [INSET.x + INSET.w, INSET.y + INSET.h],
-]);
+const main = makeMainProjection();
+const inset = makeInsetProjection();
 
 const mainPath = geoPath(main).digits(1);
 const insetPath = geoPath(inset).digits(1);
@@ -149,6 +120,7 @@ const markets = MARKETS.map((m) => {
 const out = {
   width: W,
   height: H,
+  fullHeight: FULL_H,
   inset: INSET,
   egypt: mainPath(byId.get("818")),
   origin: { x: r1(ox), y: r1(oy) },
@@ -156,11 +128,12 @@ const out = {
 };
 writeFileSync("src/lib/export-map.json", JSON.stringify(out));
 console.log(`export-map.json: ${(JSON.stringify(out).length / 1024).toFixed(0)} KB`);
-writeFileSync("public/images/company/export-map-borders.svg", bordersSvg(W, H, [borders, insetBorders]));
+writeFileSync("public/images/company/export-map-borders.svg", bordersSvg(W, FULL_H, [borders, insetBorders]));
 
 /** White coast and border lines on a transparent ground, drawn over the photo. */
 export function bordersSvg(width, height, paths) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}"><g fill="none" stroke="#fff" stroke-opacity=".55" stroke-width=".7" stroke-linejoin="round">${paths.map((d) => `<path d="${d}"/>`).join("")}</g></svg>\n`;
+  // Top-aligned when cropped, like the photos, so About can show just the top of it.
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMin slice"><g fill="none" stroke="#fff" stroke-opacity=".55" stroke-width=".7" stroke-linejoin="round">${paths.map((d) => `<path d="${d}"/>`).join("")}</g></svg>\n`;
 }
 
 // ---- Backgrounds: reproject the equirectangular NASA images ----
@@ -169,8 +142,8 @@ async function background(srcFile, outFile, tone) {
   const src = sharp(srcFile);
   const { width: SW, height: SH } = await src.metadata();
   const srcPx = await src.removeAlpha().raw().toBuffer();
-  const outPx = Buffer.alloc(W * H * 3);
-  for (let y = 0; y < H; y++) {
+  const outPx = Buffer.alloc(W * FULL_H * 3);
+  for (let y = 0; y < FULL_H; y++) {
     for (let x = 0; x < W; x++) {
       const inInset = x >= INSET.x && x < INSET.x + INSET.w && y >= INSET.y && y < INSET.y + INSET.h;
       const [lon, lat] = (inInset ? inset : main).invert([x + 0.5, y + 0.5]);
@@ -189,7 +162,7 @@ async function background(srcFile, outFile, tone) {
       }
     }
   }
-  await tone(sharp(outPx, { raw: { width: W, height: H, channels: 3 } }))
+  await tone(sharp(outPx, { raw: { width: W, height: FULL_H, channels: 3 } }))
     .webp({ quality: 72 })
     .toFile(outFile);
   console.log(`${outFile} written`);

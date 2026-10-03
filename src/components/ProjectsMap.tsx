@@ -33,16 +33,52 @@ const subscribeReducedMotion = (onChange: () => void) => {
 };
 const getReducedMotion = () => window.matchMedia(reducedQuery).matches;
 
+/** Remembers the visitor's night or day choice on this device (shared with the export map on About). */
+const MODE_KEY = "sweillem.map-mode";
+const readMode = () => {
+  try {
+    const m = window.localStorage.getItem(MODE_KEY);
+    return m === "night" || m === "day" ? m : null;
+  } catch {
+    return null;
+  }
+};
+/** Until the visitor picks a view, the map follows the site theme: day in light mode, night in dark. */
+const themeMode = () => (document.documentElement.dataset.theme === "light" ? "day" : "night");
+
+/** How long the tour rests on each country, and the wait before it starts. */
+const TOUR_MS = 2400;
+const TOUR_DELAY_MS = 2600;
+
+const mapSizes = "(min-width: 1360px) 900px, (min-width: 768px) 66vw, 760px";
+
+/** Width and height of a path, in map units. */
+function extent(d: string) {
+  const n = d.match(/-?\d+(?:\.\d+)?/g)?.map(Number) ?? [];
+  let [x0, y0, x1, y1] = [Infinity, Infinity, -Infinity, -Infinity];
+  for (let i = 0; i + 1 < n.length; i += 2) {
+    x0 = Math.min(x0, n[i]);
+    x1 = Math.max(x1, n[i]);
+    y0 = Math.min(y0, n[i + 1]);
+    y1 = Math.max(y1, n[i + 1]);
+  }
+  return Math.max(x1 - x0, y1 - y0);
+}
+
 /** How near (in page pixels) a click or tap must land to pick a pin; hovering is stricter. */
 const TAP_REACH = 26;
 const HOVER_REACH = 20;
 
 /**
  * SWEILLEM's projects, its addresses abroad and the export routes from Cairo,
- * on the same map as the export map on About. It zooms to a region (only
- * transform animates) and picks a place from the map or the lists beside it.
- * The map shapes load once it is active. It is shown in two places: the
- * header's map panel ("panel") and the Projects page ("page").
+ * on the export map from About: the satellite view with its Night / Day
+ * switch, the markets in red with their names, routes drawing out from Cairo
+ * and clay pipes shipping along them. While nobody touches it, it tours the
+ * markets like About does. It zooms to a region (only transform animates) and
+ * picks a place from the map or the lists beside it. On phones the map is
+ * wider than the screen and swipes sideways. The map shapes load once it is
+ * active. It is shown in two places: the header's map panel ("panel") and the
+ * Projects page ("page").
  */
 export function ProjectsMap({
   data,
@@ -62,6 +98,7 @@ export function ProjectsMap({
   const asideRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const pinsRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const reduced = useSyncExternalStore(subscribeReducedMotion, getReducedMotion, () => false);
   const [region, setRegion] = useState<MapRegion>("world");
   const [layer, setLayer] = useState<"all" | MapLayer>(variant === "page" ? "projects" : "all");
@@ -70,7 +107,25 @@ export function ProjectsMap({
   const [failed, setFailed] = useState(false);
   const [hovered, setHovered] = useState<Pick | null>(null);
   const [mapWidth, setMapWidth] = useState(0);
+  const [mode, setMode] = useState<"night" | "day">("night");
+  const [tour, setTour] = useState<string | null>(null);
+  const [toured, setToured] = useState(false);
   const panel = variant === "panel";
+
+  // Night or day: the visitor's choice, else the site theme (followed as it changes).
+  useEffect(() => {
+    const sync = () => setMode(readMode() ?? themeMode());
+    sync();
+    const watch = new MutationObserver(sync);
+    watch.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => watch.disconnect();
+  }, []);
+  const pickMode = (m: "night" | "day") => {
+    setMode(m);
+    try {
+      window.localStorage.setItem(MODE_KEY, m);
+    } catch {}
+  };
 
   // The shapes load once active (the header's Map button warms them on hover); a failed load can be retried.
   useEffect(() => {
@@ -95,6 +150,7 @@ export function ProjectsMap({
   }, []);
 
   const view = pins.views[region];
+  const W = pins.width;
   const places = data.places;
   const projects = places.filter((p) => p.layer === "projects");
   const addresses = places.filter((p) => p.layer === "distribution");
@@ -104,6 +160,7 @@ export function ProjectsMap({
   const pickedMarket = picked?.startsWith("market:") ? data.markets.find((m) => `market:${m.id}` === picked) : undefined;
 
   const pick = (key: Pick, itemRegion: Exclude<MapRegion, "world">) => {
+    stopTour();
     if (key === picked) return setPicked(null);
     setPicked(key);
     setRegion(itemRegion);
@@ -130,6 +187,7 @@ export function ProjectsMap({
   const regionOfMarket = new Map(data.markets.map((m) => [m.id, m.region]));
 
   const chooseRegion = (r: MapRegion) => {
+    stopTour();
     setRegion(r);
     const itemRegion = pickedPlace?.region ?? pickedMarket?.region;
     if (r !== "world" && itemRegion !== r) setPicked(null);
@@ -172,22 +230,77 @@ export function ProjectsMap({
   const onMapPointerMove = (e: PointerEvent<HTMLDivElement>) => {
     if (e.pointerType !== "mouse") return;
     const key = pinAt(e.clientX, e.clientY, HOVER_REACH);
+    if (key) stopTour();
     if (key !== hovered) setHovered(key);
   };
+
+  // The tour: while nobody has touched the map, it picks out one market after another, as on About.
+  const touring = tour !== null && picked === null && hovered === null;
+  const stopTour = () => {
+    if (toured) return;
+    setToured(true);
+    setTour(null);
+  };
+  const tourIds = geo?.markets.map((m) => m.id);
+  const canTour = active && geo !== null && !reduced && !toured && region === "world" && layer !== "projects" && picked === null;
+  useEffect(() => {
+    if (!canTour || !tourIds) return;
+    let i = -1;
+    let timer = 0;
+    const step = () => {
+      i = (i + 1) % tourIds.length;
+      setTour(tourIds[i]);
+    };
+    const start = window.setTimeout(() => {
+      step();
+      timer = window.setInterval(step, TOUR_MS);
+    }, TOUR_DELAY_MS);
+    return () => {
+      window.clearTimeout(start);
+      window.clearInterval(timer);
+      setTour(null);
+    };
+    // tourIds only changes when the shapes load, which canTour already follows.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canTour]);
+
+  // Phones: the map is wider than the screen, so slide it to keep what matters in the middle:
+  // the pick, or the toured country, or the middle of a zoomed region, or Europe to Cairo.
+  const followX = (() => {
+    const id = picked ?? (touring ? `market:${tour}` : null);
+    const x = id?.startsWith("place:")
+      ? places.find((p) => `place:${p.id}` === id)?.x
+      : id
+        ? geo?.markets.find((m) => `market:${m.id}` === id)?.x
+        : undefined;
+    if (x !== undefined) return view.tx + x * view.k;
+    return region === "world" ? 650 : W / 2;
+  })();
+  useEffect(() => {
+    const sc = scrollRef.current;
+    if (!sc || !mapWidth || sc.scrollWidth <= sc.clientWidth + 1) return;
+    sc.scrollTo({ left: (followX / W) * mapWidth - sc.clientWidth / 2, behavior: reduced || !geo ? "auto" : "smooth" });
+    // geo is read only to pick the scroll behaviour.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [followX, mapWidth, W, reduced]);
 
   /** Which side of its pin a label goes, so it stays inside the map at the current zoom. */
   const labelSide = (x: number, name: string, side: "left" | "right") => {
     if (!mapWidth) return side;
-    const px = ((view.tx + x * view.k) * mapWidth) / 1000;
+    const px = ((view.tx + x * view.k) * mapWidth) / W;
     const width = name.length * 7.6 + 34;
     if (side === "left" && px - width < 4) return "right";
     if (side === "right" && px + width > mapWidth - 4) return "left";
     return side;
   };
 
-  const on = (key: Pick) => (picked === key ? "" : undefined);
+  const on = (key: Pick) => (picked === key || (touring && key === `market:${tour}`) ? "" : undefined);
   const ready = active && geo !== null;
   const arcId = (id: string) => `pmap-arc${uid}${id}`;
+  const pipeId = `pmap-pipe${uid}`;
+  // Markets too small to see as a shape (Singapore, Hong Kong) also get a red disc.
+  const smallMarkets = new Set(geo?.markets.filter((m) => extent(m.d) < 14).map((m) => m.id));
+  const namedCount = data.markets.filter((m) => m.source === "about").length;
 
   return (
     <div
@@ -204,122 +317,190 @@ export function ProjectsMap({
           <Choice label="Show" items={layers} value={layer} onChange={chooseLayer} />
         </div>
 
-        <div
-          ref={mapRef}
-          data-view={region}
-          data-layer={layer}
-          data-ready={ready ? "" : undefined}
-          data-focus={picked ? "" : undefined}
-          style={{ "--zoom": view.k, "--pan-x": view.tx, "--pan-y": view.ty } as CSSProperties}
-          className="pmap relative mx-auto aspect-[1000/620] w-full max-w-[calc((100dvh_-_230px)_*_1.6129)] scroll-mt-[calc(var(--header-h)_+_12px)] overflow-hidden rounded-inner bg-[#0b1220]"
-        >
+        <div className="relative mx-auto w-full overflow-hidden rounded-inner bg-[#060b16] md:max-w-[calc((100dvh_-_230px)_*_1.5556)]">
           <div
-            role="img"
-            aria-label={`Map of SWEILLEM’s projects in Saudi Arabia, Egypt and Germany, its addresses in Cairo, Brüggen and Jeddah, and routes from Cairo to the ${data.markets.length} countries it names.`}
-            className="absolute inset-0"
+            ref={scrollRef}
+            onPointerDown={stopTour}
+            onWheel={stopTour}
+            role="region"
+            aria-label="Map. On small screens, scroll sideways to see the Gulf and the Far East."
+            tabIndex={0}
+            className="overflow-x-auto overscroll-x-contain [scrollbar-width:none] md:overflow-visible"
           >
-            <svg viewBox="0 0 1000 620" className="absolute inset-0 size-full" aria-hidden="true">
-              {geo && (
-                <g className="pmap-zoom">
-                  <path d={geo.land} className="pmap-land" />
-                  <path d={geo.borders} className="pmap-borders" vectorEffect="non-scaling-stroke" />
-                  <path d={geo.egypt} className="pmap-egypt" />
-                  {geo.markets.map((m, i) => (
-                    <path
-                      key={m.id}
-                      d={m.d}
-                      data-market={m.id}
-                      data-on={on(`market:${m.id}`)}
-                      className="pmap-country"
-                      style={{ "--i": i } as CSSProperties}
-                    />
-                  ))}
-                  {geo.markets.map((m, i) => (
-                    <path
-                      key={m.id}
-                      id={arcId(m.id)}
-                      d={m.arc}
-                      data-on={on(`market:${m.id}`)}
-                      vectorEffect="non-scaling-stroke"
-                      className="pmap-arc"
-                      style={{ "--i": i } as CSSProperties}
-                    />
-                  ))}
-                  {active && !reduced && (
-                    <g className="pmap-ships">
-                      {geo.markets.map((m, i) => (
-                        <circle key={m.id} r={2.4} className="pmap-ship">
-                          <animateMotion dur={`${3 + (i % 4) * 0.4}s`} begin={`${(i * 0.37).toFixed(2)}s`} repeatCount="indefinite">
-                            <mpath href={`#${arcId(m.id)}`} />
-                          </animateMotion>
-                        </circle>
-                      ))}
-                    </g>
-                  )}
-                </g>
-              )}
-            </svg>
-
             <div
-              ref={pinsRef}
-              className="absolute inset-0 data-hover:cursor-pointer"
-              data-hover={hovered ? "" : undefined}
-              onClick={onMapClick}
-              onPointerMove={onMapPointerMove}
-              onPointerLeave={() => setHovered(null)}
+              ref={mapRef}
+              data-view={region}
+              data-layer={layer}
+              data-mode={mode}
+              data-ready={ready ? "" : undefined}
+              data-focus={picked || touring ? "" : undefined}
+              style={{ "--zoom": view.k, "--pan-x": view.tx, "--pan-y": view.ty } as CSSProperties}
+              className="pmap relative aspect-[1400/900] w-[760px] scroll-mt-[calc(var(--header-h)_+_12px)] md:w-full"
             >
-              {geo?.markets.map((m, i) => (
-                <div
-                  key={m.id}
-                  data-pick={`market:${m.id}`}
-                  data-layer="distribution"
-                  data-region={regionOfMarket.get(m.id)}
-                  data-on={on(`market:${m.id}`)}
-                  data-hover={hovered === `market:${m.id}` ? "" : undefined}
-                  className="pmap-pin pmap-market"
-                  style={{ "--x": m.x, "--y": m.y, "--i": i } as CSSProperties}
-                >
-                  <span className="pmap-mark" />
-                  <span className="pmap-label" data-side={labelSide(m.x, m.name, "right")}>
-                    {m.name}
-                  </span>
+              <div
+                role="img"
+                aria-label={`Satellite map of SWEILLEM’s projects in Saudi Arabia, Egypt and Germany, its addresses in Cairo, Brüggen and Jeddah, and routes from Cairo to the ${data.markets.length} countries on its export map.`}
+                className="absolute inset-0"
+              >
+                <div className="pmap-zoom absolute inset-0" aria-hidden="true">
+                  <Image src="/images/company/export-map-night.webp" alt="" fill sizes={mapSizes} className="pmap-photo pmap-photo-night" />
+                  <Image src="/images/company/export-map-day.webp" alt="" fill sizes={mapSizes} className="pmap-photo pmap-photo-day" />
+                  <Image src="/images/company/export-map-borders.svg" alt="" fill unoptimized className="pointer-events-none" />
+                  <svg viewBox={`0 0 ${pins.width} ${pins.height}`} className="absolute inset-0 size-full">
+                    {geo && (
+                      <>
+                        <defs>
+                          <PipeSymbol id={pipeId} />
+                        </defs>
+                        <g className="pmap-countries">
+                          {geo.markets.map((m, i) => (
+                            <g key={m.id} data-market={m.id} data-on={on(`market:${m.id}`)} className="pmap-country" style={{ "--i": i } as CSSProperties}>
+                              <path d={m.d} />
+                              {smallMarkets.has(m.id) && <circle cx={m.x} cy={m.y} r={7} />}
+                            </g>
+                          ))}
+                        </g>
+                        <g className="pmap-inset">
+                          <rect x={geo.inset.x} y={geo.inset.y} width={geo.inset.w} height={geo.inset.h} rx={14} />
+                          <text x={geo.inset.x + 16} y={geo.inset.y + 28}>
+                            Far East
+                          </text>
+                        </g>
+                        {geo.markets.map((m, i) => (
+                          <path
+                            key={m.id}
+                            id={arcId(m.id)}
+                            d={m.arc}
+                            pathLength={1}
+                            data-on={on(`market:${m.id}`)}
+                            className="pmap-arc"
+                            style={{ "--i": i } as CSSProperties}
+                          />
+                        ))}
+                        {/* Shipments: a pipe leaves Cairo, rides the route nose first and fades on arrival. */}
+                        {active && !reduced && (
+                          <g className="pmap-ships">
+                            {geo.markets.map((m, i) => {
+                              const dur = `${4.2 + (i % 4) * 0.5}s`;
+                              const begin = `${(i * 0.4).toFixed(2)}s`;
+                              return (
+                                <g key={m.id} data-on={on(`market:${m.id}`)} className="pmap-ship">
+                                  <use href={`#${pipeId}`} x={-15} y={-8} width={30} height={16}>
+                                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.82;1" dur={dur} begin={begin} repeatCount="indefinite" />
+                                  </use>
+                                  <animateMotion dur={dur} begin={begin} repeatCount="indefinite" rotate="auto">
+                                    <mpath href={`#${arcId(m.id)}`} />
+                                  </animateMotion>
+                                </g>
+                              );
+                            })}
+                          </g>
+                        )}
+                        <g className="pmap-origin">
+                          <circle cx={geo.origin.x} cy={geo.origin.y} r={16} className="pmap-origin-ring" />
+                          <circle cx={geo.origin.x} cy={geo.origin.y} r={13} className="pmap-origin-dot" />
+                          <image href="/images/brand/sweillem-mark.svg" x={geo.origin.x - 6.5} y={geo.origin.y - 9.5} width={13} height={19} />
+                          <text x={geo.origin.x - 22} y={geo.origin.y + 5} className="pmap-origin-text" textAnchor="end">
+                            CAIRO
+                          </text>
+                        </g>
+                        {/* Names on the countries, sized to the country like SWEILLEM's map. */}
+                        {geo.markets.map((m, i) => (
+                          <text
+                            key={m.id}
+                            x={m.label.x}
+                            y={m.label.y}
+                            textAnchor="middle"
+                            dominantBaseline="central"
+                            data-on={on(`market:${m.id}`)}
+                            className="pmap-name"
+                            style={{ "--s": m.label.size, "--i": i } as CSSProperties}
+                          >
+                            {m.name.toUpperCase()}
+                          </text>
+                        ))}
+                      </>
+                    )}
+                  </svg>
                 </div>
-              ))}
-              {places.map((p, i) => (
+
                 <div
-                  key={p.id}
-                  data-pick={`place:${p.id}`}
-                  data-layer={p.layer}
-                  data-region={p.region}
-                  data-kind={p.origin ? "origin" : p.layer === "projects" ? "project" : "address"}
-                  data-on={on(`place:${p.id}`)}
-                  data-hover={hovered === `place:${p.id}` ? "" : undefined}
-                  className="pmap-pin pmap-place"
-                  style={{ "--x": p.x, "--y": p.y, "--i": i + 4 } as CSSProperties}
+                  ref={pinsRef}
+                  className="absolute inset-0 data-hover:cursor-pointer"
+                  data-hover={hovered ? "" : undefined}
+                  onClick={onMapClick}
+                  onPointerMove={onMapPointerMove}
+                  onPointerLeave={() => setHovered(null)}
                 >
-                  <span className="pmap-mark" />
-                  <span className="pmap-label" data-side={labelSide(p.x, p.short, p.side)}>
-                    {p.short}
-                  </span>
+                  {geo?.markets.map((m, i) => (
+                    <div
+                      key={m.id}
+                      data-pick={`market:${m.id}`}
+                      data-layer="distribution"
+                      data-region={regionOfMarket.get(m.id)}
+                      data-on={on(`market:${m.id}`)}
+                      data-hover={hovered === `market:${m.id}` ? "" : undefined}
+                      className="pmap-pin pmap-market"
+                      style={{ "--x": m.x, "--y": m.y, "--i": i } as CSSProperties}
+                    />
+                  ))}
+                  {places.map((p, i) => (
+                    <div
+                      key={p.id}
+                      data-pick={`place:${p.id}`}
+                      data-layer={p.layer}
+                      data-region={p.region}
+                      data-kind={p.origin ? "origin" : p.layer === "projects" ? "project" : "address"}
+                      data-on={on(`place:${p.id}`)}
+                      data-hover={hovered === `place:${p.id}` ? "" : undefined}
+                      className="pmap-pin pmap-place"
+                      style={{ "--x": p.x, "--y": p.y, "--i": i + 4 } as CSSProperties}
+                    >
+                      <span className="pmap-mark" />
+                      {!p.origin && (
+                        <span className="pmap-label" data-side={labelSide(p.x, p.short, p.side)}>
+                          {p.short}
+                        </span>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+              {!geo &&
+                (failed ? (
+                  <div className="absolute inset-0 grid place-content-center justify-items-center gap-3 p-4 text-center text-[14px] text-[#c9d2e3]">
+                    <p>The map could not load.</p>
+                    <button
+                      type="button"
+                      onClick={() => setFailed(false)}
+                      className="min-h-11 cursor-pointer rounded-full bg-white px-5 text-[14px] font-semibold text-[#1c1818] transition-transform duration-100 active:translate-y-px"
+                    >
+                      Try again
+                    </button>
+                  </div>
+                ) : (
+                  <p className="absolute inset-0 grid place-items-center text-[14px] text-[#c9d2e3]">Loading the map…</p>
+                ))}
             </div>
           </div>
-          {!geo &&
-            (failed ? (
-              <div className="absolute inset-0 grid place-content-center justify-items-center gap-3 p-4 text-center text-[14px] text-[#c9d2e3]">
-                <p>The map could not load.</p>
-                <button
-                  type="button"
-                  onClick={() => setFailed(false)}
-                  className="min-h-11 cursor-pointer rounded-full bg-white px-5 text-[14px] font-semibold text-[#1c1818] transition-transform duration-100 active:translate-y-px"
-                >
-                  Try again
-                </button>
-              </div>
-            ) : (
-              <p className="absolute inset-0 grid place-items-center text-[14px] text-[#c9d2e3]">Loading the map…</p>
+          {/* Night / day switch, shared with the export map on About. Outside the scroller so it stays put on phones. */}
+          <div
+            className="absolute top-3 left-3 z-[4] flex rounded-full bg-[#0b1220]/80 p-1 text-[13px] font-semibold text-white backdrop-blur-sm"
+            role="group"
+            aria-label="Map view"
+          >
+            {(["night", "day"] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                aria-pressed={mode === m}
+                onClick={() => pickMode(m)}
+                className="reach-mode min-h-11 rounded-full px-4 capitalize md:min-h-9 md:px-3.5"
+              >
+                {m}
+              </button>
             ))}
+          </div>
         </div>
 
         <ul aria-label="Map key" className="flex flex-wrap gap-x-5 gap-y-1.5 text-[13px] text-muted">
@@ -359,7 +540,9 @@ export function ProjectsMap({
                 {pickedMarket.name}
               </h3>
               <p className="text-[15px] text-muted">
-                One of the {data.markets.length} countries SWEILLEM names as customers, reached from Cairo.
+                {pickedMarket.source === "about"
+                  ? `One of the ${namedCount} countries SWEILLEM names as customers on its About Us page, reached from Cairo.`
+                  : "Filled red on SWEILLEM’s own export map, reached from Cairo."}
               </p>
             </div>
           ) : (
@@ -439,6 +622,19 @@ export function ProjectsMap({
         </div>
       </div>
     </div>
+  );
+}
+
+/** A vitrified clay pipe, spigot end first, drawn around 0,0 so it can ride a route (as on About). */
+function PipeSymbol({ id }: { id: string }) {
+  return (
+    <symbol id={id} viewBox="-15 -8 30 16" overflow="visible">
+      <rect x={-13} y={-4.5} width={19} height={9} rx={1.5} fill="#a8572f" stroke="#2a1410" strokeWidth={0.8} />
+      <rect x={-12} y={-3.4} width={17} height={2.2} rx={1} fill="#e09a63" />
+      <rect x={5} y={-6.5} width={8} height={13} rx={2.2} fill="#8a4424" stroke="#2a1410" strokeWidth={0.8} />
+      <rect x={6} y={-5.4} width={6} height={2.4} rx={1} fill="#c97d4f" />
+      <ellipse cx={13} cy={0} rx={1.6} ry={4.4} fill="#2a1410" />
+    </symbol>
   );
 }
 

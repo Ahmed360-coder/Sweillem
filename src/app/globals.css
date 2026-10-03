@@ -769,6 +769,8 @@ html[data-intro="exit"] .hero-progress {
 /* The map keeps its satellite colours in both site themes. */
 .reach-photo {
   object-fit: cover;
+  /* The pictures run further south than About shows (the projects map uses that part). */
+  object-position: top;
   transition: opacity 0.7s var(--ease-glaze);
 }
 .reach-photo-day,
@@ -978,40 +980,60 @@ html[data-intro="exit"] .hero-progress {
     --pan-x 0.9s var(--ease-kiln),
     --pan-y 0.9s var(--ease-kiln);
 }
+/* The satellite pictures and the shapes zoom together. 1 map unit is 1/1400 of
+   the map's width (it keeps the map's 1400 x 900 shape). */
 .pmap-zoom {
-  transform: translate(calc(var(--pan-x) * 1px), calc(var(--pan-y) * 1px)) scale(var(--zoom));
-  opacity: 0;
-  transition: opacity 0.5s var(--ease-glaze);
+  transform-origin: 0 0;
+  transform: translate(calc(var(--pan-x) * 100cqw / 1400), calc(var(--pan-y) * 100cqh / 900)) scale(var(--zoom));
 }
-.pmap[data-ready] .pmap-zoom {
+.pmap-photo {
+  object-fit: cover;
+  transition: opacity 0.7s var(--ease-glaze);
+}
+.pmap-photo-day,
+.pmap[data-mode="day"] .pmap-photo-night {
+  opacity: 0;
+}
+.pmap[data-mode="day"] .pmap-photo-day {
   opacity: 1;
 }
-.pmap-land {
-  fill: #1a2640;
-}
-.pmap-borders {
-  fill: none;
-  stroke: #33435f;
-  stroke-width: 0.6;
-}
-.pmap-egypt {
-  fill: #3a2f33;
-}
+/* Lines and names keep about their size as the map zooms. */
 .pmap-country {
-  fill: #b3130b;
-  opacity: 0.85;
-  transition: opacity 0.3s var(--ease-glaze);
+  fill: #a50d07;
+  stroke: #fff;
+  stroke-opacity: 0.7;
+  stroke-width: calc(0.8px / var(--zoom));
+  stroke-linejoin: round;
+  opacity: 0.92;
+  transition:
+    opacity 0.3s var(--ease-glaze),
+    fill 0.3s;
+}
+.pmap-inset rect {
+  fill: none;
+  stroke: #fff;
+  stroke-opacity: 0.8;
+  stroke-width: 1.5;
+}
+.pmap-inset text {
+  fill: #fff;
+  font: 600 calc(15px * (0.45 + 0.55 / var(--zoom))) var(--font-plex-mono), monospace;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 .pmap-arc {
   fill: none;
   stroke: #f5b041;
-  stroke-width: 1.2;
+  stroke-width: calc(1.4px / var(--zoom));
   stroke-linecap: round;
-  opacity: 0.7;
-  transition: opacity 0.3s var(--ease-glaze);
+  stroke-dasharray: 1;
+  opacity: 0.8;
+  transition:
+    opacity 0.3s,
+    stroke-width 0.3s;
 }
 .pmap-ship {
-  fill: #ffe2a8;
+  transition: opacity 0.3s;
 }
 .pmap-ships {
   opacity: 0;
@@ -1019,7 +1041,44 @@ html[data-intro="exit"] .hero-progress {
 }
 .pmap[data-ready][data-view="world"]:not([data-layer="projects"]) .pmap-ships {
   opacity: 1;
-  transition: opacity 0.4s 1s;
+  transition: opacity 0.4s 1.8s;
+}
+.pmap-origin-ring {
+  fill: none;
+  stroke: #f5b041;
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: reach-pulse 2.4s var(--ease-glaze) infinite;
+}
+.pmap-origin-dot {
+  fill: #fff;
+  stroke: #f5b041;
+  stroke-width: 2;
+}
+.pmap-origin-text {
+  fill: #fff;
+  font: 700 calc(17px * (0.45 + 0.55 / var(--zoom))) var(--font-jost), sans-serif;
+  letter-spacing: 0.08em;
+  paint-order: stroke;
+  stroke: rgb(0 0 0 / 0.55);
+  stroke-width: 3px;
+}
+/* Country names: white capitals on the red, like SWEILLEM's map. */
+.pmap-name {
+  fill: #fff;
+  font: 700 calc(var(--s) * 1px * (0.45 + 0.55 / var(--zoom))) var(--font-jost), sans-serif;
+  letter-spacing: 0.04em;
+  paint-order: stroke;
+  stroke: rgb(40 0 0 / 0.55);
+  stroke-width: calc(2.5px / var(--zoom));
+  pointer-events: none;
+  transition:
+    opacity 0.3s,
+    fill 0.25s;
+}
+.pmap-name[data-on] {
+  fill: #ffd27a;
 }
 
 /* Opening: countries, then routes, then pins arrive (animations, so the
@@ -1027,6 +1086,11 @@ html[data-intro="exit"] .hero-progress {
 @keyframes pmap-fade {
   from {
     opacity: 0;
+  }
+}
+@keyframes pmap-draw {
+  from {
+    stroke-dashoffset: 1;
   }
 }
 @keyframes pmap-pop {
@@ -1037,41 +1101,51 @@ html[data-intro="exit"] .hero-progress {
 }
 .pmap[data-ready] .pmap-country {
   animation: pmap-fade 0.6s var(--ease-glaze) backwards;
-  animation-delay: calc(150ms + var(--i) * 45ms);
+  animation-delay: calc(var(--i) * 55ms);
 }
+.pmap[data-ready] .pmap-name {
+  animation: pmap-fade 0.5s var(--ease-glaze) backwards;
+  animation-delay: calc(500ms + var(--i) * 40ms);
+}
+/* The routes draw out from Cairo, as on About. */
 .pmap[data-ready] .pmap-arc {
-  animation: pmap-fade 0.6s var(--ease-glaze) backwards;
-  animation-delay: calc(350ms + var(--i) * 55ms);
+  animation: pmap-draw 1.4s var(--ease-glaze) backwards;
+  animation-delay: calc(400ms + var(--i) * 70ms);
 }
 .pmap[data-ready] .pmap-mark {
   animation: pmap-pop 0.5s var(--ease-set) backwards;
   animation-delay: calc(650ms + var(--i) * 45ms);
 }
 
-/* Something picked: the rest steps back. */
+/* Something picked (or toured): the rest steps back. */
 .pmap[data-focus] .pmap-country {
-  opacity: 0.45;
+  opacity: 0.6;
 }
-.pmap[data-focus] .pmap-arc {
-  opacity: 0.22;
+.pmap[data-focus] .pmap-arc,
+.pmap[data-focus] .pmap-ship {
+  opacity: 0.25;
+}
+.pmap[data-focus] .pmap-ship[data-on] {
+  opacity: 1;
 }
 .pmap[data-focus] .pmap-pin:not([data-on]) .pmap-mark {
   opacity: 0.55;
 }
 .pmap .pmap-country[data-on] {
   opacity: 1;
-  fill: #e0362b;
+  fill: #e0281c;
 }
 .pmap .pmap-arc[data-on] {
   opacity: 1;
-  stroke-width: 2.4;
+  stroke-width: calc(3px / var(--zoom));
 }
 
 /* Layers. */
 .pmap[data-layer="projects"] .pmap-country {
   opacity: 0.3;
 }
-.pmap[data-layer="projects"] .pmap-arc {
+.pmap[data-layer="projects"] .pmap-arc,
+.pmap[data-layer="projects"] .pmap-name {
   opacity: 0;
 }
 .pmap[data-layer="projects"] .pmap-pin[data-layer="distribution"],
@@ -1081,8 +1155,7 @@ html[data-intro="exit"] .hero-progress {
 }
 
 /* Pins sit over the map in page pixels, so they and their labels keep their
-   size at every zoom. 1 map unit is 1/1000 of the map's width (it keeps the
-   map's 1000 x 620 shape). */
+   size at every zoom. */
 .pmap-pin {
   position: absolute;
   top: 0;
@@ -1093,8 +1166,8 @@ html[data-intro="exit"] .hero-progress {
   height: 40px;
   margin: -20px 0 0 -20px;
   transform: translate(
-    calc((var(--pan-x) + var(--x) * var(--zoom)) * 100cqw / 1000),
-    calc((var(--pan-y) + var(--y) * var(--zoom)) * 100cqh / 620)
+    calc((var(--pan-x) + var(--x) * var(--zoom)) * 100cqw / 1400),
+    calc((var(--pan-y) + var(--y) * var(--zoom)) * 100cqh / 900)
   );
   /* The map picks the pin nearest the pointer (MapPanel), so pins never block each other. */
   pointer-events: none;
@@ -1123,12 +1196,7 @@ html[data-intro="exit"] .hero-progress {
   display: block;
   transition: opacity 0.3s;
 }
-.pmap-market .pmap-mark {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #fff;
-}
+
 .pmap-place[data-kind="project"] .pmap-mark {
   width: 20px;
   height: 23px;
@@ -1149,21 +1217,7 @@ html[data-intro="exit"] .hero-progress {
   border: 2px solid #0b1220;
   background: #f5b041;
 }
-.pmap-place[data-kind="origin"] .pmap-mark {
-  width: 14px;
-  height: 14px;
-  border: 2px solid #0b1220;
-  border-radius: 50%;
-  background: #f5b041;
-}
-.pmap-place[data-kind="origin"] .pmap-mark::after {
-  content: "";
-  position: absolute;
-  inset: -9px;
-  border: 1.5px solid #f5b041;
-  border-radius: 50%;
-  animation: reach-pulse 2.4s var(--ease-glaze) infinite;
-}
+/* Cairo is drawn on the map itself (the SWEILLEM mark); its pin only shows when picked. */
 .pmap-label {
   position: absolute;
   top: 50%;
@@ -1237,7 +1291,7 @@ html[data-intro="exit"] .hero-progress {
   width: 14px;
   height: 10px;
   border-radius: 3px;
-  background: #b3130b;
+  background: #a50d07;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1246,10 +1300,14 @@ html[data-intro="exit"] .hero-progress {
   }
   .pmap[data-ready] .pmap-country,
   .pmap[data-ready] .pmap-arc,
+  .pmap[data-ready] .pmap-name,
   .pmap[data-ready] .pmap-mark,
-  .pmap-place[data-kind="origin"] .pmap-mark::after,
+  .pmap-origin-ring,
   .pmap-pin[data-on]::before {
     animation: none;
+  }
+  .pmap-photo {
+    transition: none;
   }
 }
 
