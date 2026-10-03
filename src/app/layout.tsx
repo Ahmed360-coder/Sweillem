@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans, Jost } from "next/font/google";
 import type { ReactNode } from "react";
@@ -21,6 +22,8 @@ const plexSans = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "500", "600
 const plexMono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-plex-mono", preload: false });
 
 const isProduction = process.env.VERCEL_ENV === "production";
+// The analytics script is served by Vercel itself, so it would 404 on a local or CI build.
+const onVercel = process.env.VERCEL === "1";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -77,6 +80,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <RevealObserver />
         </MotionProvider>
         <Intro />
+        {/* Vercel Web Analytics: page views per address, no cookies. Turned on in the Vercel dashboard. */}
+        {onVercel && <Analytics />}
       </body>
     </html>
   );
