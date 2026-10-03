@@ -1,0 +1,839 @@
+<title>SWEILLEM Project World</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one full-screen 3D yard; glass HUD pinned to the corners, a station sheet at the bottom. Single dusk look on purpose. */
+:root {
+  --maroon: #7a0404;
+  --maroon-hi: #a3170f;
+  --clay: #d9a67a;
+  --glaze: #5a2414;
+  --stone: #7f8285;
+  --ink: #f6efe8;
+  --ink-dim: #cdbfb3;
+  --glass: rgba(24, 16, 13, 0.78);
+  --glass-line: rgba(246, 239, 232, 0.14);
+  --font-display: "Jost", "Futura", "Avenir Next", "Segoe UI", sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body {
+  margin: 0; overflow: hidden; background: #2b1d18; color: var(--ink);
+  font-family: var(--font-body); font-size: 15px;
+  -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
+}
+#scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; outline: none; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
+
+.glass { background: var(--glass); border: 1px solid var(--glass-line); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); }
+
+/* top bar */
+#top {
+  position: fixed; left: 0; right: 0; top: 0; z-index: 5; pointer-events: none;
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px 0;
+}
+#brand { pointer-events: auto; border-radius: 14px; padding: 9px 13px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+#brand b { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.14em; font-size: 14px; }
+#brand b i { font-style: normal; color: var(--clay); }
+#brand span { white-space: nowrap; font-family: var(--font-mono); font-size: 11px; color: var(--ink-dim); letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
+#topRight { display: flex; gap: 8px; align-items: flex-start; pointer-events: auto; }
+.chipBtn { border-radius: 12px; padding: 10px 14px; font-weight: 600; font-size: 14px; min-height: 44px; }
+#map { width: 112px; height: 112px; border-radius: 50%; display: block; cursor: pointer; }
+
+/* station sheet */
+#sheet {
+  position: fixed; z-index: 6; left: 12px; right: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+  border-radius: 18px; padding: 14px 16px 14px; display: flex; flex-direction: column; gap: 8px;
+  transform: translateY(0); opacity: 1; transition: transform .35s cubic-bezier(.2,.8,.2,1), opacity .25s;
+}
+#sheet.off { transform: translateY(calc(100% + 30px)); opacity: 0; pointer-events: none; }
+#sheet .eyebrow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-family: var(--font-mono); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-dim); }
+#sheet .num { background: var(--maroon); color: #fff; border-radius: 6px; padding: 2px 7px; font-variant-numeric: tabular-nums; }
+.status { border: 1px solid var(--glass-line); border-radius: 99px; padding: 1px 8px; }
+.status.live { color: #9fe0a8; border-color: rgba(159,224,168,.35); }
+.status.wait { color: #ffcf8a; border-color: rgba(255,207,138,.35); }
+#sheet h2 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 22px; line-height: 1.15; text-wrap: balance; }
+#sheet p { margin: 0; color: var(--ink-dim); line-height: 1.45; font-size: 14.5px; max-width: 62ch; }
+#thumbs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+#thumbs::-webkit-scrollbar { display: none; }
+#thumbs button { flex: 0 0 auto; padding: 0; border: 2px solid transparent; border-radius: 9px; overflow: hidden; height: 58px; background: #000; }
+#thumbs button.on { border-color: var(--clay); }
+#thumbs img { height: 100%; width: auto; display: block; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn { border-radius: 11px; padding: 10px 14px; min-height: 44px; font-weight: 600; font-size: 14px; border: 1px solid var(--glass-line); background: rgba(255,255,255,.06); text-decoration: none; color: var(--ink); display: inline-flex; align-items: center; gap: 6px; }
+.btn.primary { background: var(--maroon); border-color: var(--maroon-hi); color: #fff; }
+.btn.primary:hover { background: var(--maroon-hi); }
+.btn:hover { background: rgba(255,255,255,.12); }
+.spacer { flex: 1; }
+
+/* hint */
+#hint { position: fixed; z-index: 4; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 18px); border-radius: 99px; padding: 9px 16px; font-size: 13px; color: var(--ink-dim); white-space: nowrap; transition: opacity .3s; max-width: calc(100% - 32px); overflow: hidden; text-overflow: ellipsis; }
+#hint.off { opacity: 0; }
+
+/* joystick */
+#stick { position: fixed; z-index: 7; width: 116px; height: 116px; margin: -58px 0 0 -58px; border-radius: 50%; border: 2px solid rgba(246,239,232,.35); background: rgba(24,16,13,.28); pointer-events: none; }
+#stick i { position: absolute; left: 50%; top: 50%; width: 50px; height: 50px; margin: -25px 0 0 -25px; border-radius: 50%; background: rgba(246,239,232,.82); box-shadow: 0 4px 14px rgba(0,0,0,.35); }
+
+/* places panel */
+#places { position: fixed; z-index: 9; top: calc(env(safe-area-inset-top, 0px) + 12px); right: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); width: min(380px, calc(100% - 24px)); border-radius: 18px; display: flex; flex-direction: column; overflow: hidden; }
+#places header { display: flex; align-items: center; gap: 8px; padding: 14px 14px 10px 18px; }
+#places header h3 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 19px; flex: 1; }
+#placeList { list-style: none; margin: 0; padding: 0 8px 12px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+#placeList .day { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--clay); padding: 12px 10px 4px; }
+#placeList button { width: 100%; text-align: left; display: grid; grid-template-columns: 34px 1fr auto; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 11px; border: 0; background: transparent; min-height: 48px; }
+#placeList button:hover, #placeList button.here { background: rgba(255,255,255,.08); }
+#placeList .n { font-family: var(--font-mono); font-size: 12px; color: var(--ink-dim); font-variant-numeric: tabular-nums; }
+#placeList .t { font-weight: 500; min-width: 0; }
+#placeList .v { font-size: 12px; color: #9fe0a8; }
+
+/* lightbox */
+#lightbox { position: fixed; inset: 0; z-index: 12; background: rgba(12,8,6,.92); display: flex; align-items: center; justify-content: center; padding: calc(env(safe-area-inset-top,0px) + 56px) 16px calc(env(safe-area-inset-bottom,0px) + 24px); }
+#lightbox img { max-width: 100%; max-height: 100%; border-radius: 10px; box-shadow: 0 20px 60px rgba(0,0,0,.6); }
+#lbClose { position: absolute; top: calc(env(safe-area-inset-top,0px) + 10px); right: 12px; }
+
+/* intro */
+#intro { position: fixed; inset: 0; z-index: 10; display: flex; align-items: flex-end; justify-content: center; padding: 16px; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); background: linear-gradient(180deg, rgba(20,12,10,0) 30%, rgba(20,12,10,.85) 75%); transition: opacity .6s; }
+#intro.gone { opacity: 0; pointer-events: none; }
+#introCard { border-radius: 22px; padding: 22px 20px 18px; width: min(520px, 100%); display: flex; flex-direction: column; gap: 12px; }
+#introCard .kicker { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--clay); }
+#introCard h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 7vw, 40px); line-height: 1.05; letter-spacing: .01em; text-wrap: balance; }
+#introCard p { margin: 0; color: var(--ink-dim); line-height: 1.5; }
+#controls { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; font-size: 14px; }
+#controls dt { font-family: var(--font-mono); font-size: 12px; color: var(--clay); padding-top: 2px; white-space: nowrap; }
+#controls dd { margin: 0; color: var(--ink); }
+#enter { align-self: stretch; justify-content: center; font-size: 16px; min-height: 52px; }
+#loadbar { height: 3px; border-radius: 3px; background: rgba(255,255,255,.1); overflow: hidden; }
+#loadbar i { display: block; height: 100%; width: 0; background: var(--clay); transition: width .2s; }
+
+@media (max-width: 520px) {
+  #sheet { padding: 12px 13px; gap: 7px; left: 10px; right: 10px; bottom: calc(env(safe-area-inset-bottom, 0px) + 10px); }
+  #sheet h2 { font-size: 18px; }
+  #sheet p { font-size: 13.5px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  #thumbs button { height: 46px; }
+  #sheet .row { flex-wrap: nowrap; }
+  #sLink { flex: 1; justify-content: center; }
+  .long { display: none; }
+  #map { width: 92px; height: 92px; }
+  #brand { padding: 8px 11px; }
+  #brand b { font-size: 12px; letter-spacing: .1em; white-space: nowrap; }
+  #brand b em { display: none; }
+}
+@media (min-width: 900px) {
+  #sheet { left: 16px; right: auto; width: 440px; bottom: 16px; }
+  #hint { bottom: 20px; }
+  #map { width: 140px; height: 140px; }
+}
+@media (prefers-reduced-motion: reduce) { #sheet, #intro, #hint { transition: none; } }
+</style>
+
+<canvas id="scene" tabindex="0" aria-label="3D yard with one stop for each project thread"></canvas>
+
+<div id="top">
+  <div id="brand" class="glass"><b>SWEILLEM <em style="font-style:normal"><i>·</i> PROJECT </em>WORLD</b><span id="visited">0 of 20 visited</span></div>
+  <div id="topRight">
+    <button id="placesBtn" class="chipBtn glass" type="button">Places</button>
+    <canvas id="map" class="glass" width="280" height="280" aria-label="Map of the yard; opens the list of places"></canvas>
+  </div>
+</div>
+
+<div id="hint" class="glass">Drag to look · WASD to walk · Click a screen to go there</div>
+<div id="stick" hidden><i></i></div>
+
+<section id="sheet" class="glass off" aria-live="polite">
+  <div class="eyebrow"><span class="num" id="sNum">01</span><span id="sDate">30 Sep</span><span class="status" id="sStatus">Live</span></div>
+  <h2 id="sTitle">Title</h2>
+  <p id="sText">Summary</p>
+  <div id="thumbs"></div>
+  <div class="row">
+    <a class="btn primary" id="sLink" href="#" target="_blank" rel="noopener">Open live page ↗</a>
+    <span class="spacer"></span>
+    <button class="btn" id="sPrev" type="button" aria-label="Previous stop">←</button>
+    <button class="btn" id="sNext" type="button" aria-label="Next stop"><span class="long">Next stop</span> →</button>
+  </div>
+</section>
+
+<aside id="places" class="glass" hidden>
+  <header><h3>Places</h3><button class="btn primary" id="tourBtn" type="button">Play tour</button><button class="btn" id="placesClose" type="button" aria-label="Close places">✕</button></header>
+  <ul id="placeList"></ul>
+</aside>
+
+<div id="lightbox" hidden><button class="btn" id="lbClose" type="button">Close ✕</button><img id="lbImg" alt=""></div>
+
+<div id="intro">
+  <div id="introCard" class="glass">
+    <div class="kicker">sweillem.net rebuild · 30 Sep to 3 Oct 2026</div>
+    <h1>Walk through everything we built</h1>
+    <p>A clay yard with 20 stops, one for each thread of the project, placed around the path in the order they started. Each stop shows its screenshots and a link to the live page.</p>
+    <dl id="controls"></dl>
+    <div id="loadbar"><i></i></div>
+    <button class="btn primary" id="enter" type="button">Loading the yard…</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function () {
+"use strict";
+const SITE = "https://sweillem.vercel.app";
+const STATIONS = [
+  { t: "Project plan", d: "30 Sep", s: "Delivered", text: "An eight-milestone plan for rebuilding sweillem.net from scratch, delivered as a PDF.", imgs: ["plan"] },
+  { t: "Redesign screens and animations", d: "30 Sep", s: "Delivered", text: "A clickable prototype of the new look: stone and maroon palette, the logo redrawn as sharp vectors, a Kiln dark theme and the motion rules every page follows.", imgs: ["proto", "logo"], link: "https://claude.ai/artifact/VaAFUNckCezictSZqwvgPP", linkText: "Open <span class=\"long\">the </span>prototype ↗" },
+  { t: "How it's made film", d: "30 Sep", s: "Delivered", text: "A film of a pipe's journey from Aswan clay to the trench, in English and Arabic. The live Process page later moved to a drawn scroll journey.", imgs: ["film", "filmar"], link: "/process" },
+  { t: "Milestone 1: content capture", d: "30 Sep", s: "Done", text: "Every page of the old sweillem.net copied into the repository as content files, plus a list of the gaps only SWEILLEM can fill.", doc: { h: "content/", l: ["Every page of the old sweillem.net captured", "Pipes and fittings with their specifications", "Projects, certificates and the company story", "Read through the site's WordPress feed", "content-gaps.md lists what SWEILLEM must supply"] } },
+  { t: "Milestone 2: foundation", d: "30 Sep", s: "Live", text: "The new site's base on Vercel: the home page, header, side menu, hero photo circle, the Map button and the home-screen icon.", imgs: ["m2home", "m2menu", "m2hero", "m2map", "m2icon"], link: "/" },
+  { t: "Milestone 3: company pages", d: "1 Oct", s: "Live", text: "About, Process, Quality, Sustainability, Services and Euro Sweillem, with a drawn scroll journey from the quarry to the trench.", imgs: ["m3fire", "m3steps", "m3deliver"], link: "/about" },
+  { t: "Product pictures on cards", d: "1 Oct", s: "Live", text: "Every product card got a picture: four live drawings and six drawn cross-sections.", imgs: ["cards", "cardsphone"], link: "/products" },
+  { t: "Ponytail plugin", d: "1 Oct", s: "Done", text: "The Ponytail plugin installed for the repository through its Claude settings, so every new session there loads it.", doc: { h: ".claude/settings.json", l: ["Ponytail plugin added to the repository settings", "Every new session in the repo picks it up", "No change to the website itself"] } },
+  { t: "Milestone 4: products and explorer", d: "1 Oct", s: "Live", text: "Product pages, the compare card, the product explorer and the roof tile journey from quarry to roof.", imgs: ["m4tools", "m4explorer", "m4compare", "m4roof", "m4glaze", "m4fire"], link: "/products/explorer" },
+  { t: "Milestone 5: projects and downloads", d: "1 Oct", s: "Live", text: "The projects and distribution map with country flags, card pictures and the animated export map, plus the downloads page.", imgs: ["m5day", "m5night", "m5map", "m5phone"], link: "/projects" },
+  { t: "Milestone 6: quote list and forms", d: "1 Oct", s: "Live", text: "A quote list visitors build while browsing, and contact forms that save each request and email Ahmed.", imgs: ["quote"], link: "/quote" },
+  { t: "Milestone 7: checks, SEO, redirects", d: "2 Oct", s: "Live", text: "Site-wide checks, search basics (sitemap, robots, titles and share images) and redirects from old sweillem.net addresses.", doc: { h: "Checks, SEO and redirects", l: ["✓  Page tests and build checks", "✓  Sitemap and robots.txt", "✓  Page titles, descriptions, share images", "✓  Old sweillem.net links redirect to new pages", "Launch needs the site address setting"] }, link: "/sitemap.xml", linkText: "Open <span class=\"long\">the </span>sitemap ↗" },
+  { t: "Milestone 8: launch prep", d: "2 Oct", s: "Waiting on SWEILLEM", wait: true, text: "A summary of the new site, the domain steps and a launch checklist. sweillem.net stays untouched until SWEILLEM approves.", imgs: ["m8sum", "m8dom", "m8pipes"] },
+  { t: "Light and dark mode", d: "2 Oct", s: "Live", text: "A Light | Dark switch at the top of every page, keeping the same maroon in both modes.", imgs: ["ld1", "ld7", "ld5", "swipe2"], link: "/" },
+  { t: "New website intro", d: "2 Oct", s: "Live", text: "A drawn pipe title card that opens the site, with no photos, as Ahmed asked.", imgs: ["intro", "introphone"], link: "/" },
+  { t: "Swipe to open menu", d: "2 Oct", s: "Live", text: "On a phone, swipe in from the edge to open the side menu.", imgs: ["swipe"], link: "/" },
+  { t: "Visitor stats", d: "3 Oct", s: "Ready to merge", wait: true, text: "Vercel Web Analytics added to the site. It needs Analytics switched on for the sweillem project in Vercel, then a “merge”.", doc: { h: "Vercel Web Analytics", l: ["Page views and visitors for the new site", "Loads only on Vercel's servers", "All checks passed, ready to merge", "Needs: Analytics switched on in Vercel"] } },
+  { t: "Pipe joint demo", d: "3 Oct", s: "Live", text: "An animation of a spigot sliding into its socket and sealing, on Joint performance and Jointing systems.", imgs: ["j2", "j4", "jp"], link: "/joint-performance" },
+  { t: "Fly to quote list", d: "3 Oct", s: "Live", text: "Adding a product sends a small pipe flying to the quote count, which bumps when it lands.", imgs: ["f1", "f2", "fp"], link: "/products" },
+  { t: "Pipe size slider and 3D", d: "3 Oct", s: "Live", text: "The Size finder from DN 150 to DN 1000, plus a 3D pipe and a 3D roof tile with the SWEILLEM stamp.", imgs: ["s1", "s2", "s3", "s4"], link: "/products#size" }
+];
+const N = STATIONS.length;
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const isTouch = matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
+const $ = (id) => document.getElementById(id);
+
+/* ---------- storage ---------- */
+let visited = new Set();
+try { visited = new Set(JSON.parse(localStorage.getItem("sw-world-visited") || "[]")); } catch (e) {}
+function saveVisited() { try { localStorage.setItem("sw-world-visited", JSON.stringify([...visited])); } catch (e) {} }
+
+/* ---------- controls copy ---------- */
+$("controls").innerHTML = isTouch
+  ? "<dt>Left thumb</dt><dd>Hold anywhere on the left and push to walk</dd><dt>Right thumb</dt><dd>Drag to look around</dd><dt>Tap</dt><dd>Tap a screen to walk straight to it</dd><dt>Places</dt><dd>Jump to any stop, or play the tour</dd>"
+  : "<dt>W A S D</dt><dd>Walk (arrow keys work too, Shift to run)</dd><dt>Drag</dt><dd>Look around</dd><dt>Click</dt><dd>Click a screen to walk straight to it</dd><dt>N / P</dt><dd>Next or previous stop</dd>";
+$("hint").textContent = isTouch ? "Left thumb to walk · drag to look · tap a screen" : "Drag to look · WASD to walk · click a screen to go there";
+
+if (typeof THREE === "undefined") {
+  $("enter").textContent = "The 3D engine could not load. Check your connection and reload.";
+  return;
+}
+
+/* ---------- renderer ---------- */
+const canvas = $("scene");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const maxAniso = renderer.capabilities.getMaxAnisotropy();
+
+const scene = new THREE.Scene();
+const FOG = new THREE.Color("#e3ab86");
+scene.fog = new THREE.Fog(FOG, 70, 280);
+const camera = new THREE.PerspectiveCamera(62, 1, 0.1, 800);
+
+/* sky dome */
+{
+  const g = new THREE.SphereGeometry(500, 32, 16);
+  const m = new THREE.ShaderMaterial({
+    side: THREE.BackSide, depthWrite: false, fog: false,
+    uniforms: { top: { value: new THREE.Color("#3a4766") }, mid: { value: new THREE.Color("#c98f7a") }, bot: { value: FOG.clone() } },
+    vertexShader: "varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }",
+    fragmentShader: "uniform vec3 top; uniform vec3 mid; uniform vec3 bot; varying vec3 vP; void main(){ float h = vP.y; vec3 c = h < 0.12 ? mix(bot, mid, smoothstep(0.0, 0.12, h)) : mix(mid, top, smoothstep(0.12, 0.65, h)); gl_FragColor = vec4(c, 1.0); }"
+  });
+  scene.add(new THREE.Mesh(g, m));
+  // low sun disc
+  const sun = new THREE.Mesh(new THREE.CircleGeometry(16, 48), new THREE.MeshBasicMaterial({ color: "#ffe2b8", fog: false, transparent: true, opacity: 0.95 }));
+  sun.position.set(-330, 60, -300); sun.lookAt(0, 0, 0); scene.add(sun);
+}
+
+const hemi = new THREE.HemisphereLight("#ffe6d0", "#6b3a26", 0.75);
+scene.add(hemi);
+const sunLight = new THREE.DirectionalLight("#ffd2a6", 1.7);
+sunLight.castShadow = true;
+sunLight.shadow.mapSize.set(2048, 2048);
+const SC = sunLight.shadow.camera; SC.left = -45; SC.right = 45; SC.top = 45; SC.bottom = -45; SC.near = 1; SC.far = 220;
+sunLight.shadow.bias = -0.0004; sunLight.shadow.normalBias = 0.02;
+scene.add(sunLight, sunLight.target);
+const SUN_DIR = new THREE.Vector3(-0.62, 0.5, -0.6).normalize();
+
+/* ---------- procedural textures ---------- */
+function canvasTex(w, h, draw, repeat) {
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  draw(c.getContext("2d"), w, h);
+  const t = new THREE.CanvasTexture(c);
+  t.encoding = THREE.sRGBEncoding; t.anisotropy = maxAniso;
+  if (repeat) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(repeat, repeat); }
+  return t;
+}
+function rnd(seed) { let s = seed; return () => (s = (s * 16807) % 2147483647) / 2147483647; }
+const groundTex = canvasTex(512, 512, (x, w, h) => {
+  x.fillStyle = "#c79a74"; x.fillRect(0, 0, w, h);
+  const r = rnd(7);
+  for (let i = 0; i < 9000; i++) { const v = r(); x.fillStyle = v < .5 ? "rgba(120,72,44,.10)" : "rgba(255,230,200,.10)"; x.fillRect(r() * w, r() * h, 1 + r() * 2.5, 1 + r() * 2.5); }
+}, 60);
+const pathTex = canvasTex(512, 512, (x, w, h) => {
+  x.fillStyle = "#5a3a2c"; x.fillRect(0, 0, w, h);
+  const r = rnd(11), bw = 64, bh = 32;
+  for (let row = 0; row < h / bh; row++) for (let col = -1; col < w / bw + 1; col++) {
+    const off = row % 2 ? bw / 2 : 0, l = 0.42 + r() * 0.16;
+    x.fillStyle = `hsl(${14 + r() * 10}, ${48 + r() * 14}%, ${l * 100}%)`;
+    x.fillRect(col * bw + off + 2, row * bh + 2, bw - 4, bh - 4);
+  }
+}, 14);
+const stoneTex = canvasTex(256, 256, (x, w, h) => {
+  x.fillStyle = "#8a8783"; x.fillRect(0, 0, w, h);
+  const r = rnd(3); for (let i = 0; i < 2500; i++) { x.fillStyle = `rgba(${r() < .5 ? "40,30,28" : "255,250,240"},.08)`; x.fillRect(r() * w, r() * h, 2, 2); }
+}, 2);
+
+/* ---------- ground, path, plaza ---------- */
+const R_PATH_IN = 49, R_PATH_OUT = 57, R_ST = 63;
+const ground = new THREE.Mesh(new THREE.CircleGeometry(420, 64), new THREE.MeshStandardMaterial({ map: groundTex, roughness: 1 }));
+ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+const path = new THREE.Mesh(new THREE.RingGeometry(R_PATH_IN, R_PATH_OUT, 160, 1), new THREE.MeshStandardMaterial({ map: pathTex, roughness: .9 }));
+path.rotation.x = -Math.PI / 2; path.position.y = 0.02; path.receiveShadow = true; scene.add(path);
+for (const rr of [R_PATH_IN, R_PATH_OUT]) {
+  const edge = new THREE.Mesh(new THREE.RingGeometry(rr - 0.25, rr + 0.25, 160, 1), new THREE.MeshStandardMaterial({ color: "#7f8285", roughness: .8 }));
+  edge.rotation.x = -Math.PI / 2; edge.position.y = 0.04; edge.receiveShadow = true; scene.add(edge);
+}
+const SLOT = (Math.PI * 2) / (N + 1);
+const A0 = Math.PI / 2; // slot 0 (gate) sits at +z
+function slotAngle(i) { return A0 + i * SLOT; } // stations use slots 1..N
+// spokes to the plaza
+for (let k = 0; k < 4; k++) {
+  const a = A0 + k * Math.PI / 2;
+  const sg = new THREE.PlaneGeometry(5, R_PATH_IN - 12); sg.rotateX(-Math.PI / 2);
+  const sp = new THREE.Mesh(sg, new THREE.MeshStandardMaterial({ map: pathTex, roughness: .9 }));
+  sp.rotation.y = Math.PI / 2 - a;
+  const mid = (R_PATH_IN + 12) / 2; sp.position.set(Math.cos(a) * mid, 0.03, Math.sin(a) * mid);
+  sp.receiveShadow = true; scene.add(sp);
+}
+// plaza: hexagon
+const plaza = new THREE.Mesh(new THREE.CylinderGeometry(15, 15.6, 0.5, 6), new THREE.MeshStandardMaterial({ map: stoneTex, color: "#b9b4ae", roughness: .85 }));
+plaza.position.y = 0.25; plaza.receiveShadow = true; plaza.castShadow = true; scene.add(plaza);
+
+/* ---------- glazed pipe geometry (bell and spigot) ---------- */
+function pipeProfile(r, L) {
+  const t = r * 0.16, sr = r * 1.24, sl = r * 0.9;
+  return [
+    new THREE.Vector2(r - t, 0), new THREE.Vector2(r, 0), new THREE.Vector2(r, L - sl - r * .25),
+    new THREE.Vector2(sr, L - sl), new THREE.Vector2(sr, L), new THREE.Vector2(sr - t * .8, L),
+    new THREE.Vector2(sr - t * .8, L - sl + t), new THREE.Vector2(r - t, L - sl + t * .6), new THREE.Vector2(r - t, 0)
+  ];
+}
+const glazeMat = new THREE.MeshStandardMaterial({ color: "#6a2412", roughness: .32, metalness: .05 });
+const glazeDark = new THREE.MeshStandardMaterial({ color: "#3e170d", roughness: .3, metalness: .05 });
+const maroonMat = new THREE.MeshStandardMaterial({ color: "#7a0404", roughness: .55 });
+const stoneMat = new THREE.MeshStandardMaterial({ map: stoneTex, color: "#a7a39e", roughness: .85 });
+const darkMat = new THREE.MeshStandardMaterial({ color: "#211816", roughness: .6 });
+const pipeGeo = new THREE.LatheGeometry(pipeProfile(0.55, 3.2), 28);
+pipeGeo.translate(0, -1.6, 0);
+
+/* monument: three pipes standing, joined, on a hex plinth, logo above */
+const monument = new THREE.Group();
+{
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(5.2, 5.6, 1.4, 6), stoneMat); base.position.y = 1.2; monument.add(base);
+  const big = new THREE.LatheGeometry(pipeProfile(1.25, 4.2), 40); big.translate(0, -2.1, 0);
+  for (let i = 0; i < 3; i++) {
+    const p = new THREE.Mesh(big, i === 1 ? glazeMat : glazeDark);
+    p.position.set(0, 1.9 + 2.1 + i * 3.45, 0); monument.add(p);
+  }
+  monument.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+  monument.scale.setScalar(1.35); monument.position.y = -0.17;
+  scene.add(monument);
+}
+
+/* entrance gate at slot 0 */
+const gate = new THREE.Group();
+{
+  const a = slotAngle(0), cx = Math.cos(a) * ((R_PATH_IN + R_PATH_OUT) / 2), cz = Math.sin(a) * ((R_PATH_IN + R_PATH_OUT) / 2);
+  for (const s of [-1, 1]) {
+    const p = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 1, 8, 6), maroonMat);
+    p.position.set(s * 6.2, 4, 0); p.castShadow = true; gate.add(p);
+  }
+  const beam = new THREE.Mesh(new THREE.BoxGeometry(14.6, 2.6, 1.2), darkMat); beam.position.y = 9.1; beam.castShadow = true; gate.add(beam);
+  const logoMat = new THREE.MeshBasicMaterial({ transparent: true, fog: false, toneMapped: false, opacity: 0 });
+  for (const side of [1, -1]) {
+    const lg = new THREE.Mesh(new THREE.PlaneGeometry(6.6, 6.6 * 217 / 642), logoMat);
+    lg.position.set(0, 9.1, side * 0.61); if (side < 0) lg.rotation.y = Math.PI; gate.add(lg);
+  }
+  const im = new Image();
+  im.onload = () => {
+    const c = document.createElement("canvas"); c.width = 1284; c.height = 434; c.getContext("2d").drawImage(im, 0, 0, 1284, 434);
+    const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.anisotropy = maxAniso;
+    logoMat.map = t; logoMat.opacity = 1; logoMat.needsUpdate = true;
+  };
+  im.src = "img/logo-white.svg";
+  gate.position.set(cx, 0, cz); gate.rotation.y = -a + Math.PI / 2; scene.add(gate);
+}
+
+/* pipe stacks between stations (instanced) */
+{
+  const spots = [];
+  for (let i = 0; i <= N; i++) { const a = slotAngle(i + 0.5); spots.push([Math.cos(a) * 72, Math.sin(a) * 72, a]); }
+  for (let k = 0; k < 4; k++) { const a = Math.PI / 4 + k * Math.PI / 2; spots.push([Math.cos(a) * 31, Math.sin(a) * 31, a]); }
+  const inst = new THREE.InstancedMesh(pipeGeo, glazeMat, spots.length * 10);
+  inst.castShadow = inst.receiveShadow = true;
+  const m = new THREE.Matrix4(), q = new THREE.Quaternion(), s = new THREE.Vector3(1, 1, 1), p = new THREE.Vector3(), up = new THREE.Vector3(0, 1, 0), dir = new THREE.Vector3();
+  let k = 0;
+  spots.forEach(([x, z, a], si) => {
+    const tx = -Math.sin(a), tz = Math.cos(a);
+    [4, 3, 2, 1].forEach((cnt, row) => {
+      for (let c = 0; c < cnt; c++) {
+        const off = (c - (cnt - 1) / 2) * 1.38;
+        p.set(x + tx * off, 0.69 + row * 1.2, z + tz * off);
+        const flip = (c + row + si) % 2 ? -1 : 1;
+        dir.set(Math.cos(a) * flip, 0, Math.sin(a) * flip);
+        q.setFromUnitVectors(up, dir);
+        m.compose(p, q, s); inst.setMatrixAt(k++, m);
+      }
+    });
+  });
+  inst.count = k; scene.add(inst);
+  window.__stackSpots = spots;
+}
+
+/* distant factory: sheds and kiln chimneys */
+{
+  const shedMat = new THREE.MeshStandardMaterial({ color: "#a9a19a", roughness: .9 });
+  const brick = new THREE.MeshStandardMaterial({ color: "#8a4a30", roughness: .9 });
+  const r = rnd(5);
+  for (let i = 0; i < 12; i++) {
+    const a = i / 12 * Math.PI * 2 + r() * .2, d = 150 + r() * 40;
+    const g = new THREE.Group();
+    const w = 30 + r() * 20, h = 9 + r() * 6, dp = 18 + r() * 8;
+    const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, dp), shedMat); body.position.y = h / 2; g.add(body);
+    const roof = new THREE.Mesh(new THREE.BoxGeometry(w + 1, 0.8, dp + 1), darkMat); roof.position.y = h + 0.4; g.add(roof);
+    const band = new THREE.Mesh(new THREE.BoxGeometry(w + 0.2, 1.4, dp + 0.2), maroonMat); band.position.y = h - 1.6; g.add(band);
+    g.position.set(Math.cos(a) * d, 0, Math.sin(a) * d); g.rotation.y = -a + Math.PI / 2; scene.add(g);
+    if (i % 2 === 0) {
+      const ch = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 2.4, 42, 16), brick);
+      ch.position.set(Math.cos(a + .08) * (d - 14), 21, Math.sin(a + .08) * (d - 14)); scene.add(ch);
+      const band = new THREE.Mesh(new THREE.CylinderGeometry(1.75, 1.75, 1.6, 16), maroonMat);
+      band.position.copy(ch.position).setY(38); scene.add(band);
+    }
+  }
+}
+
+/* ---------- text and doc cards ---------- */
+const fontsReady = (document.fonts && document.fonts.load)
+  ? Promise.race([Promise.all(["700 80px Jost", "600 80px Jost", "500 40px 'IBM Plex Mono'", "400 40px 'IBM Plex Sans'"].map((f) => document.fonts.load(f))), new Promise((r) => setTimeout(r, 2500))])
+  : Promise.resolve();
+
+function wrapLines(x, text, maxW) {
+  const words = text.split(" "), lines = []; let line = "";
+  for (const w of words) { const t = line ? line + " " + w : w; if (x.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t; }
+  if (line) lines.push(line); return lines;
+}
+function signTexture(i) {
+  const st = STATIONS[i];
+  return canvasTex(2048, 420, (x, w, h) => {
+    x.fillStyle = "#1d1513"; x.fillRect(0, 0, w, h);
+    x.fillStyle = "#7a0404"; x.fillRect(0, 0, 360, h);
+    x.fillStyle = "#fff"; x.font = "700 170px Jost, sans-serif"; x.textAlign = "center"; x.textBaseline = "middle";
+    x.fillText(String(i + 1).padStart(2, "0"), 180, h / 2 + 8);
+    x.textAlign = "left"; x.textBaseline = "alphabetic";
+    x.fillStyle = "#d9a67a"; x.font = "500 52px 'IBM Plex Mono', monospace";
+    x.fillText((st.d + "  ·  " + st.s).toUpperCase(), 420, 120);
+    x.fillStyle = "#f6efe8"; let size = 118; x.font = `600 ${size}px Jost, sans-serif`;
+    let lines = wrapLines(x, st.t, w - 470);
+    if (lines.length > 1) { size = 96; x.font = `600 ${size}px Jost, sans-serif`; lines = wrapLines(x, st.t, w - 470).slice(0, 2); }
+    lines.forEach((ln, k) => x.fillText(ln, 420, (lines.length > 1 ? 240 : 290) + k * (size + 8)));
+  });
+}
+function docCanvas(doc) {
+  const c = document.createElement("canvas"); c.width = 1600; c.height = 1000;
+  const x = c.getContext("2d");
+  x.fillStyle = "#efe9e3"; x.fillRect(0, 0, 1600, 1000);
+  x.fillStyle = "#7a0404"; x.fillRect(0, 0, 1600, 150);
+  x.fillStyle = "#fff"; x.font = "600 72px 'IBM Plex Mono', monospace"; x.fillText(doc.h, 80, 102);
+  x.fillStyle = "#2a201c"; x.font = "400 58px 'IBM Plex Sans', sans-serif";
+  doc.l.forEach((ln, k) => {
+    x.fillStyle = "#c9bdb3"; x.fillRect(80, 252 + k * 140, 1440, 2);
+    x.fillStyle = "#2a201c"; x.fillText(ln, 80, 230 + k * 140);
+  });
+  return c;
+}
+
+/* ---------- image loading ---------- */
+const loader = new THREE.TextureLoader();
+const texCache = {};
+function imgUrl(key) { return "img/" + key + ".webp"; }
+function loadTex(key) {
+  if (texCache[key]) return texCache[key];
+  texCache[key] = new Promise((res) => {
+    loader.load(imgUrl(key), (t) => { t.encoding = THREE.sRGBEncoding; t.anisotropy = maxAniso; t.generateMipmaps = true; t.minFilter = THREE.LinearMipmapLinearFilter; res(t); }, undefined, () => res(null));
+  });
+  return texCache[key];
+}
+
+/* ---------- stations ---------- */
+const stations = [];
+const pickables = [];
+const SCREEN_W = 8, SCREEN_H = 5, SCREEN_Y = 4.0;
+STATIONS.forEach((st, i) => {
+  const a = slotAngle(i + 1);
+  const pos = new THREE.Vector3(Math.cos(a) * R_ST, 0, Math.sin(a) * R_ST);
+  const g = new THREE.Group(); g.position.copy(pos); g.lookAt(0, 0, 0); // +z faces the plaza
+  const plinth = new THREE.Mesh(new THREE.CylinderGeometry(4.8, 5.1, 0.5, 6), stoneMat); plinth.position.y = 0.25; plinth.rotation.y = Math.PI / 6; g.add(plinth);
+  const posts = [];
+  for (const s of [-1, 1]) { const p = new THREE.Mesh(new THREE.BoxGeometry(0.45, 9.3, 0.45), maroonMat); p.position.set(s * 4.55, 4.65, -0.2); g.add(p); posts.push(p); }
+  const frame = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 0.3), darkMat); frame.position.set(0, SCREEN_Y, -0.2); g.add(frame);
+  const screenMat = new THREE.MeshBasicMaterial({ color: "#ffffff", fog: false, toneMapped: false });
+  const screen = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), screenMat); screen.position.set(0, SCREEN_Y, -0.04); g.add(screen);
+  const signMat = new THREE.MeshBasicMaterial({ color: "#ffffff", fog: false, toneMapped: false });
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(9.4, 9.4 * 420 / 2048), signMat); sign.position.set(0, 7.75, -0.02); g.add(sign);
+  const signBack = new THREE.Mesh(new THREE.BoxGeometry(9.5, 9.5 * 420 / 2048 + .1, 0.25), darkMat); signBack.position.set(0, 7.75, -0.17); g.add(signBack);
+  // ground ring in front
+  const ringMat = new THREE.MeshBasicMaterial({ color: visited.has(i) ? "#d9a67a" : "#a3170f", transparent: true, opacity: .75, fog: false });
+  const ring = new THREE.Mesh(new THREE.RingGeometry(1.6, 2.05, 6), ringMat); ring.rotation.x = -Math.PI / 2; ring.rotation.z = Math.PI / 6; ring.position.set(0, 0.07, 9); g.add(ring);
+  g.traverse((o) => { if (o.isMesh && o !== ring && o !== screen && o !== sign) { o.castShadow = true; o.receiveShadow = true; } o.userData.station = i; });
+  scene.add(g);
+  [plinth, frame, screen, sign, signBack, ...posts].forEach((m) => pickables.push(m));
+  const keys = st.imgs ? st.imgs.slice() : ["doc"];
+  stations.push({ i, a, pos, g, screen, frame, sign, ring, keys, cur: 0, thumbs: {} });
+});
+function fitScreen(s, img) {
+  const ar = img.width / img.height;
+  let w = SCREEN_W, h = w / ar; if (h > SCREEN_H) { h = SCREEN_H; w = h * ar; }
+  s.screen.scale.set(w, h, 1); s.frame.scale.set(w + 0.5, h + 0.5, 1);
+}
+const docTex = {};
+async function showImage(s, k) {
+  s.cur = k; const key = s.keys[k];
+  let tex;
+  if (key === "doc") {
+    if (!docTex[s.i]) { const c = docCanvas(STATIONS[s.i].doc); const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.anisotropy = maxAniso; docTex[s.i] = t; }
+    tex = docTex[s.i];
+  } else tex = await loadTex(key);
+  if (!tex || s.cur !== k) return;
+  s.screen.material.map = tex; s.screen.material.needsUpdate = true; fitScreen(s, tex.image);
+  if (active === s.i) markThumb();
+}
+
+/* ---------- player ---------- */
+const player = { x: 0, z: 0, yaw: 0, pitch: 0, eye: 1.7 };
+function spawn() {
+  const a = slotAngle(0.5), r = 40;
+  player.x = Math.cos(a) * r; player.z = Math.sin(a) * r;
+  // face along the path toward stop 1
+  const b = slotAngle(1.0), tx = Math.cos(b) * R_ST, tz = Math.sin(b) * R_ST;
+  player.yaw = Math.atan2(-(tx - player.x), -(tz - player.z)); player.pitch = 0.02;
+}
+spawn();
+const obstacles = []; // circles {x,z,r} and segments
+stations.forEach((s) => {
+  const tx = -Math.sin(s.a), tz = Math.cos(s.a);
+  obstacles.push({ ax: s.pos.x - tx * 4.6, az: s.pos.z - tz * 4.6, bx: s.pos.x + tx * 4.6, bz: s.pos.z + tz * 4.6, r: 1.0 });
+  obstacles.push({ ax: s.pos.x, az: s.pos.z, bx: s.pos.x, bz: s.pos.z, r: 5.3 });
+});
+obstacles.push({ ax: 0, az: 0, bx: 0, bz: 0, r: 8.4 });
+(window.__stackSpots || []).forEach(([x, z, a]) => { const tx = -Math.sin(a), tz = Math.cos(a); obstacles.push({ ax: x - tx * 2.6, az: z - tz * 2.6, bx: x + tx * 2.6, bz: z + tz * 2.6, r: 1.4 }); });
+{ const a = slotAngle(0), cx = Math.cos(a) * 53, cz = Math.sin(a) * 53, tx = -Math.sin(a), tz = Math.cos(a);
+  for (const s of [-1, 1]) obstacles.push({ ax: cx + tx * s * 6.2, az: cz + tz * s * 6.2, bx: cx + tx * s * 6.2, bz: cz + tz * s * 6.2, r: 1.5 }); }
+function collide() {
+  for (const o of obstacles) {
+    const dx = o.bx - o.ax, dz = o.bz - o.az, L = dx * dx + dz * dz;
+    let t = L ? ((player.x - o.ax) * dx + (player.z - o.az) * dz) / L : 0; t = Math.max(0, Math.min(1, t));
+    const cx = o.ax + dx * t, cz = o.az + dz * t, ex = player.x - cx, ez = player.z - cz, d = Math.hypot(ex, ez);
+    if (d < o.r) { const k = (o.r - d) / (d || 1); player.x += ex * k; player.z += ez * k; }
+  }
+  const d = Math.hypot(player.x, player.z); if (d > 125) { player.x *= 125 / d; player.z *= 125 / d; }
+  // on the plaza you stand a little higher
+  player.eye = 1.7 + (Math.hypot(player.x, player.z) < 15 ? 0.5 : 0);
+}
+
+/* ---------- auto travel ---------- */
+let travel = null; // {fx,fz,fy,fp,tx,tz,ty,tp,t,dur,onDone}
+function angDiff(a, b) { let d = b - a; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; return d; }
+// share of the view above the station sheet (the sheet covers the bottom on phones)
+// on phones the clear band runs from under the top bar to the top of the sheet
+function viewShare() { return camera.aspect < 0.8 ? 0.46 : 1; }
+function viewCenter() { return camera.aspect < 0.8 ? 0.3 : 0; } // band centre in screen units (-1..1)
+const BLOCK_Y = 5.1, BLOCK_HALF = 3.8; // screen plus title sign
+function viewDistance() {
+  const tv = Math.tan(camera.fov * Math.PI / 360), f = viewShare();
+  const dW = (SCREEN_W / 2 + 0.8) / (tv * camera.aspect), dH = BLOCK_HALF / (f * tv);
+  return Math.max(10, dW, dH);
+}
+function goToStation(i, opts = {}) {
+  const s = stations[i]; const d = viewDistance();
+  const tx = s.pos.x - Math.cos(s.a) * d, tz = s.pos.z - Math.sin(s.a) * d;
+  const yaw = Math.atan2(-(s.pos.x - tx), -(s.pos.z - tz));
+  const tv = Math.tan(camera.fov * Math.PI / 360);
+  const pitch = Math.atan2(BLOCK_Y - 1.7, d) - Math.atan(viewCenter() * tv);
+  startTravel(tx, tz, yaw, pitch, opts.onDone);
+}
+function startTravel(tx, tz, yaw, pitch, onDone) {
+  const dist = Math.hypot(tx - player.x, tz - player.z);
+  const dur = reduceMotion ? 0.01 : Math.max(0.7, Math.min(2.6, dist / 14));
+  travel = { fx: player.x, fz: player.z, fy: player.yaw, fp: player.pitch, tx, tz, ty: player.yaw + angDiff(player.yaw, yaw), tp: pitch, t: 0, dur, onDone };
+}
+function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+
+/* ---------- input ---------- */
+const keys = {};
+addEventListener("keydown", (e) => {
+  if (e.target && (e.target.tagName === "INPUT")) return;
+  keys[e.code] = true;
+  if (["KeyW", "KeyA", "KeyS", "KeyD", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)) { travel = null; stopTour(); }
+  if (e.code === "KeyN") nextStop(1);
+  if (e.code === "KeyP") nextStop(-1);
+  if (e.code === "Escape") { $("lightbox").hidden = true; $("places").hidden = true; }
+});
+addEventListener("keyup", (e) => { keys[e.code] = false; });
+addEventListener("blur", () => { for (const k in keys) keys[k] = false; });
+
+const stickEl = $("stick"), knob = stickEl.firstElementChild;
+let stick = null; // {id, ox, oy, dx, dy}
+const looks = new Map(); // pointerId -> {x,y,sx,sy,t}
+canvas.addEventListener("pointerdown", (e) => {
+  canvas.focus({ preventScroll: true });
+  const touch = e.pointerType !== "mouse";
+  if (touch && !stick && e.clientX < innerWidth * 0.45 && e.clientY > innerHeight * 0.3) {
+    stick = { id: e.pointerId, ox: e.clientX, oy: e.clientY, dx: 0, dy: 0, sx: e.clientX, sy: e.clientY, t: performance.now() };
+    stickEl.hidden = false; stickEl.style.left = e.clientX + "px"; stickEl.style.top = e.clientY + "px"; knob.style.transform = "";
+  } else {
+    looks.set(e.pointerId, { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, t: performance.now() });
+  }
+  try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+});
+canvas.addEventListener("pointermove", (e) => {
+  if (stick && e.pointerId === stick.id) {
+    let dx = e.clientX - stick.ox, dy = e.clientY - stick.oy; const m = Math.hypot(dx, dy), R = 50;
+    if (m > R) { dx *= R / m; dy *= R / m; }
+    stick.dx = dx / R; stick.dy = dy / R; knob.style.transform = `translate(${dx}px, ${dy}px)`;
+    if (m > 6) { travel = null; stopTour(); }
+    return;
+  }
+  const l = looks.get(e.pointerId); if (!l) return;
+  const sens = e.pointerType === "mouse" ? 0.0042 : 0.0055;
+  const dx = e.clientX - l.x, dy = e.clientY - l.y; l.x = e.clientX; l.y = e.clientY;
+  if (Math.hypot(e.clientX - l.sx, e.clientY - l.sy) > 6) { if (travel) { travel = null; } stopTour(); }
+  player.yaw -= dx * sens; player.pitch = Math.max(-1.0, Math.min(1.0, player.pitch - dy * sens));
+});
+function endPointer(e) {
+  if (stick && e.pointerId === stick.id) {
+    const wasTap = Math.hypot(e.clientX - stick.sx, e.clientY - stick.sy) < 8 && performance.now() - stick.t < 350;
+    stick = null; stickEl.hidden = true; if (wasTap && e.type === "pointerup") tap(e.clientX, e.clientY); return;
+  }
+  const l = looks.get(e.pointerId); if (!l) return; looks.delete(e.pointerId);
+  if (e.type === "pointerup" && Math.hypot(e.clientX - l.sx, e.clientY - l.sy) < 8 && performance.now() - l.t < 400) tap(e.clientX, e.clientY);
+}
+canvas.addEventListener("pointerup", endPointer);
+canvas.addEventListener("pointercancel", endPointer);
+canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+function tap(cx, cy) {
+  ndc.set(cx / innerWidth * 2 - 1, -(cy / innerHeight) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const hit = ray.intersectObjects(pickables, false)[0];
+  if (hit && hit.object.userData.station !== undefined) { stopTour(); goToStation(hit.object.userData.station); return; }
+  const g = ray.intersectObject(ground, false)[0];
+  if (g && g.distance < 90) {
+    stopTour();
+    const tx = g.point.x, tz = g.point.z, yaw = Math.atan2(-(tx - player.x), -(tz - player.z));
+    startTravel(tx, tz, yaw, 0.02);
+  }
+}
+
+/* ---------- HUD ---------- */
+let active = -1;
+const sheet = $("sheet");
+function setVisitedText() { $("visited").textContent = `${visited.size} of ${N} visited`; }
+setVisitedText();
+function linkFor(st) { if (!st.link) return null; return st.link.startsWith("http") ? st.link : SITE + st.link; }
+function markThumb() {
+  const s = stations[active]; if (!s) return;
+  [...$("thumbs").children].forEach((b, k) => b.classList.toggle("on", k === s.cur));
+}
+function openSheet(i) {
+  const st = STATIONS[i], s = stations[i];
+  $("sNum").textContent = String(i + 1).padStart(2, "0");
+  $("sDate").textContent = st.d;
+  const ss = $("sStatus"); ss.textContent = st.s; ss.className = "status " + (st.wait ? "wait" : (st.s === "Live" ? "live" : ""));
+  $("sTitle").textContent = st.t; $("sText").textContent = st.text;
+  const href = linkFor(st), a = $("sLink");
+  a.hidden = !href; if (href) { a.href = href; a.innerHTML = st.linkText || "Open <span class=\"long\">live </span>page ↗"; }
+  const th = $("thumbs"); th.innerHTML = "";
+  th.hidden = !st.imgs || st.imgs.length < 1;
+  (st.imgs || []).forEach((k, n) => {
+    const b = document.createElement("button"); b.type = "button"; b.setAttribute("aria-label", `Picture ${n + 1} of ${st.imgs.length}`);
+    const im = document.createElement("img"); im.src = imgUrl(k); im.alt = ""; im.loading = "lazy"; b.appendChild(im);
+    b.addEventListener("click", () => { showImage(s, n); openLightbox(k); });
+    th.appendChild(b);
+  });
+  markThumb();
+  sheet.classList.remove("off"); $("hint").classList.add("off");
+}
+function closeSheet() { sheet.classList.add("off"); if (!tour) $("hint").classList.remove("off"); }
+function openLightbox(k) { $("lbImg").src = imgUrl(k); $("lightbox").hidden = false; }
+$("lightbox").addEventListener("click", () => { $("lightbox").hidden = true; });
+function nextStop(dir) {
+  stopTour();
+  const base = active >= 0 ? active : nearestStation().i;
+  goToStation((base + dir + N) % N);
+}
+$("sNext").addEventListener("click", () => nextStop(1));
+$("sPrev").addEventListener("click", () => nextStop(-1));
+
+/* places */
+const list = $("placeList");
+function buildPlaces() {
+  list.innerHTML = ""; let day = "";
+  STATIONS.forEach((st, i) => {
+    if (st.d !== day) { day = st.d; const li = document.createElement("li"); li.className = "day"; li.textContent = day; list.appendChild(li); }
+    const li = document.createElement("li"), b = document.createElement("button"); b.type = "button";
+    b.className = i === active ? "here" : "";
+    b.innerHTML = `<span class="n">${String(i + 1).padStart(2, "0")}</span><span class="t"></span><span class="v">${visited.has(i) ? "Seen" : ""}</span>`;
+    b.querySelector(".t").textContent = st.t;
+    b.addEventListener("click", () => { $("places").hidden = true; stopTour(); goToStation(i); });
+    li.appendChild(b); list.appendChild(li);
+  });
+}
+function togglePlaces() { const p = $("places"); if (p.hidden) { buildPlaces(); p.hidden = false; } else p.hidden = true; }
+$("placesBtn").addEventListener("click", togglePlaces);
+$("map").addEventListener("click", togglePlaces);
+$("placesClose").addEventListener("click", () => { $("places").hidden = true; });
+
+/* tour */
+let tour = null;
+function stopTour() { if (!tour) return; clearTimeout(tour.timer); tour = null; $("tourBtn").textContent = "Play tour"; }
+function tourStep() {
+  if (!tour) return;
+  goToStation(tour.i, { onDone: () => {
+    if (!tour) return;
+    tour.timer = setTimeout(() => { if (!tour) return; tour.i++; if (tour.i >= N) { stopTour(); return; } tourStep(); }, 6500);
+  } });
+}
+$("tourBtn").addEventListener("click", () => {
+  if (tour) { stopTour(); return; }
+  $("places").hidden = true;
+  tour = { i: active >= 0 ? active : 0, timer: 0 }; $("tourBtn").textContent = "Stop tour"; tourStep();
+});
+
+/* minimap */
+const mapC = $("map"), mx = mapC.getContext("2d");
+function drawMap() {
+  const W = mapC.width, S = W / 2 / 80;
+  mx.clearRect(0, 0, W, W);
+  mx.save(); mx.translate(W / 2, W / 2);
+  mx.strokeStyle = "rgba(217,166,122,.55)"; mx.lineWidth = (R_PATH_OUT - R_PATH_IN) * S; mx.beginPath(); mx.arc(0, 0, (R_PATH_IN + R_PATH_OUT) / 2 * S, 0, Math.PI * 2); mx.stroke();
+  mx.fillStyle = "rgba(185,180,174,.6)"; mx.beginPath(); mx.arc(0, 0, 15 * S, 0, Math.PI * 2); mx.fill();
+  stations.forEach((s) => {
+    mx.fillStyle = s.i === active ? "#ffffff" : (visited.has(s.i) ? "#d9a67a" : "#c4231a");
+    mx.beginPath(); mx.arc(s.pos.x * S, s.pos.z * S, s.i === active ? 9 : 6.5, 0, Math.PI * 2); mx.fill();
+  });
+  // player arrow
+  mx.translate(player.x * S, player.z * S); mx.rotate(-player.yaw);
+  mx.fillStyle = "#ffffff"; mx.strokeStyle = "#7a0404"; mx.lineWidth = 3;
+  mx.beginPath(); mx.moveTo(0, -15); mx.lineTo(10, 11); mx.lineTo(0, 5); mx.lineTo(-10, 11); mx.closePath(); mx.fill(); mx.stroke();
+  mx.restore();
+}
+
+/* ---------- near detection ---------- */
+function nearestStation() {
+  let best = null, bd = 1e9;
+  for (const s of stations) { const d = Math.hypot(s.pos.x - player.x, s.pos.z - player.z); if (d < bd) { bd = d; best = s; } }
+  return { i: best.i, d: bd };
+}
+let dwell = 0, cycleT = 0;
+
+/* ---------- resize ---------- */
+function resize() {
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h; camera.fov = w < h ? 72 : 60; camera.updateProjectionMatrix();
+}
+addEventListener("resize", resize); resize();
+
+/* ---------- loop ---------- */
+let started = false, intro = null, last = performance.now(), elapsed = 0;
+const fwd = new THREE.Vector3();
+function frame(now) {
+  const rdt = Math.min(0.25, (now - last) / 1000), dt = Math.min(0.05, rdt); last = now; elapsed += dt;
+  if (started) {
+    if (travel) {
+      travel.t += rdt / travel.dur; const k = ease(Math.min(1, travel.t));
+      player.x = travel.fx + (travel.tx - travel.fx) * k; player.z = travel.fz + (travel.tz - travel.fz) * k;
+      player.yaw = travel.fy + (travel.ty - travel.fy) * k; player.pitch = travel.fp + (travel.tp - travel.fp) * k;
+      if (travel.t >= 1) { const cb = travel.onDone; travel = null; cb && cb(); }
+    } else {
+      let mvF = 0, mvR = 0;
+      if (keys.KeyW || keys.ArrowUp) mvF += 1; if (keys.KeyS || keys.ArrowDown) mvF -= 1;
+      if (keys.KeyD) mvR += 1; if (keys.KeyA) mvR -= 1;
+      if (keys.ArrowLeft || keys.KeyQ) player.yaw += 1.9 * dt; if (keys.ArrowRight || keys.KeyE) player.yaw -= 1.9 * dt;
+      if (stick) { mvF += -stick.dy; mvR += stick.dx; }
+      const m = Math.hypot(mvF, mvR);
+      if (m > 0.05) {
+        const sp = (keys.ShiftLeft || keys.ShiftRight ? 14 : 7.5) * Math.min(1, m) / (m || 1);
+        const sy = Math.sin(player.yaw), cy = Math.cos(player.yaw);
+        player.x += (-sy * mvF + cy * mvR) * sp * dt; player.z += (-cy * mvF - sy * mvR) * sp * dt;
+      }
+      collide();
+    }
+    // active station
+    const n = nearestStation();
+    const want = n.d < Math.max(19, viewDistance() + 4) ? n.i : -1;
+    if (want !== active) {
+      active = want; dwell = 0; cycleT = 0;
+      if (active >= 0) openSheet(active); else closeSheet();
+    }
+    if (active >= 0) {
+      dwell += dt; cycleT += dt;
+      if (dwell > 1.2 && !visited.has(active)) { visited.add(active); saveVisited(); setVisitedText(); stations[active].ring.material.color.set("#d9a67a"); }
+      const s = stations[active];
+      if (!reduceMotion && s.keys.length > 1 && cycleT > 5 && $("lightbox").hidden) { cycleT = 0; showImage(s, (s.cur + 1) % s.keys.length); }
+    }
+  }
+  // rings pulse
+  stations.forEach((s) => { const on = s.i === active; s.ring.material.opacity = on ? 0.6 + 0.35 * Math.sin(elapsed * 4) : 0.7; s.ring.scale.setScalar(on ? 1.15 : 1); });
+  // camera
+  let cx = player.x, cy = player.eye, cz = player.z, yaw = player.yaw, pitch = player.pitch;
+  if (intro) {
+    intro.t += rdt / intro.dur; const k = ease(Math.min(1, intro.t));
+    cx = intro.x + (player.x - intro.x) * k; cy = intro.y + (player.eye - intro.y) * k; cz = intro.z + (player.z - intro.z) * k;
+    yaw = intro.yaw + angDiff(intro.yaw, player.yaw) * k; pitch = intro.pitch + (player.pitch - intro.pitch) * k;
+    if (intro.t >= 1) intro = null;
+  } else if (!started) {
+    // slow orbit behind the welcome card
+    const a = elapsed * 0.05; cx = Math.cos(a) * 90; cz = Math.sin(a) * 90; cy = 34;
+    yaw = Math.atan2(cx, cz); pitch = -0.36;
+  }
+  camera.position.set(cx, cy, cz);
+  camera.rotation.set(pitch, yaw, 0, "YXZ");
+  // shadows follow the viewer
+  sunLight.position.set(cx + SUN_DIR.x * 120, SUN_DIR.y * 120, cz + SUN_DIR.z * 120);
+  sunLight.target.position.set(cx - Math.sin(yaw) * 18, 0, cz - Math.cos(yaw) * 18);
+  renderer.render(scene, camera);
+  if (started) drawMap();
+  requestAnimationFrame(frame);
+}
+
+/* ---------- boot ---------- */
+async function boot() {
+  await fontsReady;
+  stations.forEach((s) => { s.sign.material.map = signTexture(s.i); s.sign.material.needsUpdate = true; });
+  let done = 0; const bar = $("loadbar").firstElementChild;
+  await Promise.all(stations.map((s) => showImage(s, 0).then(() => { done++; bar.style.width = (done / N * 100) + "%"; })));
+  const enter = $("enter"); enter.textContent = "Enter the yard";
+  enter.addEventListener("click", () => {
+    const a = elapsed * 0.05, x = Math.cos(a) * 90, z = Math.sin(a) * 90;
+    intro = reduceMotion ? null : { x, y: 34, z, yaw: Math.atan2(x, z), pitch: -0.36, t: 0, dur: 2.8 };
+    started = true; $("intro").classList.add("gone"); setTimeout(() => { $("intro").hidden = true; }, 700);
+    canvas.focus({ preventScroll: true });
+  }, { once: true });
+}
+requestAnimationFrame(frame);
+boot();
+})();
+</script>
