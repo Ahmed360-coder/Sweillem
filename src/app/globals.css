@@ -408,6 +408,67 @@
   .hex {
     clip-path: var(--hex);
   }
+
+  /* Size slider (/products): a 44 px tall hit area, a thin track filled in
+     brand up to the thumb (--fill), and a ring thumb. The fill runs from the
+     inline start, so it mirrors in Arabic. */
+  .size-range {
+    --fill: 0%;
+    --track: linear-gradient(to right, var(--brand) var(--fill), var(--line) var(--fill));
+    appearance: none;
+    display: block;
+    width: 100%;
+    height: 44px;
+    background: transparent;
+    cursor: pointer;
+    touch-action: pan-y;
+  }
+  [dir="rtl"] .size-range {
+    --track: linear-gradient(to left, var(--brand) var(--fill), var(--line) var(--fill));
+  }
+  .size-range::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 999px;
+    background: var(--track);
+  }
+  .size-range::-moz-range-track {
+    height: 6px;
+    border-radius: 999px;
+    background: var(--track);
+  }
+  .size-range::-webkit-slider-thumb {
+    appearance: none;
+    width: 28px;
+    height: 28px;
+    margin-top: -11px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 3px solid var(--brand);
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.22);
+    transition: transform var(--t-quick) var(--ease-glaze);
+  }
+  .size-range::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 3px solid var(--brand);
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.22);
+  }
+  .size-range:active::-webkit-slider-thumb {
+    transform: scale(1.12);
+  }
+  .size-range:focus-visible {
+    outline: none;
+  }
+  .size-range:focus-visible::-webkit-slider-thumb {
+    outline: 2px solid var(--maroon);
+    outline-offset: 3px;
+  }
+  .size-range:focus-visible::-moz-range-thumb {
+    outline: 2px solid var(--maroon);
+    outline-offset: 3px;
+  }
 }
 
 /* M01 page transition: views rise 14 px and fade in on route change. */

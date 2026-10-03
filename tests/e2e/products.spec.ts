@@ -88,3 +88,23 @@ test("printing a product page hides the site chrome", async ({ page }) => {
   await expect(page.locator("#n-pipes-normal-strength table")).toBeVisible();
   await expect(page.getByRole("button", { name: "Print spec sheet" })).toBeHidden();
 });
+
+test("size slider redraws the pipe and lists the fittings made at that size", async ({ page }) => {
+  await page.goto("/products");
+  const slider = page.getByRole("slider", { name: "Drag to choose a size" });
+  await expect(slider).toHaveAttribute("aria-valuetext", "DN 300");
+  const finder = page.locator("#size");
+
+  await slider.fill("0");
+  await expect(slider).toHaveAttribute("aria-valuetext", "DN 125");
+  await expect(finder).toContainText("126 ± 4");
+  await expect(finder.getByRole("radio", { name: /H class/ })).toBeDisabled();
+  await expect(finder.getByRole("img", { name: /DN 125 N class pipe drawn to scale/ })).toBeVisible();
+  await expect(finder.getByRole("link", { name: /^Enlarger 125/ })).toHaveAttribute("href", /product=enlarger-reducer.*dn=125%2F150/);
+
+  // DN 1000 is H class only, and no fitting is published at that size.
+  await slider.fill("12");
+  await expect(finder).toContainText("1120 ± 15");
+  await expect(finder.getByRole("radio", { name: /^H class/ })).toBeChecked();
+  await expect(finder).toContainText("publishes no fittings at DN 1000");
+});
