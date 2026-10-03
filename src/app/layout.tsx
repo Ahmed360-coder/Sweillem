@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans, Jost } from "next/font/google";
 import type { ReactNode } from "react";
@@ -77,6 +78,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <RevealObserver />
         </MotionProvider>
         <Intro />
+        {/* Vercel Web Analytics: page views per address, no cookies. Turned on in the Vercel dashboard. */}
+        <Analytics />
       </body>
     </html>
   );
