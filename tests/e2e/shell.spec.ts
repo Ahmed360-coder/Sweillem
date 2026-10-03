@@ -113,7 +113,10 @@ test.describe("header", () => {
     await page.goto("/");
     await page.getByRole("button", { name: "Menu", exact: true }).click();
     const hrefs = await page.locator("#site-menu a").evaluateAll((els) => els.map((e) => e.getAttribute("href")));
-    expect([...hrefs].sort()).toEqual([...staticRoutes].sort());
+    // Section links (e.g. /products#size) point into a page that is listed too.
+    const pages = hrefs.filter((h) => !h!.includes("#"));
+    expect([...pages].sort()).toEqual([...staticRoutes].sort());
+    for (const h of hrefs.filter((h) => h!.includes("#"))) expect(staticRoutes).toContain(h!.split("#")[0]);
   });
 
   test("home-screen icon and name", async ({ page, request }) => {

@@ -108,3 +108,17 @@ test("size slider redraws the pipe and lists the fittings made at that size", as
   await expect(finder.getByRole("radio", { name: /^H class/ })).toBeChecked();
   await expect(finder).toContainText("publishes no fittings at DN 1000");
 });
+
+test("the side menu's Size finder link opens the slider, from another page and from /products", async ({ page }) => {
+  const burger = page.getByRole("button", { name: "Menu", exact: true });
+  const menu = page.locator("#site-menu");
+  const heading = page.getByRole("heading", { name: "Slide to your pipe size" });
+  for (const start of ["/about", "/products"]) {
+    await page.goto(start);
+    await burger.click();
+    await menu.getByRole("link", { name: "Size finder" }).click();
+    await expect(page).toHaveURL(/\/products#size$/);
+    await expect(menu).toHaveAttribute("inert", "");
+    await expect(heading).toBeInViewport();
+  }
+});

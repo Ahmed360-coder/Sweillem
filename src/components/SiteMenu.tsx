@@ -85,11 +85,13 @@ export function SiteMenu({
                 {group.items.map((item) => {
                   const i = index++;
                   const current = pathname === item.href;
+                  // A link to a section of this page (e.g. /products#size) scrolls, so the menu closes itself.
+                  const samePage = current || item.href.split("#")[0] === pathname;
                   return (
                     <li key={item.href}>
                       <Link
                         href={item.href}
-                        onClick={current ? onClose : undefined}
+                        onClick={samePage ? onClose : undefined}
                         aria-current={current ? "page" : undefined}
                         style={{ transitionDelay: open ? `${Math.min(i, 14) * 22 + 120}ms` : "0ms" }}
                         className={`group/link flex min-h-11 items-center gap-3 rounded-inner px-3 -mx-3 text-[16px] font-medium text-ink no-underline transition-[opacity,transform] duration-[420ms] ease-glaze hover:bg-sunk aria-[current=page]:bg-sunk aria-[current=page]:text-maroon ${
