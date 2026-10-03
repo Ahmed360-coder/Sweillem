@@ -89,7 +89,7 @@ export default function ProductsPage() {
       >
         <PipeSizeSlider stops={stops} />
       </Section>
-      <Section id="tile-3d" eyebrow="Clay roof tiles" title="Turn a roof tile" className="bg-sunk/50">
+      <Section id="tile-3d" eyebrow="Clay roof tiles" title="See the tiles on a roof" className="bg-sunk/50">
         <TileRotator />
       </Section>
       <Section id="families" eyebrow="Ten product families" title="Choose a product">
