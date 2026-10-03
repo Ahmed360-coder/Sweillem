@@ -126,7 +126,9 @@ test("the side menu's Size finder link opens the slider, from another page and f
   }
 });
 
-test("the pipe and the roof tile can be turned in 3D on /products", async ({ page }) => {
+test("the pipe and the tiled roof can be turned in 3D on /products", async ({ page }) => {
+  // Software WebGL in headless Chromium draws the roof slowly.
+  test.setTimeout(90_000);
   await page.goto("/products");
   const pipe = page.locator("#size").getByRole("img", { name: /3D model of the DN 300 N class pipe/ });
   await pipe.scrollIntoViewIfNeeded();
@@ -136,9 +138,16 @@ test("the pipe and the roof tile can be turned in 3D on /products", async ({ pag
   await page.keyboard.press("ArrowLeft");
   await expect(page.locator("#size").getByText("Drag to turn")).toHaveClass(/opacity-0/);
 
+  // With reduced motion the roof only draws when something changes (software WebGL in CI is slow).
+  await page.emulateMedia({ reducedMotion: "reduce" });
   const tiles = page.locator("#tile-3d");
   await tiles.scrollIntoViewIfNeeded();
   await tiles.getByText("Blue", { exact: true }).click();
-  await expect(tiles.getByRole("img", { name: /roof tile in blue/ })).toBeVisible();
+  await expect(tiles.getByRole("img", { name: /piece of roof laid with SWEILLEM clay roof tiles, colour blue/ })).toBeVisible();
   await expect(tiles.getByRole("button", { name: "Add to quote: blue roof tiles" })).toBeVisible();
+  // A tile lifts out to show its stamp, and goes back.
+  await tiles.getByRole("button", { name: "Lift a tile out" }).click();
+  await expect(tiles.getByRole("img", { name: /One tile is lifted out/ })).toBeVisible();
+  await tiles.getByRole("button", { name: "Put the tile back" }).click();
+  await expect(tiles.getByRole("img", { name: /One tile is lifted out/ })).toHaveCount(0);
 });
