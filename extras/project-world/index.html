@@ -473,6 +473,79 @@ for (let i = 0; i < 280; i++) {
 const emitters = [];
 function addEmitter(o) { emitters.push(Object.assign({ acc: 0, rate: 6, life: 5, rise: 2, spread: .6, s0: 1, s1: 5, a: .45, color: "#cfc8c2", wind: .6 }, o)); }
 let smokeOn = 1;
+/* ---------- real-world rules: vehicles slow down and stop for people and for each other ---------- */
+const traffic = { cars: [], people: [] };
+const _tw = new THREE.Vector3(), _td = new THREE.Vector3();
+function regVehicle(obj, o) {
+  const v = Object.assign({ obj, len: 4, half: 1, gap: 4, k: 1, dirX: 0, dirZ: 1, lx: null, lz: 0, wait: 0, ignore: 0, honked: false, x: 0, z: 0, fx: 0, fz: 1 }, o);
+  traffic.cars.push(v); return v;
+}
+function shown(o) { for (let p = o; p; p = p.parent) if (!p.visible) return false; return true; }
+function honk() { tone(392, 0, .32, .07, "square"); tone(330, .03, .32, .07, "square"); }
+updaters.push(() => {
+  for (const v of traffic.cars) { v.obj.getWorldPosition(_tw); v.obj.getWorldDirection(_td); v.x = _tw.x; v.z = _tw.z; const l = Math.hypot(_td.x, _td.z) || 1; v.fx = _td.x / l; v.fz = _td.z / l; }
+});
+/* the speed factor for this frame: eases to 0 while someone or something is in the way */
+function trafficK(v, dt, moving) {
+  if (!built || !moving || !shown(v.obj)) { v.k = 1; v.wait = 0; v.lx = null; return 1; }
+  v.obj.getWorldPosition(_tw);
+  if (v.lx !== null) { const dx = _tw.x - v.lx, dz = _tw.z - v.lz, d = Math.hypot(dx, dz); if (d > 1e-3) { v.dirX = dx / d; v.dirZ = dz / d; } }
+  else { v.dirX = v.fx; v.dirZ = v.fz; if (v.rev) { v.dirX *= -1; v.dirZ *= -1; } }
+  v.lx = _tw.x; v.lz = _tw.z;
+  const reach = v.len / 2 + v.gap, px0 = _tw.x, pz0 = _tw.z;
+  const hit = (px, pz, r) => { const rx = px - px0, rz = pz - pz0, along = rx * v.dirX + rz * v.dirZ; return along > 0 && along < reach + r && Math.abs(rx * v.dirZ - rz * v.dirX) < v.half + r; };
+  let why = 0;
+  if (started && hit(ch.x, ch.z, 1)) why = 2;
+  if (!why && v.ignore <= 0) {
+    for (const p of traffic.people) if (hit(p.position.x, p.position.z, .45)) { why = 1; break; }
+    if (!why) for (const u of traffic.cars) {
+      if (u === v || u.air || !shown(u.obj)) continue;
+      const hl = u.len / 2 - .6;
+      if (hit(u.x, u.z, u.half) || hit(u.x + u.fx * hl, u.z + u.fz * hl, u.half) || hit(u.x - u.fx * hl, u.z - u.fz * hl, u.half)) { why = 1; break; }
+    }
+  }
+  v.ignore -= dt;
+  if (why) { v.wait += dt; if (why === 1 && v.wait > 7) { v.ignore = 6; v.wait = 0; } if (why === 2 && v.wait > 1 && !v.honked && v.horn) { v.honked = true; honk(); } }
+  else { v.wait = 0; v.honked = false; }
+  v.k += ((why ? 0 : 1) - v.k) * Math.min(1, dt * (why ? 7 : 2.2));
+  if (v.k < .02 && why) v.k = 0;
+  if (v.brake) v.brake.color.set(why || v.k < .6 ? "#ff2a1a" : "#4a0905");
+  return v.k;
+}
+/* a live information board drawn on a canvas, redrawn once a second */
+function liveTable(w, h, title, cols, rowsFn) {
+  const c = document.createElement("canvas"); c.width = w; c.height = h; const x = c.getContext("2d");
+  const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.anisotropy = maxAniso;
+  const draw = () => {
+    x.fillStyle = "#0b0d10"; x.fillRect(0, 0, w, h);
+    x.fillStyle = "#7a0404"; x.fillRect(0, 0, w, 84);
+    x.textBaseline = "middle"; x.textAlign = "left"; x.fillStyle = "#fff"; x.font = "700 46px Jost, sans-serif"; x.fillText(title, 28, 44);
+    x.textAlign = "right"; x.fillStyle = "#ffd27a"; x.font = "600 34px 'IBM Plex Mono', monospace";
+    const d = new Date(); x.fillText(String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"), w - 28, 44);
+    x.textAlign = "left"; x.fillStyle = "#8b96a2"; x.font = "600 26px Jost, sans-serif";
+    cols.forEach(([name, cx]) => x.fillText(name, cx, 116));
+    x.fillStyle = "rgba(255,255,255,.12)"; x.fillRect(20, 136, w - 40, 2);
+    const rows = rowsFn(), rh = (h - 150) / Math.max(3, rows.length);
+    rows.forEach((r, i) => {
+      const y = 150 + rh * (i + .5);
+      if (i % 2) { x.fillStyle = "rgba(255,255,255,.04)"; x.fillRect(20, y - rh / 2, w - 40, rh); }
+      r.forEach((cell, j) => {
+        const last = j === r.length - 1, col = last ? (cell.c || "#7ad7a0") : j === 0 ? "#ffd27a" : "#f2f0ec", txt = last ? cell.s : cell;
+        x.fillStyle = col; x.font = (j === 0 ? "600 34px 'IBM Plex Mono', monospace" : "600 36px Jost, sans-serif");
+        const maxW = (j < cols.length - 1 ? cols[j + 1][1] : w - 20) - cols[j][1] - 16; fitFont(x, txt, 600, j === 0 ? "'IBM Plex Mono', monospace" : "Jost, sans-serif", 36, maxW);
+        x.fillText(txt, cols[j][1], y);
+      });
+    });
+    t.needsUpdate = true;
+  };
+  draw(); let acc = 0; updaters.push((dt) => { acc += dt; if (acc > 1) { acc = 0; draw(); } });
+  return new THREE.MeshBasicMaterial({ map: t, toneMapped: false });
+}
+const FLIGHTS = [], VESSELS = [];
+let goAround = null;
+const onRunway = (x, z) => x > 195 && x < 615 && Math.abs(z - AIR.runZ) < 26;
+/* one plane on the runway at a time, and nobody takes off while someone is walking on it */
+function runwayFree(me) { if (started && onRunway(ch.x, ch.z)) return false; return FLIGHTS.every((f) => f === me || !f.rw); }
 updaters.push((dt) => {
   for (const e of emitters) {
     e.acc += e.rate * dt * smokeOn;
@@ -537,7 +610,7 @@ function animateWorker(w, phase, walk, gesture) {
 }
 /* a worker who walks a loop of points, pausing at each */
 function patrol(points, o) {
-  const w = makeWorker(o); scene.add(w);
+  const w = makeWorker(o); scene.add(w); traffic.people.push(w);
   let i = 0, pause = Math.random() * 2, ph = Math.random() * 6;
   w.position.set(points[0][0], o && o.y || 0, points[0][1]);
   updaters.push((dt) => {
@@ -604,6 +677,312 @@ function mergeStatic(parent) {
     const geo = new THREE.BufferGeometry(); geo.setAttribute("position", new THREE.BufferAttribute(pos, 3)); geo.setAttribute("normal", new THREE.BufferAttribute(nor, 3)); geo.setAttribute("uv", new THREE.BufferAttribute(uv, 2));
     const mm = new THREE.Mesh(geo, list[0].material); mm.castShadow = list[0].castShadow; mm.receiveShadow = list[0].receiveShadow; parent.add(mm);
     list.forEach((m) => parent.remove(m));
+  }
+}
+
+/* ---------- modern factory kit: self-driving carts, live screens, laser check, palletizer and wrapper,
+   solar roof and EV chargers, plus the pipe pressure test and seal robots, and the tile glaze colours and colour sorter ---------- */
+function liveBoard(kind) {
+  const w = 1024, h = 576, c = document.createElement("canvas"); c.width = w; c.height = h; const x = c.getContext("2d");
+  const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.anisotropy = maxAniso;
+  const st = { out: kind === "pipe" ? 1840 : 26400, orders: kind === "pipe" ? 38 : 52, pass: 99.2, temp: 1192, bars: Array.from({ length: 12 }, () => .5 + Math.random() * .42), acc: 0 };
+  const name = kind === "pipe" ? "CLAY PIPE FACTORY" : "ROOF TILE FACTORY";
+  const draw = () => {
+    x.fillStyle = "#0e1114"; x.fillRect(0, 0, w, h);
+    x.fillStyle = "#7a0404"; x.fillRect(0, 0, w, 74);
+    x.textBaseline = "middle"; x.textAlign = "left"; x.fillStyle = "#fff";
+    fitFont(x, "SWEILLEM  ·  " + name, 700, "Jost, sans-serif", 40, w * .72); x.fillText("SWEILLEM  ·  " + name, 30, 38);
+    x.textAlign = "right"; x.fillStyle = "#7ad7a0"; x.font = "600 30px 'IBM Plex Mono', monospace"; x.fillText("● LIVE", w - 30, 38);
+    const tiles = [["OUTPUT TODAY", st.out.toLocaleString("en-US"), kind === "pipe" ? "pipes" : "tiles"], ["KILN", Math.round(st.temp) + " °C", "target 1200 °C"], ["QUALITY PASS", st.pass.toFixed(1) + " %", "laser check"], ["ORDERS", String(st.orders), "to ship today"]];
+    const tw = (w - 60) / 4;
+    tiles.forEach(([a, b, s], i) => {
+      const tx = 30 + i * tw, ty = 100;
+      x.fillStyle = "#1a2026"; x.fillRect(tx, ty, tw - 14, 170);
+      x.textAlign = "left"; x.fillStyle = "#9aa6b2"; x.font = "600 24px Jost, sans-serif"; x.fillText(a, tx + 18, ty + 32);
+      x.fillStyle = i === 1 ? "#ffb067" : "#ffffff"; fitFont(x, b, 700, "Jost, sans-serif", 62, tw - 50); x.fillText(b, tx + 18, ty + 92);
+      x.fillStyle = "#6f7b86"; x.font = "500 20px 'IBM Plex Mono', monospace"; x.fillText(s, tx + 18, ty + 145);
+    });
+    const cy = 296, chh = 250;
+    x.fillStyle = "#1a2026"; x.fillRect(30, cy, w - 74, chh);
+    x.fillStyle = "#9aa6b2"; x.font = "600 22px Jost, sans-serif"; x.textAlign = "left"; x.fillText("OUTPUT PER HOUR", 48, cy + 28);
+    const bw = (w - 110) / 12;
+    st.bars.forEach((v, i) => { const bh = v * (chh - 70); x.fillStyle = i === 11 ? "#e05a3a" : "#b5532c"; x.fillRect(48 + i * bw + bw * .15, cy + chh - 16 - bh, bw * .7, bh); });
+    t.needsUpdate = true;
+  };
+  draw();
+  updaters.push((dt) => {
+    st.acc += dt; if (st.acc < 1) return; st.acc = 0;
+    st.out += 1 + (Math.random() * 3 | 0); st.temp = 1188 + Math.random() * 10; st.pass = 98.8 + Math.random() * .9;
+    st.bars[11] = Math.min(.95, st.bars[11] + .03); if (st.bars[11] >= .95) { st.bars.shift(); st.bars.push(.15); }
+    if (Math.random() < .06) st.orders = Math.max(6, st.orders - 1);
+    draw();
+  });
+  return new THREE.MeshBasicMaterial({ map: t, toneMapped: false });
+}
+let SOLAR_MAT = null, EV_SCREEN = null;
+function solarMat() {
+  if (SOLAR_MAT) return SOLAR_MAT;
+  const t = canvasTex(256, 256, (x, w, h) => {
+    x.fillStyle = "#c9ccd0"; x.fillRect(0, 0, w, h);
+    for (let r = 0; r < 2; r++) for (let c = 0; c < 4; c++) {
+      const gx = c * 64 + 3, gy = r * 128 + 3, g = x.createLinearGradient(gx, gy, gx + 58, gy + 122); g.addColorStop(0, "#29476e"); g.addColorStop(1, "#101e33");
+      x.fillStyle = g; x.fillRect(gx, gy, 58, 122);
+      x.strokeStyle = "rgba(170,200,235,.22)"; x.lineWidth = 1;
+      for (let k = 1; k < 4; k++) { x.beginPath(); x.moveTo(gx + k * 14.5, gy); x.lineTo(gx + k * 14.5, gy + 122); x.stroke(); }
+      for (let k = 1; k < 8; k++) { x.beginPath(); x.moveTo(gx, gy + k * 15.25); x.lineTo(gx + 58, gy + k * 15.25); x.stroke(); }
+    }
+  }, true);
+  SOLAR_MAT = new THREE.MeshStandardMaterial({ map: t, roughness: .22, metalness: .55 });
+  return SOLAR_MAT;
+}
+/* a self-driving cart (AGV) with a lidar puck and status lights */
+function makeAGV(parent, cargo) {
+  const a = new THREE.Group(); parent.add(a);
+  mesh(box(1.5, .42, 2.3), M.white, 0, .3, 0, a); mesh(box(1.52, .12, 2.32), M.maroon, 0, .14, 0, a);
+  mesh(box(1.36, .06, 2.1), M.dark, 0, .54, 0, a);
+  mesh(cyl(.13, .13, .16, 14), M.dark, 0, .64, 1.0, a);
+  const lamp = new THREE.MeshBasicMaterial({ color: "#39e58a", toneMapped: false });
+  for (const s of [-1, 1]) mesh(box(.3, .08, .04), lamp, s * .45, .34, 1.16, a, false);
+  if (cargo) { cargo.position.y = .57; a.add(cargo); }
+  return a;
+}
+/* follow a closed polyline, waiting at some points */
+function followLoop(obj, pts, speed, waits, onArrive, start, veh) {
+  let i = start || 0, wait = 0; obj.position.set(pts[i][0], 0, pts[i][1]);
+  updaters.push((dt) => {
+    if (wait > 0) { wait -= dt; return; }
+    const [tx, tz] = pts[(i + 1) % pts.length], dx = tx - obj.position.x, dz = tz - obj.position.z, d = Math.hypot(dx, dz);
+    if (d < .05) { i = (i + 1) % pts.length; wait = waits[i] || .4; if (onArrive) onArrive(i); return; }
+    const sp = speed * dt * (veh ? trafficK(veh, dt, true) : 1); obj.position.x += dx / d * Math.min(sp, d); obj.position.z += dz / d * Math.min(sp, d);
+    obj.rotation.y += angDiff(obj.rotation.y, Math.atan2(dx, dz)) * Math.min(1, dt * 4);
+  });
+}
+function modernKit(o, g, k) {
+  const { toW, seg, circ, items, LZ, BY, W, D, H, glaze, palletMat } = k;
+  const isPipe = o.kind === "pipe";
+  const board = liveBoard(o.kind);
+
+  /* solar panels on every sawtooth slope */
+  const sm = solarMat(); sm.map.repeat.set((W * 2 - 4) / 4, 1);
+  const tilt = Math.atan2(3.2, 8);
+  for (let t = 0; t < 7; t++) {
+    const z0 = -D + t * 8;
+    const p = mesh(new THREE.PlaneGeometry(W * 2 - 4, 7.8), sm, 0, H + 1.6 + .14, z0 + 4 + .05, g, false);
+    p.rotation.x = -Math.PI / 2 + tilt;
+  }
+
+  /* EV chargers behind the parking spaces */
+  if (!EV_SCREEN) { EV_SCREEN = new THREE.MeshBasicMaterial({ map: brandPanel("EV", "CHARGING", "#0f3d27", "#7af0b0"), toneMapped: false }); }
+  for (const i of [3, 4, 5, 6]) {
+    const cx = 21.8 + i * 3.6, cz = D + 12.6;
+    mesh(box(.55, 1.7, .4), M.white, cx, .85, cz, g); mesh(box(.6, .14, .45), M.maroon, cx, 1.75, cz, g);
+    mesh(new THREE.PlaneGeometry(.4, .3), EV_SCREEN, cx, 1.35, cz - .21, g, false).rotation.y = Math.PI;
+    if (i !== 3) { const cb = mesh(box(.06, .06, 1.2), M.rubber, cx + .2, .8, cz - .75, g, false); cb.rotation.x = .5; }
+    circ(cx, cz, .45);
+  }
+  { const pm = new THREE.MeshBasicMaterial({ map: brandPanel("EV CHARGING", "SOLAR POWERED", "#0f3d27", "#ffffff"), toneMapped: false });
+    mesh(box(.15, 3.2, .15), M.steelDark, 32.6, 1.6, D + 13.4, g); mesh(new THREE.PlaneGeometry(3, .75), pm, 32.6, 3.4, D + 13.3, g, false).rotation.y = Math.PI;
+    mesh(new THREE.PlaneGeometry(3, .75), pm, 32.6, 3.4, D + 13.5, g, false); }
+
+  /* big live screens on the walls, and a video wall in the control room */
+  const screen = (x, y, z, ry, w, hh) => {
+    const s = new THREE.Group(); s.position.set(x, y, z); s.rotation.y = ry; g.add(s);
+    mesh(box(w + .5, hh + .5, .3), M.dark, 0, 0, -.12, s); mesh(new THREE.PlaneGeometry(w, hh), board, 0, 0, .04, s, false);
+  };
+  for (const sx of [-30, 30]) screen(sx, 8.6, D - .45, Math.PI, 12, 6.75);
+  screen(-20, 9.2, -D + .45, 0, 10, 5.6);
+  screen(-6, 2.3, 19.25, Math.PI, 5.6, 1.7);
+  for (const cx of [-8, -4]) { const s = mesh(new THREE.PlaneGeometry(1.1, .62), board, cx, 1.62, 15.95, g, false); s.rotation.y = Math.PI; }
+  stander(...toW(-8, 15.0), o.rot, { suit: "#2d3e57", gesture: 2 });
+
+  /* self-driving carts on a green floor line, between the raw material racks and the press */
+  const line = new THREE.MeshBasicMaterial({ color: "#2fbf71" });
+  const AGV_PTS = [[-30, -8], [-4, -8], [-4, -24], [-30, -24]];
+  AGV_PTS.forEach(([ax, az], i) => { const [bx, bz] = AGV_PTS[(i + 1) % 4], L = Math.hypot(bx - ax, bz - az); const ln = mesh(new THREE.PlaneGeometry(.28, L + .28), line, (ax + bx) / 2, .065, (az + bz) / 2, g, false); ln.rotation.x = -Math.PI / 2; ln.rotation.z = Math.atan2(bx - ax, bz - az); });
+  { const pm = new THREE.MeshBasicMaterial({ map: brandPanel("AGV ROUTE", "SELF-DRIVING CARTS", "#0f3d27", "#ffffff"), toneMapped: false });
+    const p = mesh(new THREE.PlaneGeometry(4.4, 1.1), pm, -17, .07, -16, g, false); p.rotation.x = -Math.PI / 2; }
+  // high-bay racks of raw material along the back wall
+  for (let rx = -31; rx <= -3; rx += 4) for (const rz of [-27.2, -26]) mesh(box(.14, 5, .14), M.steelDark, rx, 2.5, rz, g);
+  for (const ry of [.15, 1.9, 3.65]) for (const rz of [-27.2, -26]) mesh(box(28, .16, .1), M.maroon, -17, ry, rz, g);
+  for (let rx = -29; rx <= -5; rx += 4) for (const ry of [.3, 2.05, 3.8]) { mesh(box(2.8, .14, 1.1), palletMat, rx, ry + .07, -26.6, g); mesh(box(2.5, 1.1, 1, 1), M.clay, rx, ry + .7, -26.6, g); }
+  seg(-31.5, -26.6, -2.5, -26.6, .9);
+  AGV_PTS.forEach((_, n) => {
+    const cargo = new THREE.Group(); mesh(box(1.3, .14, 1.9), palletMat, 0, .07, 0, cargo); mesh(box(1.1, .8, 1.6), M.clay, 0, .54, 0, cargo);
+    if (n % 2) return;
+    const a = makeAGV(g, cargo);
+    followLoop(a, AGV_PTS, 2.2, [1.5, 2.5, 1, 2.5], (i) => { if (i === 1) cargo.visible = false; if (i === 3) cargo.visible = true; }, n, regVehicle(a, { len: 2.3, half: .85, gap: 1.6 }));
+    cargo.visible = n === 0;
+  });
+
+  /* laser quality check over the belt, with a reject bin */
+  const QX = 36.6;
+  for (const s of [-1, 1]) mesh(box(.35, 2.6, .35), M.white, QX, 1.3, LZ + s * 1.45, g);
+  mesh(box(.7, .55, 3.3), M.white, QX, 2.75, LZ, g); mesh(box(.72, .16, 3.32), M.maroon, QX, 2.5, LZ, g);
+  const laserMat = new THREE.MeshBasicMaterial({ color: "#36ff7a", transparent: true, opacity: .18, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false });
+  const fan = mesh(new THREE.PlaneGeometry(2.5, 1.45), laserMat, QX, BY + .74, LZ, g, false); fan.rotation.y = Math.PI / 2; fan.userData.dyn = true;
+  const beam = mesh(box(.04, .04, 2.5), new THREE.MeshBasicMaterial({ color: "#7dffa8", toneMapped: false }), QX, BY + .5, LZ, g, false); beam.userData.dyn = true;
+  const qcLamp = new THREE.MeshBasicMaterial({ color: "#39e58a", toneMapped: false });
+  const lampM = mesh(cyl(.13, .13, .32, 14), qcLamp, QX, 3.18, LZ + 1.2, g, false); lampM.userData.dyn = true;
+  { const pm = new THREE.MeshBasicMaterial({ map: brandPanel("LASER QUALITY CHECK", null, "#1d1513", "#7dffa8"), toneMapped: false }); mesh(new THREE.PlaneGeometry(3.2, .8), pm, QX + .36, 2.75, LZ, g, false).rotation.y = Math.PI / 2; }
+  mesh(box(1.8, 1.1, 1.6), M.maroonGloss, QX + .4, .55, LZ + 3, g);
+  { const pm = new THREE.MeshBasicMaterial({ map: brandPanel("REJECT", null, "#7a0404", "#ffffff"), toneMapped: false }); mesh(new THREE.PlaneGeometry(1.5, .38), pm, QX + .4, .7, LZ + 3.81, g, false); }
+  circ(QX, LZ, 1.6); circ(QX + .4, LZ + 3, 1.1);
+  let qcCount = 0, red = 0, gIdx = 0, gT = 0;
+  const GLAZES = ["#c8714a", "#4f8fd4", "#3a3634"];
+  updaters.push((dt, t) => {
+    beam.position.y = BY + .15 + (Math.sin(t * 3) + 1) * .6;
+    red -= dt; qcLamp.color.set(red > 0 ? "#ff3b30" : "#39e58a");
+    if (!isPipe) { gT += dt; if (gT > 6) { gT = 0; gIdx = (gIdx + 1) % 3; if (glaze) glaze.color = GLAZES[gIdx]; glazeLamps.forEach((l, n) => l.color.set(n === gIdx ? GLAZES[n] : "#2a2a2a")); } }
+    for (const m of items) {
+      if (!m.visible) { m.userData.qc = false; m.userData.rej = false; continue; }
+      const x = m.position.x;
+      if (x < 0) { m.userData.qc = false; m.userData.rej = false; m.position.z = LZ; }
+      if (!isPipe && x < 6) m.userData.c = gIdx;
+      if (!m.userData.qc && x >= QX) { m.userData.qc = true; qcCount++; if (qcCount % 7 === 0) { m.userData.rej = true; red = 1.2; } }
+      if (m.userData.rej) { m.position.x -= dt * 1.9 - dt * .4; m.position.z += dt * 2.2; if (m.position.z > LZ + 2.8) { m.visible = false; m.userData.rej = false; m.position.z = LZ; } }
+    }
+  });
+
+  /* tile glaze tanks: the colour changes between terracotta, blue and black */
+  const glazeLamps = [];
+  if (!isPipe) {
+    GLAZES.forEach((col, n) => {
+      const tz = LZ - 2.6 - n * 1.5;
+      mesh(cyl(.6, .6, 1.8, 20), new THREE.MeshStandardMaterial({ color: col, roughness: .35, metalness: .2 }), 10.6, .9, tz, g);
+      mesh(cyl(.62, .62, .12, 20), M.steelDark, 10.6, 1.85, tz, g);
+      const lm = new THREE.MeshBasicMaterial({ color: n === 0 ? col : "#2a2a2a", toneMapped: false }); glazeLamps.push(lm);
+      const l = mesh(new THREE.SphereGeometry(.16, 12, 8), lm, 10.6, 2.1, tz, g, false); l.userData.dyn = true;
+      const hs = mesh(box(2.4, .08, .08), M.rubber, 9.4, 1.6, tz, g, false); hs.rotation.y = .3 * (n - 1);
+    });
+    const pm = new THREE.MeshBasicMaterial({ map: brandPanel("GLAZE COLOUR", "TERRACOTTA · BLUE · BLACK", "#1d1513", "#ffffff"), toneMapped: false });
+    mesh(new THREE.PlaneGeometry(3.4, .85), pm, 10.6, 3, LZ - 1.6, g, false);
+    seg(10.6, LZ - 2.6, 10.6, LZ - 5.6, .8);
+  }
+
+  /* the transfer conveyor to the palletizer */
+  const TX = 46, TZ0 = 6, TZ1 = 17.6;
+  mesh(box(1.8, .26, TZ1 - TZ0), M.rubber, TX, BY - .13, (TZ0 + TZ1) / 2, g);
+  for (const s of [-1, 1]) mesh(box(.18, .45, TZ1 - TZ0), M.steel, TX + s * 1, BY - .15, (TZ0 + TZ1) / 2, g);
+  for (let z = TZ0 + .5; z <= TZ1; z += 3) for (const s of [-1, 1]) mesh(box(.15, BY, .15), M.steelDark, TX + s * .85, BY / 2 - .1, z, g);
+  seg(TX, TZ0, TX, TZ1, 1.1);
+  const tGeo = isPipe ? pipeGeometry(.42, 1.6, 24) : tileGeometry(1.25);
+  const sealMat = new THREE.MeshStandardMaterial({ color: "#151515", roughness: .7 });
+  const sealGeo = new THREE.TorusGeometry(.5, .07, 8, 28);
+  const tItems = [];
+  for (let i = 0; i < 7; i++) {
+    const it = new THREE.Group(); it.visible = false; g.add(it);
+    const p = new THREE.Mesh(tGeo, isPipe ? M.fired : M.firedTile[0]); p.castShadow = true; it.add(p);
+    if (isPipe) { p.rotation.z = Math.PI / 2; const r1 = new THREE.Mesh(sealGeo, sealMat); r1.rotation.y = Math.PI / 2; r1.position.x = -.62; it.add(r1); r1.visible = false; it.userData.seal = r1; }
+    tItems.push(it);
+  }
+  // tile colour sorter: a camera checks each tile, pushers send it to its colour lane
+  const LANES = [11.6, 13.8, 16], pushers = [];
+  if (!isPipe) {
+    for (const s of [-1, 1]) mesh(box(.2, 3.2, .2), M.steelDark, TX + s * 1.3, 1.6, 9, g);
+    mesh(box(2.9, .3, .4), M.steelDark, TX, 3.2, 9, g);
+    mesh(box(.6, .5, .6), M.dark, TX, 2.85, 9, g); mesh(cyl(.16, .16, .2, 14), M.glassDark, TX, 2.55, 9, g);
+    const flash = new THREE.MeshBasicMaterial({ color: "#ffffff", transparent: true, opacity: 0, toneMapped: false });
+    const fl = mesh(new THREE.ConeGeometry(.9, 1.4, 16, 1, true), flash, TX, 1.85, 9, g, false); fl.userData.dyn = true;
+    updaters.push((dt, t) => { flash.opacity = Math.max(0, Math.sin(t * 4)) > .97 ? .35 : 0; });
+    const pm = new THREE.MeshBasicMaterial({ map: brandPanel("COLOUR SORTER", null, "#1d1513", "#ffffff"), toneMapped: false });
+    mesh(new THREE.PlaneGeometry(2.8, .7), pm, TX, 3.75, 9, g, false).rotation.y = -Math.PI / 2;
+    LANES.forEach((lz, n) => {
+      const pu = new THREE.Group(); pu.position.set(TX - 1.5, BY + .2, lz); g.add(pu);
+      mesh(box(.9, .5, .9), M.steelDark, -.3, 0, 0, pu); const head = mesh(box(.2, .45, .9), M.maroonGloss, .2, 0, 0, pu); head.userData.dyn = true; pushers.push(head);
+      const bin = mesh(box(1.5, .9, 1.7), new THREE.MeshStandardMaterial({ color: GLAZES[n], roughness: .5 }), TX + 2.4, .45, lz, g);
+      for (let r = 0; r < 3; r++) { const tl = mesh(tGeo, M.firedTile[n], TX + 2.4, .95 + r * .12, lz, g, false); tl.rotation.y = Math.PI / 2; }
+      circ(TX + 2.4, lz, .95);
+    });
+  } else {
+    // two robots fitting the joint seals onto the pipe ends
+    for (const [rx, face, ph] of [[43.5, Math.PI / 2, 0], [48.5, -Math.PI / 2, 1.4]]) {
+      const ring = new THREE.Mesh(sealGeo, sealMat); ring.rotation.x = Math.PI / 2;
+      makeRobot(g, rx, 11.5, face, ph, ring); circ(rx, 11.5, 1.2);
+    }
+    mesh(cyl(.8, .8, 1, 18), M.steelDark, 43.5, .5, 14.2, g);
+    for (let r = 0; r < 4; r++) mesh(sealGeo, sealMat, 43.5, 1.05 + r * .12, 14.2, g, false).rotation.x = Math.PI / 2;
+    const pm = new THREE.MeshBasicMaterial({ map: brandPanel("JOINT SEALS", "FITTED BY ROBOT", "#1d1513", "#ffffff"), toneMapped: false });
+    mesh(new THREE.PlaneGeometry(2.8, .7), pm, TX - 1.05, 2.4, 9, g, false).rotation.y = -Math.PI / 2;
+    circ(43.5, 14.2, 1);
+  }
+  let tSpawn = 0, layers = 0;
+  updaters.push((dt) => {
+    tSpawn -= dt;
+    if (tSpawn <= 0) { tSpawn = 2.3; const it = tItems.find((q) => !q.visible); if (it) { it.visible = true; it.position.set(TX, BY + (isPipe ? .42 : .02), TZ0 + .4); it.userData.lane = -1; const c = Math.random() * 3 | 0; it.userData.c = c; if (!isPipe) it.children[0].material = M.firedTile[c]; else it.userData.seal.visible = false; } }
+    pushers.forEach((p) => { p.position.x = Math.max(.2, p.position.x - dt * 2); });
+    for (const it of tItems) {
+      if (!it.visible) continue;
+      if (it.userData.lane >= 0) { it.position.x += dt * 3; pushers[it.userData.lane].position.x = Math.min(1.4, it.position.x - TX + 1.3); if (it.position.x > TX + 2.2) it.visible = false; continue; }
+      it.position.z += dt * 1.5;
+      if (isPipe && it.position.z > 11.5) it.userData.seal.visible = true;
+      if (!isPipe && it.position.z >= LANES[it.userData.c]) { it.userData.lane = it.userData.c; continue; }
+      if (it.position.z > TZ1 - .4) { it.visible = false; layers = (layers + 1) % 5; stackLayers.forEach((l, n) => { l.visible = n < layers; }); }
+    }
+  });
+
+  /* robot palletizer and stretch wrapper */
+  const done = isPipe ? new THREE.Mesh(tGeo, M.fired) : new THREE.Mesh(tGeo, M.firedTile[1]);
+  if (isPipe) done.rotation.x = Math.PI / 2;
+  makeRobot(g, TX, 20.4, Math.PI * 1.25, .7, done); circ(TX, 20.4, 1.2);
+  mesh(box(2.8, .3, 2.2), palletMat, 42.2, .15, 20.6, g);
+  const stackLayers = [];
+  for (let n = 0; n < 4; n++) {
+    const L = new THREE.Group(); L.visible = false; g.add(L); stackLayers.push(L);
+    if (isPipe) for (let c = 0; c < 3; c++) { const p = mesh(tGeo, M.fired, 42.2, .72 + n * .84, 19.9 + c * .7, L); p.rotation.z = Math.PI / 2; p.userData.dyn = true; }
+    else for (let c = 0; c < 2; c++) { const p = mesh(tGeo, M.firedTile[c], 41.6 + c * 1.2, .38 + n * .17, 20.6, L, false); p.userData.dyn = true; }
+  }
+  circ(42.2, 20.6, 1.6);
+  const tt = new THREE.Group(); tt.position.set(37, 0, 21); g.add(tt);
+  mesh(cyl(1.7, 1.7, .25, 32), M.steelDark, 0, .12, 0, tt);
+  mesh(box(2.4, .3, 2), palletMat, 0, .4, 0, tt);
+  const filmMat = new THREE.MeshPhysicalMaterial({ color: "#e8eef2", roughness: .15, transparent: true, opacity: .55, clearcoat: 1 });
+  mesh(box(2.3, 1.9, 1.9), filmMat, 0, 1.5, 0, tt);
+  { const lm = new THREE.MeshBasicMaterial({ map: brandPanel("SWEILLEM", isPipe ? "CLAY PIPES" : "ROOF TILES", "#7a0404", "#ffffff"), toneMapped: false });
+    for (const s of [-1, 1]) { const p = mesh(new THREE.PlaneGeometry(1.8, .45), lm, 0, 1.5, s * .96, tt, false); if (s < 0) p.rotation.y = Math.PI; } }
+  tt.traverse((m) => { if (m.isMesh) m.userData.dyn = true; });
+  mesh(box(.35, 4.2, .35), M.steelDark, 39.3, 2.1, 21, g); mesh(box(.8, .2, .8), M.steelDark, 39.3, .1, 21, g);
+  const carriage = mesh(box(.5, .7, .9), M.maroonGloss, 39.05, 1, 21, g); carriage.userData.dyn = true;
+  const roll = mesh(cyl(.14, .14, .9, 12), M.white, 38.7, 1, 21, g, false); roll.userData.dyn = true;
+  { const pm = new THREE.MeshBasicMaterial({ map: brandPanel("STRETCH WRAPPER", null, "#1d1513", "#ffffff"), toneMapped: false }); mesh(new THREE.PlaneGeometry(2.6, .65), pm, 39.3, 4.5, 21, g, false).rotation.y = -Math.PI / 2; }
+  circ(37, 21, 1.9); circ(39.3, 21, .5);
+  updaters.push((dt, t) => { tt.rotation.y += dt * 1.6; const y = .9 + (Math.sin(t * .7) + 1) * .85; carriage.position.y = y; roll.position.y = y; });
+  stander(...toW(34, 23.5), o.rot + Math.PI * .75, { suit: "#7a0404", hat: "#e0a81e", gesture: 2 });
+
+  /* pipe pressure test: water in, the gauge needle climbs, holds, then PASS */
+  if (isPipe) {
+    const RX = 25, RZ = 20.5;
+    mesh(box(10, .6, 2.2), M.steelDark, RX, .3, RZ, g);
+    for (const s of [-1, 1]) { mesh(box(1, 2.6, 2), M.maroonGloss, RX + s * 4.3, 1.6, RZ, g); mesh(cyl(.25, .25, .6, 14), M.steel, RX + s * 3.6, 1.6, RZ, g).rotation.z = Math.PI / 2; }
+    const tp = mesh(pipeGeometry(.62, 7, 36), M.fired, RX, 1.6, RZ, g); tp.rotation.z = Math.PI / 2;
+    mesh(cyl(1, 1, 2.6, 24), new THREE.MeshStandardMaterial({ color: "#2b6fb3", roughness: .35, metalness: .3 }), RX - 7.2, 1.3, RZ + .6, g);
+    { const hs = mesh(box(2.4, .1, .1), M.rubber, RX - 5.7, .9, RZ + .4, g, false); hs.rotation.y = -.2; }
+    const dialTex = canvasTex(256, 256, (x, w, h) => {
+      x.fillStyle = "#f6f3ee"; x.beginPath(); x.arc(w / 2, h / 2, w / 2 - 4, 0, TAU); x.fill();
+      x.strokeStyle = "#1d1513"; x.lineWidth = 8; x.stroke();
+      x.lineWidth = 4; for (let i = 0; i <= 10; i++) { const a = Math.PI * .75 + i / 10 * Math.PI * 1.5; x.beginPath(); x.moveTo(w / 2 + Math.cos(a) * 95, h / 2 + Math.sin(a) * 95); x.lineTo(w / 2 + Math.cos(a) * 112, h / 2 + Math.sin(a) * 112); x.stroke(); }
+      x.strokeStyle = "#2fbf71"; x.lineWidth = 12; x.beginPath(); x.arc(w / 2, h / 2, 104, Math.PI * .75 + Math.PI * 1.5 * .6, Math.PI * .75 + Math.PI * 1.5 * .85); x.stroke();
+      x.fillStyle = "#1d1513"; x.textAlign = "center"; x.textBaseline = "middle"; x.font = "700 30px Jost, sans-serif"; x.fillText("BAR", w / 2, h * .72);
+    });
+    const dial = new THREE.Group(); dial.position.set(RX, 4, RZ + 1.25); g.add(dial);
+    mesh(box(.2, 2.6, .2), M.steelDark, RX, 2.7, RZ + 1.1, g);
+    mesh(cyl(.78, .78, .2, 28), M.steelDark, 0, 0, -.12, dial).rotation.x = Math.PI / 2;
+    mesh(new THREE.CircleGeometry(.72, 32), new THREE.MeshBasicMaterial({ map: dialTex, toneMapped: false }), 0, 0, .0, dial, false);
+    const needle = new THREE.Group(); needle.position.z = .03; dial.add(needle);
+    mesh(box(.05, .58, .02), new THREE.MeshBasicMaterial({ color: "#c0261c", toneMapped: false }), 0, .27, 0, needle, false);
+    dial.traverse((m) => { if (m.isMesh) m.userData.dyn = true; });
+    const passMat = new THREE.MeshBasicMaterial({ color: "#2a2a2a", toneMapped: false });
+    const pl = mesh(new THREE.SphereGeometry(.2, 12, 8), passMat, RX + 1.1, 4.6, RZ + 1.2, g, false); pl.userData.dyn = true;
+    { const pm = new THREE.MeshBasicMaterial({ map: brandPanel("PRESSURE TEST", "EVERY PIPE, BEFORE IT SHIPS", "#1d1513", "#ffffff"), toneMapped: false }); mesh(new THREE.PlaneGeometry(3.6, .9), pm, RX, .9, RZ + 1.12, g, false); }
+    let pt2 = 0;
+    updaters.push((dt) => {
+      pt2 = (pt2 + dt) % 10;
+      const k2 = pt2 < 3 ? ease(pt2 / 3) : pt2 < 7 ? 1 : 1 - ease(Math.min(1, (pt2 - 7) / 2));
+      // the needle sweeps clockwise from the lower left; the green band is at 60 to 85 % of the scale
+      needle.rotation.z = -1.25 * Math.PI - 1.5 * Math.PI * (k2 * .75);
+      passMat.color.set(pt2 > 4 && pt2 < 7 ? "#39e58a" : "#2a2a2a");
+    });
+    seg(RX - 5, RZ, RX + 5, RZ, 1.3); circ(RX - 7.2, RZ + .6, 1.1);
+    stander(...toW(RX + 2, RZ + 3), o.rot + Math.PI, { suit: "#2d3e57", hat: "#ffffff", gesture: 2 });
   }
 }
 
@@ -855,6 +1234,7 @@ function factoryHall(o) {
   mesh(box(5.8, .3, 4.6), M.maroon, 6, 4.7, LZ, g);
   makeRobot(g, 6, LZ - 4.6, Math.PI, 1.5, null); circ(6, LZ - 4.6, 1.2); seg(3.2, LZ, 8.8, LZ, 2.4);
   { const w = toW(6, LZ); addEmitter({ x: w[0], y: 2, z: w[1], rate: 6, life: 1.4, rise: .5, spread: 1.4, s0: .3, s1: 1.2, a: .3, color: o.kind === "pipe" ? "#c99a7a" : "#9fc3ee", wind: .1 }); }
+  const glazeEm = emitters[emitters.length - 1];
 
   /* 05 kiln: a long brick tunnel, glowing mouths, a chimney up through the roof */
   mesh(box(20, 7, 8), M.brick, 24, 3.5, LZ, g);
@@ -950,19 +1330,21 @@ function factoryHall(o) {
   if (o.kind === "pipe") { for (let i = 0; i < 3; i++) mesh(pipeGeometry(.3, 1.3, 20), M.fired, -.45 + i * .45, .42, 0, load).rotation.z = Math.PI / 2; }
   else for (let r = 0; r < 4; r++) mesh(tileGeometry(1.3), M.firedTile[0], 0, .1 + r * .14, 0, load);
   const fd = makeWorker({ suit: "#2d3e57", hat: "#e0a81e" }); fd.scale.setScalar(.92); fd.position.set(0, .9, -.4); fork.add(fd);
+  const fveh = regVehicle(fork, { len: 3.6, half: .9, gap: 2.2, horn: true });
   const fpath = [[27, -12], [30, -20], [30, -25.5], [30, -20], [36, -16], [42, -20], [42, -25.5], [42, -20], [36, -12]];
   let fi = 0, fwait = 0;
   fork.position.set(fpath[0][0], 0, fpath[0][1]);
   updaters.push((dt) => {
-    if (fwait > 0) { fwait -= dt; return; }
+    if (fwait > 0) { fwait -= dt; trafficK(fveh, dt, false); return; }
     const [tx, tz] = fpath[(fi + 1) % fpath.length], dx = tx - fork.position.x, dz = tz - fork.position.z, d = Math.hypot(dx, dz);
     if (d < .1) { fi = (fi + 1) % fpath.length; if (fi === 2 || fi === 6) { fwait = 2; load.visible = false; } if (fi === 0 || fi === 4) { fwait = 1.5; load.visible = true; } return; }
-    const sp = 4 * dt; fork.position.x += dx / d * Math.min(sp, d); fork.position.z += dz / d * Math.min(sp, d);
+    const sp = 4 * dt * trafficK(fveh, dt, true); fork.position.x += dx / d * Math.min(sp, d); fork.position.z += dz / d * Math.min(sp, d);
     fork.rotation.y += angDiff(fork.rotation.y, Math.atan2(dx, dz)) * Math.min(1, dt * 5);
   });
   // dock shelters and a marshal outside
   for (const dx of DOCKS) { mesh(box(7, 7.2, 1.2), M.dark, dx, 3.6, -D - .9, g); mesh(box(6.2, 1.4, 2.4), M.steelDark, dx, .7, -D - 1.6, g, false); }
   stander(...toW(36, -D - 6), o.rot + Math.PI, { suit: "#7a0404", gesture: 2 });
+  modernKit(o, g, { toW, seg, circ, items, LZ, BY, W, D, H, glaze: glazeEm, palletMat });
   mergeStatic(g); mergeStatic(off);
   return { group: g, toW, docks: DOCKS.map((dx) => toW(dx, -D - 9)) };
 }
@@ -1207,7 +1589,9 @@ function makeTruck(kind) {
     if (kind === "pipe") { for (let r = 0; r < 2; r++) for (let k = 0; k < 3 - r; k++) mesh(pipeGeometry(.36, 2.4, 20), M.fired, -.75 + k * .75 + r * .37, .38 + r * .64, 0, c).rotation.z = Math.PI / 2; }
     else { mesh(box(1.6, .15, 1.4), new THREE.MeshStandardMaterial({ color: "#a07a52" }), 0, .07, 0, c); for (let r = 0; r < 6; r++) mesh(tileGeometry(1.35), M.firedTile[i % 3], 0, .18 + r * .14, 0, c).rotation.y = Math.PI / 2; }
   }
-  return { g, cargo };
+  const brake = new THREE.MeshBasicMaterial({ color: "#4a0905", toneMapped: false });
+  for (const s of [-1, 1]) mesh(box(.4, .26, .08), brake, s * 1.05, 1.15, -5.8, g, false);
+  return { g, cargo, brake };
 }
 function pathLen(pts) { let L = 0; for (let i = 1; i < pts.length; i++) L += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); return L; }
 function pointOn(pts, s) {
@@ -1234,7 +1618,8 @@ function runTruck(t, legs, offset) {
   t.cargo.forEach((c) => (c.visible = false));
   { const [x, z, h] = pointOn(legs[0].pts, 0); t.g.position.set(x, 0, z); t.g.rotation.y = h; }
   while (pre > 0) { step(.1); pre -= .1; }
-  updaters.push(step);
+  const v = regVehicle(t.g, { len: 11.5, half: 1.4, gap: 6, horn: true, brake: t.brake });
+  updaters.push((dt) => { const L = legs[li]; v.rev = !!L.rev; step(dt * trafficK(v, dt, !!L.pts)); });
 }
 function buildTrucks() {
   const RB = ROAD_BACK, DZ = PIPE_F.oz - FD - 9;
@@ -1351,11 +1736,20 @@ function makeTractor() {
   const box1 = container(g, -.6, 2.95, 0, 0);
   return { g, box: box1 };
 }
+function makeTug() {
+  const tug = new THREE.Group(); scene.add(tug);
+  mesh(box(14, 3, 5.4), M.maroonGloss, 0, .2, 0, tug); mesh(box(5, 3, 4), M.white, 1, 3, 0, tug); mesh(box(1.2, 2.6, 1.4), M.dark, -1.8, 5, 0, tug); mesh(box(4, 1.2, 5.8), M.rubber, 6.4, .6, 0, tug);
+  const line = mesh(box(.12, .12, 1), M.dark, 0, 0, 0, undefined, false); line.visible = false;
+  return { g: tug, line, vx: 0, vz: 0 };
+}
 function buildPort() {
-  const berths = [{ x: -40, cranes: [3, 8], seed: 4 }, { x: 140, cranes: [6], seed: 9 }];
+  const berths = [{ x: -40, cranes: [3, 8], seed: 4, name: "SWEILLEM 1", to: "JEDDAH" }, { x: 140, cranes: [6], seed: 9, name: "SWEILLEM 2", to: "HAMBURG" }];
   berths.forEach((b, bi) => {
     const ship = makeShip({ craneBays: b.cranes, seed: b.seed }); ship.g.position.set(b.x, 0, BERTH_Z);
     const st = { phase: "load", t: 0 };
+    // two tugs per berth: they wait by the quay and pull the ship off the berth and back on
+    const tugs = [-1, 1].map((s, n) => { const tg = makeTug(); tg.home = [b.x - 78 + n * 16, WATER_Z - 30]; tg.side = s; tg.g.position.set(tg.home[0], 0, tg.home[1]); tg.g.rotation.y = Math.PI / 2; return tg; });
+    const vs = { name: b.name, to: b.to, berth: String(bi + 1), s: "", c: "" }; VESSELS.push(vs);
     const reset = () => { b.cranes.forEach((bay) => ship.bays[bay].forEach((s, i) => (s.m.visible = i < 12))); };
     reset();
     const cranes = b.cranes.map((bay, ci) => {
@@ -1372,6 +1766,22 @@ function buildPort() {
       else if (st.phase === "leave") { const u = st.t / 50; const side = ease(Math.min(1, u / .3)), fwd = Math.max(0, (u - .25) / .75); ship.g.position.set(b.x + 950 * fwd * fwd, 0, BERTH_Z - 40 * side); if (u >= 1) { st.phase = "away"; st.t = 0; ship.g.visible = false; } }
       else if (st.phase === "away") { if (st.t > 20) { st.phase = "arrive"; st.t = 0; reset(); cranes.forEach((k) => { k.slot = 12; k.done = false; k.ct = 0; k.placed = -1; }); ship.g.visible = true; } }
       else if (st.phase === "arrive") { const u = st.t / 50, a = Math.min(1, u / .75), side = ease(clamp((u - .7) / .3, 0, 1)); ship.g.position.set(b.x - 950 * (1 - a) * (1 - a), 0, BERTH_Z - 40 * (1 - side)); if (u >= 1) { st.phase = "load"; st.t = 0; } }
+      // tugs: attached while the ship comes off or onto the berth, otherwise waiting at home
+      const u2 = st.t / 50, assist = (st.phase === "leave" && u2 < .42) || (st.phase === "arrive" && u2 > .5);
+      tugs.forEach((tg) => {
+        const sp = ship.g.position, tx = assist ? sp.x + tg.side * 30 : tg.home[0], tz = assist ? sp.z - 19 : tg.home[1];
+        const dx = tx - tg.g.position.x, dz = tz - tg.g.position.z, d = Math.hypot(dx, dz), mv = Math.min(d, Math.max(6, d * 1.2) * dt);
+        if (d > .05) { tg.g.position.x += dx / d * mv; tg.g.position.z += dz / d * mv; }
+        const want = d > 3 ? Math.atan2(-dz, dx) : Math.PI / 2; tg.g.rotation.y += angDiff(tg.g.rotation.y, want) * Math.min(1, dt * 1.5);
+        tg.g.position.y = Math.sin(t * 1.3 + tg.side) * .1;
+        tg.line.visible = assist && d < 6;
+        if (tg.line.visible) { const a = tg.g.position, bx = sp.x + tg.side * 30, bz = sp.z - 10; tg.line.position.set((a.x - 6 * Math.cos(tg.g.rotation.y) + bx) / 2, 2.4, (a.z + 6 * Math.sin(tg.g.rotation.y) + bz) / 2); tg.line.lookAt(bx, 2.4, bz); tg.line.scale.z = Math.hypot(bx - tg.line.position.x, bz - tg.line.position.z) * 2; }
+      });
+      // the board at the gate
+      if (st.phase === "load") { let pl = 0, tot = 0; cranes.forEach((k) => { pl += k.slot - 12; tot += ship.bays[k.bay].length - 12; }); vs.s = "Loading " + pl + "/" + tot + " containers"; vs.c = "#7ad7a0"; }
+      else if (st.phase === "leave") { vs.s = u2 < .42 ? "Departing with tugs" : "Departed"; vs.c = "#f2f0ec"; }
+      else if (st.phase === "away") { vs.s = "At sea to " + b.to[0] + b.to.slice(1).toLowerCase(); vs.c = "#8b96a2"; }
+      else { vs.s = u2 > .5 ? "Berthing with tugs" : "Arriving"; vs.c = "#ffd27a"; }
       // the cranes
       for (const k of cranes) {
         const { trolley, spreader, cables, carried } = k.crane, slots = ship.bays[k.bay];
@@ -1409,6 +1819,10 @@ function buildPort() {
   mesh(box(6, 1.2, 1.2), M.yellow, 0, 17.5, -9.5, rtg); mesh(box(6, 1.2, 1.2), M.yellow, 0, 17.5, 9.5, rtg);
   mesh(box(3, 1.4, 3), M.steelDark, 0, 18.6, 0, rtg);
   let rt = 0; updaters.push((dt) => { rt += dt; rtg.position.x = 70 + Math.sin(rt * .05) * 16; });
+  // live vessel board by the gate
+  { const bm = liveTable(1024, 384, "VESSELS  ·  EXPORT TERMINAL", [["SHIP", 28], ["BERTH", 300], ["TO", 430], ["STATUS", 640]], () => VESSELS.map((v) => [v.name, v.berth, v.to, { s: v.s, c: v.c }]));
+    for (const s of [-1, 1]) { mesh(box(.45, 9, .45), M.steelDark, 26 + s * 7.6, 4.5, ROAD_PORT - 13); addCircle(26 + s * 7.6, ROAD_PORT - 13, .6); }
+    mesh(box(15.6, 6.1, .4), M.dark, 26, 6.6, ROAD_PORT - 13); mesh(new THREE.PlaneGeometry(15, 5.6), bm, 26, 6.6, ROAD_PORT - 12.78, undefined, false); }
   // gate house and port sign
   const gm = new THREE.MeshBasicMaterial({ map: nameSignTex("EXPORT TERMINAL"), toneMapped: false });
   for (const s of [-1, 1]) mesh(box(.8, 7, .8), M.maroonGloss, s * 9, 3.5, ROAD_PORT - 12, undefined);
@@ -1420,12 +1834,7 @@ function buildPort() {
   for (let i = 0; i < 6; i++) mesh(cyl(2.6 - i * .22, 2.6 - (i + 1) * .22, 4, 20), i % 2 ? M.maroon : M.white, 0, 1 + i * 4 + 2, 0, lh);
   const lamp = new THREE.MeshStandardMaterial({ color: "#fff7d6", emissive: "#ffe9a8", emissiveIntensity: .3 }); nightGlow.push({ mat: lamp, day: .3, night: 3 });
   mesh(cyl(1.4, 1.4, 2.2, 16), lamp, 0, 26.2, 0, lh); mesh(new THREE.ConeGeometry(1.8, 1.8, 16), M.maroon, 0, 28.2, 0, lh);
-  // tugboats and ships passing out at sea
-  for (let i = 0; i < 2; i++) {
-    const tug = new THREE.Group(); scene.add(tug);
-    mesh(box(14, 3, 5.4), M.maroonGloss, 0, .2, 0, tug); mesh(box(5, 3, 4), M.white, 1, 3, 0, tug); mesh(box(1.2, 2.6, 1.4), M.dark, -1.8, 5, 0, tug); mesh(box(4, 1.2, 5.8), M.rubber, 6.4, .6, 0, tug);
-    let a = i * Math.PI; updaters.push((dt, t) => { a += dt * .035; tug.position.set(60 + Math.cos(a) * 170, Math.sin(t + i) * .1, -420 + Math.sin(a) * 45); tug.rotation.y = Math.atan2(-Math.sin(a) * 170, Math.cos(a) * 45) + Math.PI / 2; });
-  }
+  // ships passing out at sea
   for (const [z, sp, x0, seed] of [[-700, 6, -300, 13], [-820, -5, 400, 17]]) {
     const s = makeShip({ craneBays: [], seed }); let x = x0; s.g.rotation.y = sp < 0 ? Math.PI : 0;
     updaters.push((dt, t) => { x += sp * dt; if (x > 800) x = -800; if (x < -800) x = 800; s.g.position.set(x, Math.sin(t * .5) * .12, z); });
@@ -1553,6 +1962,12 @@ function buildAirport() {
     [-260, 135, -500], [-470, 115, -280], [-520, 90, -90], [-430, 62, runZ], [-200, 44, runZ], [40, 22, runZ], [170, 7, runZ], [236, 0, runZ]
   ].map((q) => new THREE.Vector3(q[0], q[1], q[2])), false, "centripetal");
   const airLen = air.getLength();
+  // where a go-around rejoins the circuit
+  let gaU = 0, best = 1e9; const gp = new THREE.Vector3();
+  for (let i = 0; i <= 400; i++) { air.getPointAt(i / 400, gp); const d = gp.distanceTo(new THREE.Vector3(650, 55, runZ - 30)); if (d < best) { best = d; gaU = i / 400; } }
+  goAround = (p) => { const pts = [p.clone(), new THREE.Vector3(330, 26, runZ), new THREE.Vector3(520, 44, runZ - 6), air.getPointAt(gaU + .01)]; const c = new THREE.CatmullRomCurve3(pts, false, "centripetal"); return { c, len: c.getLength(), s: 0, u0: gaU }; };
+  { const bm = liveTable(1024, 384, "DEPARTURES  ·  AIR CARGO", [["FLIGHT", 28], ["TO", 190], ["STAND", 470], ["STATUS", 590]], () => FLIGHTS.map((f) => [f.flight, f.to, f.stand, { s: f.s, c: f.c }]));
+    mesh(box(15.6, 6.1, .3), M.dark, tx - 45, 11, termZ + tD / 2 + .2); mesh(new THREE.PlaneGeometry(15, 5.6), bm, tx - 45, 11, termZ + tD / 2 + .4, undefined, false); }
   stands.forEach((sx, si) => {
     const jet = makeJet();
     const doorX = sx + 3.1, doorZ = standZ + 12.5;
@@ -1573,18 +1988,22 @@ function buildAirport() {
     const legs = [
       { k: "stand", dur: 48 },
       { k: "ground", pts: [[sx, standZ], [sx, lane - 20], [sx + 6, lane - 6], [sx + 22, lane]], v: 2.6, rev: true },
-      { k: "ground", pts: [[sx + 22, lane], [228, lane], [214, lane + 8], [212, runZ - 10], [224, runZ]], v: 9 },
+      { k: "ground", pts: [[sx + 22, lane], [228, lane], [214, lane + 8]], v: 9, tag: "taxi" },
       { k: "hold", dur: 4 },
+      { k: "ground", pts: [[214, lane + 8], [212, runZ - 10], [224, runZ]], v: 5, lineup: true },
       { k: "roll", x0: 224, x1: 340, v0: 0, v1: 52 },
       { k: "air", v: 55 },
       { k: "roll", x0: 236, x1: 470, v0: 50, v1: 8 },
-      { k: "ground", pts: [[470, runZ], [482, runZ - 12], [478, lane], [sx + 16, lane], [sx + 3, lane - 8], [sx, lane - 22], [sx, standZ]], v: 8 }
+      { k: "ground", pts: [[470, runZ], [482, runZ - 12], [478, lane], [sx + 16, lane], [sx + 3, lane - 8], [sx, lane - 22], [sx, standZ]], v: 8, tag: "in" }
     ];
+    const me = { flight: ["SW 101", "SW 204", "SW 317"][si], to: ["JEDDAH", "DÜSSELDORF", "JEDDAH"][si], stand: "A" + (si + 1), rw: false, u: 0, ga: null, s: "", c: "" }; FLIGHTS.push(me);
+    const jv = regVehicle(jet.g, { len: 52, half: 6, gap: 14 });
     let li = 0, lt = 0, prevYaw = 0, bank = 0, spin = 0;
     const tmp = new THREE.Vector3(), ahead = new THREE.Vector3();
     const groundAt = (x, z, yaw) => { jet.g.position.set(x, 0, z); jet.g.rotation.set(0, yaw, 0); };
     const step = (dt, t) => {
-      const L = legs[li]; lt += dt; let moving = true, next = false, loading = false;
+      const L = legs[li]; lt += dt * (L.k === "ground" ? trafficK(jv, dt, true) : (trafficK(jv, dt, false), 1)); let moving = true, next = false, loading = false;
+      jv.rev = !!L.rev; jv.air = L.k === "air" || L.k === "roll";
       if (L.k === "stand") {
         moving = false; groundAt(sx, standZ, Math.PI); loading = true;
         const ld = lt - 3, n = Math.floor(ld / 8), u = (ld % 8) / 8;
@@ -1605,12 +2024,20 @@ function buildAirport() {
         const [x, z, h] = pointOn(L.pts, s); const yaw = L.rev ? h + Math.PI : h;
         jet.g.position.set(x, 0, z); jet.g.rotation.set(0, jet.g.rotation.y + angDiff(jet.g.rotation.y, yaw) * Math.min(1, dt * 3), 0);
         if (k >= 1) next = true;
-      } else if (L.k === "hold") { moving = true; if (lt >= L.dur) next = true; }
+      } else if (L.k === "hold") { moving = true; if (lt >= L.dur && runwayFree(me)) next = true; }
       else if (L.k === "roll") {
         const d = L.x1 - L.x0, dur = 2 * d / (L.v0 + L.v1), a = (L.v1 - L.v0) / dur, tt = Math.min(lt, dur);
         groundAt(L.x0 + L.v0 * tt + .5 * a * tt * tt, runZ, Math.PI / 2); if (lt >= dur) next = true;
       } else if (L.k === "air") {
-        const u = clamp(lt * L.v / airLen, 0, 1); air.getPointAt(u, tmp); air.getPointAt(Math.min(1, u + .002), ahead);
+        let u = clamp(lt * L.v / airLen, 0, 1);
+        // go around if someone is on the runway during the final approach
+        if (!me.ga && u > .86 && u < .93 && started && onRunway(ch.x, ch.z)) { air.getPointAt(u, tmp); me.ga = goAround(tmp); }
+        if (me.ga) {
+          const G = me.ga; G.s += L.v * dt; const kk = Math.min(1, G.s / G.len); G.c.getPointAt(kk, tmp);
+          if (kk + .004 > 1) air.getPointAt(G.u0 + .014, ahead); else G.c.getPointAt(kk + .004, ahead);
+          if (kk >= 1) { lt = (G.u0 + .01) * airLen / L.v; me.ga = null; } u = .3;
+        } else { air.getPointAt(u, tmp); air.getPointAt(Math.min(1, u + .002), ahead); }
+        me.u = u;
         jet.g.position.copy(tmp); jet.g.up.set(0, 1, 0); jet.g.lookAt(ahead);
         const yaw = Math.atan2(ahead.x - tmp.x, ahead.z - tmp.z), rate = angDiff(prevYaw, yaw) / Math.max(dt, 1e-3); prevYaw = yaw;
         bank += (clamp(-rate * 3.2, -.45, .45) - bank) * Math.min(1, dt * 1.5); jet.g.rotateZ(bank);
@@ -1621,6 +2048,16 @@ function buildAirport() {
       if (L.k === "air" && lt < dt * 2) prevYaw = jet.g.rotation.y;
       spin += dt * (moving ? 22 : (L.k === "stand" && lt < 4 ? 22 * (1 - lt / 4) : 0)); jet.fans.forEach((f) => (f.rotation.z = spin));
       jet.beacon.material.opacity = (t * 1.2) % 1 < .12 ? 1 : .15;
+      // what this flight is doing, for the departures board and the runway
+      me.rw = L.k === "roll" || !!L.lineup || (L.k === "air" && !me.ga && (me.u > .8 || me.u < .05));
+      if (L.k === "stand") { const n = Math.max(0, Math.min(5, Math.floor((lt - 3) / 8))); me.s = lt < 3 ? "Arrived" : n < 5 ? "Loading " + n + "/5 containers" : "Loaded, ready"; me.c = "#7ad7a0"; }
+      else if (L.rev) { me.s = "Pushback"; me.c = "#f2f0ec"; }
+      else if (L.tag === "taxi") { me.s = "Taxiing to runway"; me.c = "#f2f0ec"; }
+      else if (L.k === "hold") { me.s = lt < L.dur ? "Holding short" : "Waiting for runway"; me.c = "#ffd27a"; }
+      else if (L.lineup) { me.s = "Lining up"; me.c = "#f2f0ec"; }
+      else if (L.k === "roll") { me.s = L.x0 === 224 ? "Taking off" : "Landed"; me.c = L.x0 === 224 ? "#f2f0ec" : "#7ad7a0"; }
+      else if (L.k === "air") { me.s = me.ga ? "Go-around" : me.u < .5 ? "Departed" : "On approach"; me.c = me.ga ? "#ff6b5a" : me.u < .5 ? "#8b96a2" : "#ffd27a"; }
+      else if (L.tag === "in") { me.s = "Taxiing to stand"; me.c = "#f2f0ec"; }
       if (next) { li = (li + 1) % legs.length; lt = 0; }
     };
     let pre = si * 88; while (pre > 0) { step(.1, 0); pre -= .1; }
