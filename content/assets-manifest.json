@@ -689,6 +689,78 @@
       "notes": "MIT licence of flag-icons, which the flag SVGs come from.",
       "publish": "yes",
       "status": "in-repo"
+    },
+    {
+      "path": "public/images/hero/pipe-wide.webp",
+      "source": "generated",
+      "origin": "scripts/render-hero-pieces.mjs (three.js studio render, scripts/hero-pieces/scene.html)",
+      "notes": "Home hero piece: wide glazed pipe standing on its spigot, socket up. A 3D render in SWEILLEM's glaze colours, not a photo of a specific product; approved by Ahmed 2026-10-04.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/hero/pipe-dark.webp",
+      "source": "generated",
+      "origin": "scripts/render-hero-pieces.mjs (three.js studio render, scripts/hero-pieces/scene.html)",
+      "notes": "Home hero piece: dark glazed pipe standing, socket up. A 3D render in SWEILLEM's glaze colours, not a photo of a specific product; approved by Ahmed 2026-10-04.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/hero/pipe-honey.webp",
+      "source": "generated",
+      "origin": "scripts/render-hero-pieces.mjs (three.js studio render, scripts/hero-pieces/scene.html)",
+      "notes": "Home hero piece: honey-glazed pipe standing, socket up. A 3D render in SWEILLEM's glaze colours, not a photo of a specific product; approved by Ahmed 2026-10-04.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/hero/junction.webp",
+      "source": "generated",
+      "origin": "scripts/render-hero-pieces.mjs (three.js studio render, scripts/hero-pieces/scene.html)",
+      "notes": "Home hero piece: glazed junction. A 3D render in SWEILLEM's glaze colours, not a photo of a specific product; approved by Ahmed 2026-10-04.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/hero/bend.webp",
+      "source": "generated",
+      "origin": "scripts/render-hero-pieces.mjs (three.js studio render, scripts/hero-pieces/scene.html)",
+      "notes": "Home hero piece: glazed bend. A 3D render in SWEILLEM's glaze colours, not a photo of a specific product; approved by Ahmed 2026-10-04.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/hero/short-piece.webp",
+      "source": "generated",
+      "origin": "scripts/render-hero-pieces.mjs (three.js studio render, scripts/hero-pieces/scene.html)",
+      "notes": "Home hero piece: glazed short piece. A 3D render in SWEILLEM's glaze colours, not a photo of a specific product; approved by Ahmed 2026-10-04.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/hero/shard-1.webp",
+      "source": "generated",
+      "origin": "scripts/render-hero-pieces.mjs (three.js studio render, scripts/hero-pieces/scene.html)",
+      "notes": "Home hero piece: broken glazed pipe shard. A 3D render in SWEILLEM's glaze colours, not a photo of a specific product; approved by Ahmed 2026-10-04.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/hero/shard-2.webp",
+      "source": "generated",
+      "origin": "scripts/render-hero-pieces.mjs (three.js studio render, scripts/hero-pieces/scene.html)",
+      "notes": "Home hero piece: broken glazed pipe shard. A 3D render in SWEILLEM's glaze colours, not a photo of a specific product; approved by Ahmed 2026-10-04.",
+      "publish": "yes",
+      "status": "in-repo"
+    },
+    {
+      "path": "public/images/hero/shard-3.webp",
+      "source": "generated",
+      "origin": "scripts/render-hero-pieces.mjs (three.js studio render, scripts/hero-pieces/scene.html)",
+      "notes": "Home hero piece: broken glazed pipe shard. A 3D render in SWEILLEM's glaze colours, not a photo of a specific product; approved by Ahmed 2026-10-04.",
+      "publish": "yes",
+      "status": "in-repo"
     }
   ],
   "liveSite": [

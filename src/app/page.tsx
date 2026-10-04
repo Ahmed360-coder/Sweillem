@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ButtonLink } from "@/components/Button";
 import { CtaBand } from "@/components/CtaBand";
-import { HeroSlideshow, type HeroSlide } from "@/components/HeroSlideshow";
+import { ClayHero } from "@/components/ClayHero";
 import { FamilyGrid } from "@/components/FamilyGrid";
 import { Section } from "@/components/Section";
 import { frameSVG, getChapters, H, W } from "@/lib/journey/frames";
@@ -29,57 +29,6 @@ const stats = [
   { value: "100+", label: "Years design life" },
   { value: "10", label: "Product families" },
 ];
-
-// Real site photos, one country after another. Places follow content/company.ts.
-const heroSlides: HeroSlide[] = [
-  {
-    src: "/images/site/hero.webp",
-    alt: "SWEILLEM vitrified clay pipes laid on a site in Germany",
-    kicker: "On site",
-    place: "Germany · Euro Sweillem",
-  },
-  {
-    src: "/images/site/hero-makkah.webp",
-    alt: "Stacked SWEILLEM clay pipes next to hotel towers in Makkah",
-    kicker: "Haram central area",
-    place: "Makkah, Saudi Arabia",
-  },
-  {
-    src: "/images/site/hero-alamein.webp",
-    alt: "Rows of SWEILLEM clay pipes on site with the New Alamein towers behind",
-    kicker: "On site",
-    place: "New Alamein City, Egypt",
-  },
-  {
-    src: "/images/site/hero-makkah-lift.webp",
-    alt: "A crane lifting SWEILLEM clay pipes near the minarets of the Haram in Makkah",
-    kicker: "Delivery",
-    place: "Makkah, Saudi Arabia",
-  },
-  {
-    src: "/images/site/hero-germany-street.webp",
-    alt: "An excavator lowering a clay pipe into a street trench in Germany",
-    kicker: "Laying",
-    place: "Germany · Euro Sweillem",
-  },
-];
-
-function RisingHeadline({ text, emphasis }: { text: string; emphasis: string }) {
-  const words = text.split(" ");
-  return (
-    <h1 className="text-[clamp(34px,4vw,54px)] tracking-[-.01em]">
-      {words.map((word, i) => (
-        <span key={i}>
-          <span className="rise-word">
-            <span style={{ "--i": i } as CSSProperties} className={word === emphasis ? "text-maroon" : undefined}>
-              {word}
-            </span>
-          </span>{" "}
-        </span>
-      ))}
-    </h1>
-  );
-}
 
 // Standards named on About Us and on SWEILLEM's certificate files.
 const standards = [
@@ -108,45 +57,9 @@ export default function HomePage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: organizationJsonLd() }} />
 
-      <section aria-label="Introduction" className="overflow-x-clip pt-[clamp(20px,4vw,56px)] pb-[clamp(48px,6vw,80px)]">
-        <div className="wrap grid items-center gap-[clamp(24px,4vw,64px)] md:grid-cols-[1.25fr_1fr]">
-          <div className="grid min-w-0 gap-[22px]">
-            <p className="eyebrow fade-up" style={{ "--dl": "60ms" } as CSSProperties}>
-              Vitrified clay pipes · Cairo, since 1935
-            </p>
-            <RisingHeadline text="Daring to be the first, working hard for a world-class level" emphasis="world-class" />
-            <p className="lede fade-up" style={{ "--dl": "620ms" } as CSSProperties}>
-              Glazed vitrified clay pipes and fittings for sewer and drainage networks, made from Aswan clay and fired at up to 1200 °C.
-            </p>
-            <div className="fade-up flex flex-wrap gap-3" style={{ "--dl": "760ms" } as CSSProperties}>
-              <ButtonLink href="/products" arrow>
-                Explore the pipes
-              </ButtonLink>
-              <ButtonLink href="/process" variant="ghost">
-                How it’s made
-              </ButtonLink>
-            </div>
-          </div>
+      <ClayHero />
 
-          <div className="relative -order-1 mx-auto aspect-square w-full max-w-[min(460px,82vw)] min-w-0 md:order-none md:max-w-none">
-            <svg className="rings pointer-events-none absolute -inset-[8%] -z-10" viewBox="0 0 400 400" aria-hidden="true">
-              {[190, 160, 128, 94].map((r, i) => (
-                <circle key={r} cx="200" cy="200" r={r} style={{ "--c": Math.round(2 * Math.PI * r), "--i": i } as CSSProperties} />
-              ))}
-            </svg>
-            <HeroSlideshow slides={heroSlides} />
-            <div
-              className="badge-1935 hex pointer-events-none absolute end-2 top-[6%] z-10 grid h-24 w-[84px] place-content-center bg-brand text-center text-on-brand md:-end-[3%] md:h-32 md:w-28"
-              aria-hidden="true"
-            >
-              <span className="font-mono text-[10px] font-medium tracking-[.14em] uppercase">Since</span>
-              <b className="font-display text-[22px] leading-none font-bold md:text-[30px]">1935</b>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div className="wrap">
+      <div id="after-hero" className="wrap scroll-mt-24">
         <dl className="grid grid-cols-2 border-y border-line sm:grid-cols-3 lg:grid-cols-5">
           {stats.map((s) => (
             <div key={s.label} className="grid min-w-0 gap-1 border-b border-line px-5 py-6 last:border-b-0 lg:border-b-0 lg:border-s lg:first:border-s-0">
