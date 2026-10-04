@@ -177,7 +177,7 @@ test.describe("light and dark mode", () => {
       const page = await ctx.newPage();
       await skipIntro(page);
       await page.goto("/");
-      await expect(page.getByRole("link", { name: "Explore the pipes" })).toHaveCSS("background-color", "rgb(122, 4, 4)");
+      await expect(page.locator(".clay-hero").getByRole("link", { name: "Products", exact: true })).toHaveCSS("background-color", "rgb(122, 4, 4)");
       await ctx.close();
     }
   });
@@ -242,13 +242,13 @@ test.describe("intro", () => {
 
   test("holds the hero entrance until the intro hands off", async ({ page }) => {
     await page.goto("/");
-    const word = page.locator(".rise-word > span").first();
-    const playState = () => word.evaluate((el) => getComputedStyle(el).animationPlayState);
+    const pipe = page.locator('.clay-piece[data-kind="pipe"]').first();
+    const playState = () => pipe.evaluate((el) => getComputedStyle(el).animationPlayState);
     await expect(page.locator("html")).toHaveAttribute("data-intro", "play");
-    expect(await playState()).toBe("paused");
+    expect(await playState()).toContain("paused");
     await page.keyboard.press("Escape");
     await expect(page.locator("html")).toHaveAttribute("data-intro", "exit");
-    expect(await playState()).toBe("running");
+    expect(await playState()).not.toContain("paused");
     await expect(page.locator("html")).toHaveAttribute("data-intro", "done", { timeout: 2000 });
   });
 
@@ -273,16 +273,6 @@ test.describe("layout rules (design/taste-audit.md)", () => {
     await skipIntro(page);
   });
 
-  test("hero headline takes at most three lines at 1280 px", async ({ page }) => {
-    await page.setViewportSize({ width: 1280, height: 900 });
-    await page.goto("/");
-    const lines = await page.locator("h1").evaluate((h) => {
-      const lh = parseFloat(getComputedStyle(h).lineHeight);
-      return Math.round(h.getBoundingClientRect().height / lh);
-    });
-    expect(lines).toBeLessThanOrEqual(3);
-  });
-
   for (const width of [980, 1100, 1280, 1440]) {
     test(`navigation stays on one line at ${width} px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 800 });
@@ -297,39 +287,48 @@ test.describe("layout rules (design/taste-audit.md)", () => {
   }
 });
 
-test.describe("home hero slideshow", () => {
+test.describe("home hero", () => {
   test.beforeEach(async ({ page }) => skipIntro(page));
 
-  test("moves to the next photo by itself and can be paused", async ({ page }) => {
+  test("fills the first screen with the logo, the pipes and the three buttons", async ({ page }) => {
     await page.goto("/");
-    const caption = page.locator(".hero-caption strong");
-    await expect(caption).toHaveText("Germany · Euro Sweillem");
-    await expect(caption).toHaveText("Makkah, Saudi Arabia", { timeout: 8000 });
-
-    await page.getByRole("button", { name: "Pause slideshow" }).click();
-    await page.getByRole("button", { name: /^Photo 3 of 5/ }).click();
-    await expect(caption).toHaveText("New Alamein City, Egypt");
-    await page.waitForTimeout(6500);
-    await expect(caption).toHaveText("New Alamein City, Egypt");
-    await expect(page.getByRole("button", { name: "Play slideshow" })).toBeVisible();
+    const hero = page.locator(".clay-hero");
+    const box = (await hero.boundingBox())!;
+    const height = page.viewportSize()!.height;
+    expect(Math.abs(box.y + box.height - height)).toBeLessThanOrEqual(2);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("SWEILLEM Vitrified Clay Pipes Co.");
+    await expect(hero.locator('.clay-piece[data-kind="pipe"]')).toHaveCount(3);
+    for (const name of ["Products", "Size finder", "Get a quote"]) {
+      const link = hero.getByRole("link", { name, exact: true });
+      await expect(link).toBeVisible();
+      const b = (await link.boundingBox())!;
+      expect(b.y + b.height).toBeLessThanOrEqual(height);
+    }
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow).toBeLessThanOrEqual(0);
   });
 
-  test("a tap on the photo shows the next one, and after the last the first", async ({ page }) => {
+  test("looks the same in the light and dark themes", async ({ browser }) => {
+    const look = async (colorScheme: "light" | "dark") => {
+      const ctx = await browser.newContext({ colorScheme });
+      const page = await ctx.newPage();
+      await skipIntro(page);
+      await page.goto("/");
+      const style = await page.locator(".clay-hero").evaluate((el) => {
+        const cs = getComputedStyle(el);
+        const panel = getComputedStyle(el.querySelector(".clay-hero-panel")!);
+        return [cs.backgroundImage, cs.getPropertyValue("--logo-word"), panel.backgroundColor];
+      });
+      await ctx.close();
+      return style;
+    };
+    expect(await look("dark")).toEqual(await look("light"));
+  });
+
+  test("the scroll cue leads to the rest of the page", async ({ page }) => {
     await page.goto("/");
-    const current = page.locator('[aria-current="true"][aria-label^="Photo "]');
-    const photo = page.getByRole("button", { name: /^Next photo/ });
-    await expect(current).toHaveAttribute("aria-label", /^Photo 1 of 5/);
-    await expect(photo).toHaveAccessibleName("Next photo: Makkah, Saudi Arabia");
-    for (const n of [2, 3, 4, 5, 1]) {
-      await photo.click();
-      await expect(current).toHaveAttribute("aria-label", new RegExp(`^Photo ${n} of 5`));
-    }
-    // The caption sits on the photo; a tap on it goes through to the photo.
-    const box = (await page.locator(".hero-caption").boundingBox())!;
-    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
-    await expect(current).toHaveAttribute("aria-label", /^Photo 2 of 5/);
-    await photo.press("Enter");
-    await expect(current).toHaveAttribute("aria-label", /^Photo 3 of 5/);
+    await page.locator(".clay-hero").getByRole("link", { name: /Scroll/ }).click();
+    await expect(page.locator("#after-hero")).toBeInViewport();
   });
 
   test("stays still with reduced motion", async ({ browser }) => {
@@ -337,9 +336,8 @@ test.describe("home hero slideshow", () => {
     const page = await ctx.newPage();
     await skipIntro(page);
     await page.goto("/");
-    const caption = page.locator(".hero-caption strong");
-    await page.waitForTimeout(6500);
-    await expect(caption).toHaveText("Germany · Euro Sweillem");
+    const names = await page.locator(".clay-piece").evaluateAll((els) => els.map((el) => getComputedStyle(el).animationName));
+    expect(new Set(names)).toEqual(new Set(["none"]));
     await ctx.close();
   });
 });
