@@ -543,6 +543,13 @@
   height: min(40%, 24vw);
   animation: hero-logo 1s var(--ease-glaze) both;
 }
+/* Give the logo its own size from the viewBox: Safari draws a viewBox-only SVG
+   with an auto width and a percentage height as nothing. */
+.clay-hero-logo svg {
+  height: 100%;
+  width: auto;
+  aspect-ratio: 642 / 217;
+}
 @keyframes hero-logo {
   from {
     opacity: 0;
@@ -655,6 +662,10 @@
     height: auto;
     width: 92%;
     margin-inline: auto;
+  }
+  .clay-hero-logo svg {
+    width: 100%;
+    height: auto;
   }
   .clay-hero-panel {
     inset-inline: -45%;
