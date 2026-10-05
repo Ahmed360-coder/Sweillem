@@ -292,6 +292,8 @@ test.describe("home hero", () => {
 
   test("fills the first screen with the logo, the pipes and the three buttons", async ({ page }) => {
     await page.goto("/");
+    // Measure once the page's own rise-and-fade entrance has ended; mid-rise the hero sits a few px low.
+    await page.locator(".view-enter").evaluate((el) => Promise.all(el.getAnimations().map((a) => a.finished)));
     const hero = page.locator(".clay-hero");
     const box = (await hero.boundingBox())!;
     const height = page.viewportSize()!.height;
