@@ -292,11 +292,19 @@ test.describe("home hero", () => {
 
   test("fills the first screen with the logo, the pipes and the three buttons", async ({ page }) => {
     await page.goto("/");
+    // Measure once the page's own rise-and-fade entrance has ended; mid-rise the hero sits a few px low.
+    await page.locator(".view-enter").evaluate((el) => Promise.all(el.getAnimations().map((a) => a.finished)));
     const hero = page.locator(".clay-hero");
     const box = (await hero.boundingBox())!;
     const height = page.viewportSize()!.height;
     expect(Math.abs(box.y + box.height - height)).toBeLessThanOrEqual(2);
     await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("SWEILLEM Vitrified Clay Pipes Co.");
+    // The big logo has a real size and sits above the pipes (Safari once drew it at 0 px).
+    const logo = (await hero.locator(".clay-hero-logo svg").boundingBox())!;
+    expect(logo.width).toBeGreaterThan(Math.min(box.width * 0.5, 600));
+    expect(logo.height).toBeGreaterThan(logo.width / 3.2);
+    const pipeTop = Math.min(...(await hero.locator('.clay-piece[data-kind="pipe"]').evaluateAll((els) => els.map((e) => e.getBoundingClientRect().top))));
+    expect(logo.y).toBeLessThan(pipeTop);
     await expect(hero.locator('.clay-piece[data-kind="pipe"]')).toHaveCount(3);
     for (const name of ["Products", "Size finder", "Get a quote"]) {
       const link = hero.getByRole("link", { name, exact: true });
