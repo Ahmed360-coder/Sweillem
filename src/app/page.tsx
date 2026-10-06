@@ -16,9 +16,10 @@ export const metadata: Metadata = {
   openGraph: { ...baseOpenGraph, url: "/" },
 };
 
-// The journey card shows the kiln mid-firing, drawn by the same code as the Process journey.
+// The journey card shows the kiln at its 1200 °C peak, door shut and glowing,
+// drawn by the same code as the Process journey.
 const fire = getChapters("en").find((c) => c.id === "fire")!;
-const teaserFrame = frameSVG(fire.start + fire.lead + 6, { uid: "teaser" });
+const teaserFrame = frameSVG(fire.start + fire.lead + 8.2, { uid: "teaser" });
 
 // Stats that SWEILLEM publishes and that agree across its sources.
 // The project count stays off until SWEILLEM confirms it (docs/content-gaps.md 2.1).
@@ -113,7 +114,7 @@ export default function HomePage() {
               scroll.
             </p>
             <Link href="/process#steps" className="link w-fit">
-              The six steps in detail
+              Every step in detail
             </Link>
           </div>
           <Link
@@ -126,7 +127,7 @@ export default function HomePage() {
               aria-hidden="true"
               dangerouslySetInnerHTML={{ __html: teaserFrame }}
             />
-            <span className="absolute end-3 bottom-3 flex items-center gap-3 rounded-full bg-ink/85 py-1 ps-1 pe-4 text-paper shadow-card backdrop-blur-sm sm:end-4 sm:bottom-4 sm:py-1.5 sm:ps-1.5 sm:pe-5">
+            <span className="absolute start-3 top-3 flex items-center gap-3 rounded-full bg-ink/85 py-1 ps-1 pe-4 text-paper shadow-card backdrop-blur-sm sm:start-4 sm:top-4 sm:py-1.5 sm:ps-1.5 sm:pe-5">
               <span className="hex grid size-10 place-content-center bg-brand text-on-brand transition-transform duration-300 ease-set group-hover:scale-110 sm:size-12">
                 <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
                   <path d="M12 5v14M6 13l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />

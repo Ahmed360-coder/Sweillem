@@ -536,11 +536,12 @@
 .clay-hero-logo {
   position: absolute;
   inset-inline: 0;
-  top: 7%;
+  top: 6%;
   margin: 0;
   display: flex;
   justify-content: center;
-  height: min(40%, 24vw);
+  /* Sized so the whole logo, tagline included, sits above the pipes. */
+  height: min(29%, 21vw);
   animation: hero-logo 1s var(--ease-glaze) both;
 }
 /* Give the logo its own size from the viewBox: Safari draws a viewBox-only SVG
