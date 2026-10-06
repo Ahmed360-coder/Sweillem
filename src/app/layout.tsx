@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans, Jost } from "next/font/google";
 import type { ReactNode } from "react";
+import { Assistant } from "@/components/Assistant";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Intro, introGateScript } from "@/components/Intro";
@@ -75,6 +76,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <Footer />
           <script dangerouslySetInnerHTML={{ __html: revealEarlyScript }} />
           <RevealObserver />
+          <Assistant />
         </MotionProvider>
         <Intro />
       </body>
