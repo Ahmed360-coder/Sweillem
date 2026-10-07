@@ -133,16 +133,26 @@ export function FamilySizeViewer({ family }: { family: ViewerFamily }) {
   }
 
   if (!item) return null;
-  // Close-up frame around a straight piece's socket joint, if it has one.
-  const jointBox: [number, number, number, number] | null =
+  // Close-ups of a straight piece's joint: the socket with the next pipe in it, or,
+  // for a pipe on its own, both ends (spigot seal on the left, socket on the right).
+  const closeUps: { title: string; box: [number, number, number, number]; label: string; detail?: string }[] =
     item.shape.kind === "straight" && item.shape.joint
       ? (() => {
-          const { len, d3 } = item.shape;
+          const { len, d1, d3 } = item.shape;
           const j = item.shape.joint!;
-          const h = Math.max(j.d4, j.d7) / 2 + j.seal + (d3 - item.shape.d1) / 2 + 20;
-          return [len - j.depth * 1.2, 0, len + j.depth + Math.min(j.next, j.depth * 1.2), h];
+          const h = Math.max(j.d4, j.d7) / 2 + j.seal + (d3 - d1) / 2 + 20;
+          const socket: [number, number, number, number] = [len - j.depth * 1.2, 0, len + j.depth + Math.min(j.next, j.depth * 1.2), h];
+          if (j.next > 0) return [{ title: "Joint, close-up", box: socket, label: "the socket joint", detail: ": the next pipe's spigot pushed home and sealed" }];
+          // Just the wall and its seal, a little wider than tall like the panes, centred on each end.
+          const y0 = Math.max(0, d1 / 2 - 30);
+          const half = ((h - y0) * 1.25) / 2;
+          const around = (x: number): [number, number, number, number] => [x - half, y0, x + half, h];
+          return [
+            { title: "Spigot end", box: around(j.depth * 0.45), label: "the spigot end and its seal" },
+            { title: "Socket end", box: around(len + j.depth * 0.35), label: "the socket end and its seal" },
+          ];
         })()
-      : null;
+      : [];
   const shownSize = `DN ${item.size}`;
   const classes = (["N", "H"] as const).filter((c) => type.items.some((i) => i.strength === c));
   const desc = `${title}, ${shownSize}${item.strength ? ` ${item.strength} class` : ""}`;
@@ -169,13 +179,17 @@ export function FamilySizeViewer({ family }: { family: ViewerFamily }) {
                 <div className="min-h-0 flex-1">
                   <FittingDrawing shape={item.shape} frame={frame2d} label={`${desc}, drawn to scale on a 100 mm grid.`} />
                 </div>
-                {jointBox && (
-                  // The joint is small next to a 2 m pipe: a close-up of it, on the same 100 mm grid.
-                  <div className="h-[44%] border-t border-line">
-                    <p className="px-4 pt-2 font-mono text-[10px] tracking-[.1em] text-muted uppercase sm:px-6">Joint, close-up</p>
-                    <div className="h-[calc(100%-22px)]">
-                      <FittingDrawing shape={item.shape} frame={jointBox} label={`Close-up of the socket joint of the ${desc}: the next pipe's spigot pushed home and sealed, to scale on a 100 mm grid.`} />
-                    </div>
+                {closeUps.length > 0 && (
+                  // The joint is small next to a 2 m pipe: close-ups of it, on the same 100 mm grid.
+                  <div className="flex h-[44%] border-t border-line">
+                    {closeUps.map((c, i) => (
+                      <div key={c.title} className={`min-w-0 flex-1 ${i ? "border-l border-line" : ""}`}>
+                        <p className="px-4 pt-2 font-mono text-[10px] tracking-[.1em] text-muted uppercase sm:px-6">{c.title}</p>
+                        <div className="h-[calc(100%-22px)] overflow-hidden">
+                          <FittingDrawing shape={item.shape} frame={c.box} label={`Close-up of ${c.label} of the ${desc}${c.detail ?? ""}, to scale on a 100 mm grid.`} />
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>

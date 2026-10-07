@@ -2,7 +2,7 @@ import { productSpecs, products } from "@content/products";
 import type { SpecTable } from "@content/types";
 import type { FittingShape } from "./fitting-shapes";
 import { explorerHref, type PipeClass } from "./size-finder";
-import { cellText, columnHeading, columnUnit, leadingNumber, rowSize, specGroups } from "./specs";
+import { cellText, columnHeading, columnUnit, leadingNumber, rowSize, specGroups, tableTitle } from "./specs";
 
 // Data for the size finder's other product families (pipes keep their own
 // slider in src/lib/size-finder.ts). For each family: its types (an angle, a
@@ -273,6 +273,40 @@ function jointingSystems(): ViewerType[] {
   return [{ id: "c-joint", label: "C joint", items: items.sort(bySize) }];
 }
 
+/** The longest length a pipe row lists, in mm ("2.0, 2.5" is 2500). */
+function longestMm(t: SpecTable, r: string[]) {
+  const m = (cell(t, r, "length").match(/\d+(?:\.\d+)?/g) ?? []).map(Number);
+  return m.length ? Math.max(...m) * 1000 : null;
+}
+
+function pipeWithJoints(): ViewerType[] {
+  // One pipe per size and class: the row with the longest length.
+  const rows = pipeRows
+    .filter((p) => p.d4 !== null && p.d7 !== null && longestMm(p.table, p.row) !== null)
+    .sort((a, b) => longestMm(b.table, b.row)! - longestMm(a.table, a.row)!)
+    .map((p) => ({ ...p, size: String(p.dn) }));
+  const items = firstPerSize(rows).map((p): ViewerItem => {
+    const depth = socketDepth(p.d1);
+    const len = longestMm(p.table, p.row)!;
+    return {
+      size: p.size,
+      dn: p.dn,
+      strength: p.strength,
+      shape: { kind: "straight", d1: p.d1, d3: p.d3, len, joint: { d4: p.d4!, d7: p.d7!, depth, seal: SEAL, next: 0 } },
+      figures: figuresOf(p.table, p.row),
+      drawn: [
+        `Socket depth: not published, drawn ${depth} mm.`,
+        `Seal thickness: not published, drawn ${SEAL} mm.`,
+        `Length: the longest published, ${len / 1000} m.`,
+        "DN 125 and 150 use the F joint, whose sizes are not published, so they are not drawn here.",
+      ],
+      href: explorerHref("pipes", pipeGroupId(p.table), p.strength, p.size),
+      quote: { product: `Pipes, ${tableTitle(p.table)}`, size: `DN ${p.dn}`, strengthClass: p.strength },
+    };
+  });
+  return [{ id: "c-joint-pipe", label: "C joint", items: items.sort(bySize) }];
+}
+
 function endPlugs(): ViewerType[] {
   const items = socketRows().map((p): ViewerItem => {
     const depth = socketDepth(p.d1);
@@ -429,10 +463,18 @@ const build: Record<string, { note: string; types: () => ViewerType[] }> = {
   "half-channels": { note: "End view, to scale.", types: halfChannels },
 };
 
-/** Every product family but pipes, in the order of the product list. */
+/** Every product family in the order of the product list: pipes as the pipe with its joints (the plain pipe keeps its own slider). */
 export function viewerFamilies(): ViewerFamily[] {
   return products.flatMap((p): ViewerFamily[] => {
-    if (p.slug === "pipes") return [];
+    if (p.slug === "pipes")
+      return [
+        {
+          slug: "pipe-with-joints",
+          name: "Pipe with joints",
+          note: "Section through the centre, to scale: the polyurethane seal on the spigot (left) and in the socket (right).",
+          types: pipeWithJoints(),
+        },
+      ];
     if (p.slug === "u-trap") {
       const pipe = pipeAt(150, "N")!;
       return [

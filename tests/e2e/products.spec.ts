@@ -131,7 +131,7 @@ test("the size finder shows every product family in 3D and to scale", async ({ p
   await page.goto("/products");
   const finder = page.locator("#size");
   const families = finder.getByRole("group", { name: "Product family" });
-  for (const name of ["Pipes", "Bends", "Junctions", "Jointing Systems", "Short Pieces", "Input clutch & End plugs", "Perforated Pipe", "U-Trap", "Enlarger and Reducer", "Half Channels"]) {
+  for (const name of ["Pipes", "Pipe with joints", "Bends", "Junctions", "Jointing Systems", "Short Pieces", "Input clutch & End plugs", "Perforated Pipe", "U-Trap", "Enlarger and Reducer", "Half Channels"]) {
     await expect(families.getByRole("button", { name, exact: true })).toBeVisible();
   }
 
@@ -159,6 +159,14 @@ test("the size finder shows every product family in 3D and to scale", async ({ p
   await slider.fill("0");
   await expect(finder).toContainText("260.0 ± 0.5");
   await expect(finder).toContainText("263.0 ± 0.5");
+
+  // The pipe with its joints: the seal on the spigot and in the socket, each end in close-up.
+  await families.getByRole("button", { name: "Pipe with joints" }).click();
+  await expect(finder.getByText("Pipe with joints, C joint").first()).toBeVisible();
+  await finder.getByRole("button", { name: "To scale" }).click();
+  await expect(finder.getByRole("img", { name: /Close-up of the spigot end and its seal of the Pipe with joints, C joint, DN 500 N class/ })).toBeVisible();
+  await expect(finder.getByRole("img", { name: /Close-up of the socket end and its seal/ })).toBeVisible();
+  await expect(finder.getByText("Socket depth: not published, drawn 110 mm.")).toBeVisible();
 
   // Perforated pipe: drawn with its socket joint, the socket sizes taken from the pipe table.
   await families.getByRole("button", { name: "Perforated Pipe", exact: true }).click();

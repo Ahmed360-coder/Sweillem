@@ -5,7 +5,7 @@
 // published and which are drawn is decided in src/lib/family-viewer.ts.
 
 export type FittingShape =
-  /** A straight barrel: short pieces, perforated pipe (with its holes, and its socket joint with the next pipe). */
+  /** A straight barrel: short pieces, perforated pipe (with its holes, and its socket joint with the next pipe), a pipe with its joints. */
   | { kind: "straight"; d1: number; d3: number; len: number; holes?: Holes; joint?: SocketJoint }
   /** A bend of `angle` degrees around a centre line of radius `radius`. */
   | { kind: "bend"; d1: number; d3: number; angle: number; radius: number }
@@ -38,7 +38,7 @@ export interface SocketJoint {
   d7: number;
   depth: number;
   seal: number;
-  /** How much of the next pipe to show beyond the socket (mm). */
+  /** How much of the next pipe to show beyond the socket (mm); 0 for a pipe on its own, with its spigot seal on the far end. */
   next: number;
 }
 
@@ -108,8 +108,14 @@ export function sectionOf(s: FittingShape): Section {
         const sock = socketHalf(s.d1, s.d3, j.d4, j.depth, j.seal, s.len);
         const gap = Math.max(6, j.depth * 0.06);
         const shift = (polys: Pt[][]) => polys.map((p) => p.map(([x, y]) => [x + s.len, y] as Pt));
-        both(shift([...sock.walls, rect(gap, s.d1 / 2, j.depth + j.next, s.d3 / 2)]), out.walls);
-        both(shift([sock.lining, rect(gap + j.depth * 0.08, s.d3 / 2, j.depth * 0.96, j.d7 / 2)]), out.seals);
+        if (j.next > 0) {
+          both(shift([...sock.walls, rect(gap, s.d1 / 2, j.depth + j.next, s.d3 / 2)]), out.walls);
+          both(shift([sock.lining, rect(gap + j.depth * 0.08, s.d3 / 2, j.depth * 0.96, j.d7 / 2)]), out.seals);
+        } else {
+          // A pipe on its own: its spigot seal sits on the left end, the socket lining on the right.
+          both(shift(sock.walls), out.walls);
+          both([...shift([sock.lining]), rect(j.depth * 0.04, s.d3 / 2, j.depth * 0.92, j.d7 / 2)], out.seals);
+        }
       } else both([rect(0, s.d1 / 2, s.len, s.d3 / 2)], out.walls);
       out.axes.push([
         [-20, 0],
