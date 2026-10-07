@@ -8,6 +8,8 @@ import { Logo } from "./Logo";
 // fixed, so it looks the same in the light and dark themes (Ahmed, 2026-10-04).
 // Positions are a share of the hero box: x from the start edge, b (pipes) from
 // the bottom, y (floats) from the top, h the height; m* are the phone values.
+// On phones the logo's bottom edge is 6% + 31.1vw down the hero (see globals.css),
+// so the floats near it are placed from that edge and never cross the tagline.
 
 interface Piece {
   src: string;
@@ -21,11 +23,11 @@ const pieces: Piece[] = [
   { src: "pipe-wide", kind: "pipe", vars: { x: "41.5%", b: "13%", h: "44%", mx: "28%", mb: "27%", mh: "38%", d: "0s", t: "7s", r0: "1deg", r1: "-1deg" } },
   { src: "pipe-dark", kind: "pipe", vars: { x: "58%", b: "13%", h: "48%", mx: "66%", mb: "29%", mh: "42%", d: ".3s", t: "6.5s", r0: ".5deg", r1: "-2deg" } },
   { src: "junction", kind: "float", vars: { x: "10%", y: "40%", h: "24%", mx: "0%", my: "50%", mh: "11%", a: "-16deg", t: "8s" } },
-  { src: "short-piece", kind: "float", vars: { x: "82%", y: "8%", h: "13%", mx: "80%", my: "22%", mh: "7%", a: "18deg", t: "10s", d: "-3s" } },
-  { src: "bend", kind: "float", vars: { x: "80%", y: "46%", h: "20%", mx: "56%", my: "24%", mh: "6%", a: "12deg", t: "7s", d: "-1s" } },
-  { src: "shard-1", kind: "float", vars: { x: "19%", y: "9%", h: "8%", mx: "36%", my: "25%", mh: "4.5%", a: "25deg", t: "11s", d: "-5s" } },
+  { src: "short-piece", kind: "float", vars: { x: "82%", y: "8%", h: "13%", mx: "80%", my: "calc(6% + 31.1vw + 3vh)", mh: "7%", a: "18deg", t: "10s", d: "-3s" } },
+  { src: "bend", kind: "float", vars: { x: "80%", y: "46%", h: "20%", mx: "56%", my: "calc(6% + 31.1vw + 3vh + 1%)", mh: "6%", a: "12deg", t: "7s", d: "-1s" } },
+  { src: "shard-1", kind: "float", vars: { x: "19%", y: "9%", h: "8%", mx: "36%", my: "calc(6% + 31.1vw + 3vh + 0.5%)", mh: "4.5%", a: "25deg", t: "11s", d: "-5s" } },
   { src: "shard-2", kind: "float", vars: { x: "73%", y: "44%", h: "8%", mx: "88%", my: "50%", mh: "4%", a: "-20deg", t: "8.5s", d: "-2s" } },
-  { src: "shard-3", kind: "float", vars: { x: "22%", y: "56%", h: "7%", mx: "10%", my: "27%", mh: "4%", a: "40deg", t: "12s", d: "-6s" } },
+  { src: "shard-3", kind: "float", vars: { x: "22%", y: "56%", h: "7%", mx: "10%", my: "calc(6% + 31.1vw + 3vh + 2%)", mh: "4%", a: "40deg", t: "12s", d: "-6s" } },
   { src: "shard-1", kind: "float", desktopOnly: true, vars: { x: "88%", y: "34%", h: "5%", a: "110deg", t: "9.5s" } },
   { src: "shard-2", kind: "float", desktopOnly: true, vars: { x: "8%", y: "24%", h: "5%", a: "70deg", t: "7.5s", d: "-4s" } },
   { src: "shard-3", kind: "float", desktopOnly: true, vars: { x: "90%", y: "64%", h: "4.5%", a: "-60deg", t: "10.5s" } },

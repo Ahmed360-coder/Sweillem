@@ -317,6 +317,23 @@ test.describe("home hero", () => {
     expect(overflow).toBeLessThanOrEqual(0);
   });
 
+  test("no pipe or fitting covers the tagline on a short phone screen", async ({ browser }) => {
+    // An iPhone with Safari's bars showing leaves about 660 px (SE: about 550 px) of page.
+    for (const viewport of [
+      { width: 393, height: 659 },
+      { width: 375, height: 553 },
+    ]) {
+      const ctx = await browser.newContext({ viewport, isMobile: true, hasTouch: true, reducedMotion: "reduce" });
+      const page = await ctx.newPage();
+      await skipIntro(page);
+      await page.goto("/");
+      const logo = (await page.locator(".clay-hero-logo svg").boundingBox())!;
+      const tops = await page.locator(".clay-piece:visible").evaluateAll((els) => els.map((e) => e.getBoundingClientRect().top));
+      expect(Math.min(...tops), `${viewport.width}x${viewport.height}`).toBeGreaterThanOrEqual(logo.y + logo.height);
+      await ctx.close();
+    }
+  });
+
   test("looks the same in the light and dark themes", async ({ browser }) => {
     const look = async (colorScheme: "light" | "dark") => {
       const ctx = await browser.newContext({ colorScheme });

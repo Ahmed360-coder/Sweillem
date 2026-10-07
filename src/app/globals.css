@@ -651,6 +651,11 @@
   }
   .clay-piece[data-kind="pipe"] {
     bottom: var(--mb, var(--b));
+    /* The logo is sized by width (6% + 31.1vw tall) but the pipes by height, so on a
+       short screen, such as an iPhone with Safari's bars showing, a pipe would rise
+       over the tagline. Cap each pipe so its top stays below the logo, with room
+       for the bob. */
+    height: min(var(--mh), calc(100% - var(--mb) - 6% - 31.1vw - 4vh));
   }
   .clay-piece[data-kind="float"] {
     top: var(--my, var(--y));
