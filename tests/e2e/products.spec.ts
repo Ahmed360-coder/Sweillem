@@ -112,10 +112,58 @@ test("size slider redraws the pipe and lists the fittings made at that size", as
   await expect(finder).toContainText("publishes no fittings at DN 1000");
 });
 
+test("the size finder shows every product family in 3D and to scale", async ({ page }) => {
+  // Software WebGL in headless Chromium is slow: draw only on change.
+  test.setTimeout(90_000);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/products");
+  const finder = page.locator("#size");
+  const families = finder.getByRole("group", { name: "Product family" });
+  for (const name of ["Pipes", "Bends", "Junctions", "Jointing Systems", "Short Pieces", "Input clutch & End plugs", "Perforated Pipe", "U-Trap", "Enlarger and Reducer", "Half Channels"]) {
+    await expect(families.getByRole("button", { name, exact: true })).toBeVisible();
+  }
+
+  // Bends: pick an angle, then a size; the published row follows.
+  await families.getByRole("button", { name: "Bends", exact: true }).click();
+  await finder.getByRole("button", { name: "90°", exact: true }).click();
+  const slider = finder.getByRole("slider", { name: "Drag to choose a size" });
+  await slider.fill("0");
+  await expect(slider).toHaveAttribute("aria-valuetext", "DN 125");
+  await expect(finder).toContainText("90° ± 5°");
+  await expect(finder).toContainText("Bend radius: not published");
+  await expect(finder.getByRole("img", { name: /3D model of the Bends, 90°, DN 125 N class/ })).toBeVisible();
+  await finder.getByRole("button", { name: "To scale" }).click();
+  await expect(finder.getByRole("img", { name: /Bends, 90°, DN 125 N class, drawn to scale/ })).toBeVisible();
+
+  // Junctions: the class chips say where a class is not made.
+  await families.getByRole("button", { name: "Junctions", exact: true }).click();
+  await slider.fill("0");
+  await expect(slider).toHaveAttribute("aria-valuetext", "DN 125/125");
+  await expect(finder.getByRole("button", { name: /^H class/ })).toBeDisabled();
+  await expect(finder.getByRole("link", { name: "Full row in the explorer" })).toHaveAttribute("href", /product=junctions.*dn=125%2F125/);
+
+  // Jointing systems: socket and spigot figures from the pipe table.
+  await families.getByRole("button", { name: "Jointing Systems", exact: true }).click();
+  await slider.fill("0");
+  await expect(finder).toContainText("260.0 ± 0.5");
+  await expect(finder).toContainText("263.0 ± 0.5");
+
+  // The U-trap has no published sizes: shape only, with SWEILLEM's drawing.
+  await families.getByRole("button", { name: "U-Trap", exact: true }).click();
+  await expect(finder).toContainText("publishes no sizes");
+  await expect(slider).toHaveCount(0);
+  await finder.getByRole("button", { name: "To scale" }).click();
+  await expect(finder.getByRole("img", { name: /dimension drawing of the U-trap/ })).toBeVisible();
+
+  // Back to pipes: the pipe slider and its fittings list.
+  await families.getByRole("button", { name: "Pipes", exact: true }).click();
+  await expect(finder.getByRole("heading", { name: /Fittings made at DN/ })).toBeVisible();
+});
+
 test("the side menu's Size finder link opens the slider, from another page and from /products", async ({ page }) => {
   const burger = page.getByRole("button", { name: "Menu", exact: true });
   const menu = page.locator("#site-menu");
-  const heading = page.getByRole("heading", { name: "Slide to your pipe size" });
+  const heading = page.getByRole("heading", { name: "Slide to your size" });
   for (const start of ["/about", "/products"]) {
     await page.goto(start);
     await burger.click();

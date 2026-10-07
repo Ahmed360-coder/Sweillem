@@ -4,10 +4,11 @@ import { CompareArt, ExplorerArt, RoofTilesArt } from "@/components/CategoryArt"
 import { CtaBand } from "@/components/CtaBand";
 import { FamilyGrid } from "@/components/FamilyGrid";
 import { PageHeader } from "@/components/PageHeader";
-import { PipeSizeSlider } from "@/components/PipeSizeSlider";
+import { SizeFinder } from "@/components/SizeFinder";
 import { TileRotator } from "@/components/TileRotator";
 import { Section } from "@/components/Section";
 import { pageMetadata } from "@/lib/metadata";
+import { viewerFamilies } from "@/lib/family-viewer";
 import { sizeStops } from "@/lib/size-finder";
 import { explorerProducts, totalRows } from "@/lib/specs";
 import { ArrowIcon } from "@/components/icons";
@@ -21,6 +22,7 @@ export const metadata = pageMetadata({
 
 const [nPipes, hPipes] = productSpecs.pipes.tables;
 const stops = sizeStops();
+const families = viewerFamilies();
 
 /** Crushing strength and wall thickness of one class at the given DN, from its table. */
 function classFacts(t: typeof nPipes, dn: string) {
@@ -84,10 +86,10 @@ export default function ProductsPage() {
       <Section
         id="size"
         eyebrow="Size finder"
-        title="Slide to your pipe size"
-        lede={`Drag from DN ${stops[0].dn} to ${stops.at(-1)!.dn} and turn the pipe in 3D. It is redrawn to scale, with its published figures and every fitting SWEILLEM makes at that size.`}
+        title="Slide to your size"
+        lede={`Pick a product family, drag through its published sizes and turn the piece in 3D, or see it drawn to scale with its published figures. Pipes run from DN ${stops[0].dn} to ${stops.at(-1)!.dn}, with every fitting SWEILLEM makes at each size.`}
       >
-        <PipeSizeSlider stops={stops} />
+        <SizeFinder stops={stops} families={families} />
       </Section>
       <Section id="tile-3d" eyebrow="Clay roof tiles" title="See the tiles on a roof" className="bg-sunk/50">
         <TileRotator />
