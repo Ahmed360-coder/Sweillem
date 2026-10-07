@@ -2,6 +2,9 @@ import type { SpecTable as Table } from "@content/types";
 import { cellText, columnHeading, columnName, columnUnit, rowSize, tableTitle } from "@/lib/specs";
 import { AddToQuote } from "./AddToQuote";
 
+/** Rows a phone shows before the rest of a table folds away. */
+const PHONE_ROWS = 3;
+
 /**
  * One published spec table. Wide screens and print get the table; phones get
  * one card per row so nothing scrolls sideways. Cell text is as published.
@@ -16,6 +19,34 @@ export function SpecTable({ table, productName, headingLevel = 3 }: { table: Tab
     strengthClass: table.strength ?? undefined,
   });
   const quoteLabel = (row: string[], i: number) => `Add DN ${rowSize(table, row)} (row ${i + 1}) of ${title} to quote`;
+  // A table only folds when it would hide at least two rows.
+  const shown = table.rows.length > PHONE_ROWS + 1 ? PHONE_ROWS : table.rows.length;
+  const folded = table.rows.length - shown;
+  const card = (row: string[], ri: number) => (
+    <li key={ri} className="rounded-inner border border-line bg-surface p-4">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <p className="font-display text-lg font-semibold">
+          <span className="text-muted">DN </span>
+          <span className="font-mono text-maroon">{rowSize(table, row)}</span>
+        </p>
+        <AddToQuote compact item={quoteItem(row)} label={quoteLabel(row, ri)} />
+      </div>
+      <dl className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm">
+        {table.columns.slice(1).map((c, ci) => {
+          const unit = columnUnit(c);
+          return (
+            <div key={ci} className="grid min-w-0 gap-0.5">
+              <dt className="text-[12.5px] leading-tight text-muted">
+                {columnName(c)}
+                {unit && <span> ({unit})</span>}
+              </dt>
+              <dd className="font-mono [overflow-wrap:anywhere]">{cellText(row[ci + 1])}</dd>
+            </div>
+          );
+        })}
+      </dl>
+    </li>
+  );
 
   return (
     <section id={table.id} aria-labelledby={headingId} className="spec-table grid scroll-mt-28 gap-4 break-inside-avoid-page">
@@ -71,34 +102,21 @@ export function SpecTable({ table, productName, headingLevel = 3 }: { table: Tab
         </table>
       </div>
 
-      {/* Cards: phones. */}
-      <ul className="grid gap-3 md:hidden print:hidden">
-        {table.rows.map((row, ri) => (
-          <li key={ri} className="rounded-inner border border-line bg-surface p-4">
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <p className="font-display text-lg font-semibold">
-                <span className="text-muted">DN </span>
-                <span className="font-mono text-maroon">{rowSize(table, row)}</span>
-              </p>
-              <AddToQuote compact item={quoteItem(row)} label={quoteLabel(row, ri)} />
-            </div>
-            <dl className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm">
-              {table.columns.slice(1).map((c, ci) => {
-                const unit = columnUnit(c);
-                return (
-                  <div key={ci} className="grid min-w-0 gap-0.5">
-                    <dt className="text-[12.5px] leading-tight text-muted">
-                      {columnName(c)}
-                      {unit && <span> ({unit})</span>}
-                    </dt>
-                    <dd className="font-mono [overflow-wrap:anywhere]">{cellText(row[ci + 1])}</dd>
-                  </div>
-                );
-              })}
-            </dl>
-          </li>
-        ))}
-      </ul>
+      {/* Cards: phones. Long tables show the first few rows and fold the rest away,
+          so a phone page stays a few screens long. */}
+      <ul className="grid gap-3 md:hidden print:hidden">{table.rows.slice(0, shown).map(card)}</ul>
+      {folded > 0 && (
+        <details className="group grid gap-3 md:hidden print:hidden">
+          <summary className="mx-auto flex min-h-11 w-fit cursor-pointer list-none items-center gap-2 rounded-full border border-line bg-surface px-5 text-sm font-semibold text-maroon [&::-webkit-details-marker]:hidden">
+            <span className="group-open:hidden">Show all {table.rows.length} rows</span>
+            <span className="hidden group-open:inline">Show fewer rows</span>
+            <svg viewBox="0 0 24 24" className="size-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
+              <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </summary>
+          <ul className="mt-3 grid gap-3">{table.rows.slice(shown).map((row, i) => card(row, i + shown))}</ul>
+        </details>
+      )}
     </section>
   );
 }

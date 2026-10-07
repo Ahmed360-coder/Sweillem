@@ -536,11 +536,12 @@
 .clay-hero-logo {
   position: absolute;
   inset-inline: 0;
-  top: 7%;
+  top: 6%;
   margin: 0;
   display: flex;
   justify-content: center;
-  height: min(40%, 24vw);
+  /* Sized so the whole logo, tagline included, sits above the pipes. */
+  height: min(29%, 21vw);
   animation: hero-logo 1s var(--ease-glaze) both;
 }
 /* Give the logo its own size from the viewBox: Safari draws a viewBox-only SVG
@@ -650,6 +651,11 @@
   }
   .clay-piece[data-kind="pipe"] {
     bottom: var(--mb, var(--b));
+    /* The logo is sized by width (6% + 31.1vw tall) but the pipes by height, so on a
+       short screen, such as an iPhone with Safari's bars showing, a pipe would rise
+       over the tagline. Cap each pipe so its top stays below the logo, with room
+       for the bob. */
+    height: min(var(--mh), calc(100% - var(--mb) - 6% - 31.1vw - 4vh));
   }
   .clay-piece[data-kind="float"] {
     top: var(--my, var(--y));

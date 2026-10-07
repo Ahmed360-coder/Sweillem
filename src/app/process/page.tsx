@@ -74,7 +74,7 @@ export default function ProcessPage() {
     <>
       <PageHeader
         eyebrow="Manufacturing process"
-        title="Six steps from Aswan clay to a finished joint"
+        title="Nine steps from Aswan clay to a finished joint"
         lede="Every SWEILLEM pipe is moulded, dried, glazed inside and out, and fired at up to 1200 °C. Scroll to move one pipe through the factory, at your own pace."
       />
 
