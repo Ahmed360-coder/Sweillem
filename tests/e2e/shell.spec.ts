@@ -299,12 +299,13 @@ test.describe("home hero", () => {
     const height = page.viewportSize()!.height;
     expect(Math.abs(box.y + box.height - height)).toBeLessThanOrEqual(2);
     await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("SWEILLEM Vitrified Clay Pipes Co.");
-    // The big logo has a real size and sits above the pipes (Safari once drew it at 0 px).
+    // The big logo has a real size (Safari once drew it at 0 px), and the whole of it,
+    // tagline included, sits above the pipes so no pipe covers the name.
     const logo = (await hero.locator(".clay-hero-logo svg").boundingBox())!;
-    expect(logo.width).toBeGreaterThan(Math.min(box.width * 0.5, 600));
+    expect(logo.width).toBeGreaterThan(Math.min(box.width * 0.38, 480));
     expect(logo.height).toBeGreaterThan(logo.width / 3.2);
     const pipeTop = Math.min(...(await hero.locator('.clay-piece[data-kind="pipe"]').evaluateAll((els) => els.map((e) => e.getBoundingClientRect().top))));
-    expect(logo.y).toBeLessThan(pipeTop);
+    expect(logo.y + logo.height).toBeLessThanOrEqual(pipeTop);
     await expect(hero.locator('.clay-piece[data-kind="pipe"]')).toHaveCount(3);
     for (const name of ["Products", "Size finder", "Get a quote"]) {
       const link = hero.getByRole("link", { name, exact: true });
@@ -314,6 +315,23 @@ test.describe("home hero", () => {
     }
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     expect(overflow).toBeLessThanOrEqual(0);
+  });
+
+  test("no pipe or fitting covers the tagline on a short phone screen", async ({ browser }) => {
+    // An iPhone with Safari's bars showing leaves about 660 px (SE: about 550 px) of page.
+    for (const viewport of [
+      { width: 393, height: 659 },
+      { width: 375, height: 553 },
+    ]) {
+      const ctx = await browser.newContext({ viewport, isMobile: true, hasTouch: true, reducedMotion: "reduce" });
+      const page = await ctx.newPage();
+      await skipIntro(page);
+      await page.goto("/");
+      const logo = (await page.locator(".clay-hero-logo svg").boundingBox())!;
+      const tops = await page.locator(".clay-piece:visible").evaluateAll((els) => els.map((e) => e.getBoundingClientRect().top));
+      expect(Math.min(...tops), `${viewport.width}x${viewport.height}`).toBeGreaterThanOrEqual(logo.y + logo.height);
+      await ctx.close();
+    }
   });
 
   test("looks the same in the light and dark themes", async ({ browser }) => {

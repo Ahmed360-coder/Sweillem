@@ -81,6 +81,18 @@ test("roof tile viewer switches colour and view", async ({ page }) => {
   await expect(page.getByText("Step 01 of 09")).toBeAttached();
 });
 
+test("on a phone, a long spec table shows three rows and folds the rest away", async ({ page, isMobile }) => {
+  test.skip(!isMobile, "Phones get cards; wider screens get the full table.");
+  await page.goto("/products/pipes");
+  const table = page.locator("#n-pipes-normal-strength");
+  const cards = table.locator("li:visible");
+  await expect(cards).toHaveCount(3);
+  await table.getByText("Show all 16 rows").click();
+  await expect(cards).toHaveCount(16);
+  await table.getByText("Show fewer rows").click();
+  await expect(cards).toHaveCount(3);
+});
+
 test("printing a product page hides the site chrome", async ({ page }) => {
   await page.goto("/products/pipes");
   await page.emulateMedia({ media: "print" });
