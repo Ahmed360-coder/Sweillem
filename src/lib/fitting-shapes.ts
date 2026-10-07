@@ -5,8 +5,8 @@
 // published and which are drawn is decided in src/lib/family-viewer.ts.
 
 export type FittingShape =
-  /** A straight barrel: short pieces, perforated pipe (with its holes). */
-  | { kind: "straight"; d1: number; d3: number; len: number; holes?: Holes }
+  /** A straight barrel: short pieces, perforated pipe (with its holes, and its socket joint with the next pipe). */
+  | { kind: "straight"; d1: number; d3: number; len: number; holes?: Holes; joint?: SocketJoint }
   /** A bend of `angle` degrees around a centre line of radius `radius`. */
   | { kind: "bend"; d1: number; d3: number; angle: number; radius: number }
   /** A main barrel with a branch of bore b1 and outer ø b3 at `angle` degrees. */
@@ -30,6 +30,16 @@ export interface Holes {
   along: number;
   /** Arc the holes around the pipe spread over, in degrees from the top. */
   arc: number;
+}
+
+/** A socket at the far end of a straight piece, with the next pipe's spigot pushed home and sealed. */
+export interface SocketJoint {
+  d4: number;
+  d7: number;
+  depth: number;
+  seal: number;
+  /** How much of the next pipe to show beyond the socket (mm). */
+  next: number;
 }
 
 export type Pt = [number, number];
@@ -66,11 +76,11 @@ function arc(cx: number, cy: number, r: number, a0: number, a1: number, steps = 
 }
 
 /** Socket bell on the left of x = 0, open towards +x, for joints and plugs. Returns the outer radius of the bell. */
-function socketHalf(d1: number, d3: number, d4: number, depth: number, seal: number) {
+function socketHalf(d1: number, d3: number, d4: number, depth: number, seal: number, barrelLen?: number) {
   const wall = (d3 - d1) / 2;
   const sIn = d4 / 2 + seal;
   const sOut = sIn + wall;
-  const barrel = Math.max(depth * 1.6, d3 * 0.6);
+  const barrel = barrelLen ?? Math.max(depth * 1.6, d3 * 0.6);
   const walls = [
     // pipe barrel, the shoulder, then the bell
     rect(-barrel, d1 / 2, 0, d3 / 2),
@@ -92,10 +102,18 @@ export function sectionOf(s: FittingShape): Section {
 
   switch (s.kind) {
     case "straight": {
-      both([rect(0, s.d1 / 2, s.len, s.d3 / 2)], out.walls);
+      if (s.joint) {
+        // The barrel runs 0..len, its socket from len, and the next pipe's spigot sits in the socket.
+        const j = s.joint;
+        const sock = socketHalf(s.d1, s.d3, j.d4, j.depth, j.seal, s.len);
+        const gap = Math.max(6, j.depth * 0.06);
+        const shift = (polys: Pt[][]) => polys.map((p) => p.map(([x, y]) => [x + s.len, y] as Pt));
+        both(shift([...sock.walls, rect(gap, s.d1 / 2, j.depth + j.next, s.d3 / 2)]), out.walls);
+        both(shift([sock.lining, rect(gap + j.depth * 0.08, s.d3 / 2, j.depth * 0.96, j.d7 / 2)]), out.seals);
+      } else both([rect(0, s.d1 / 2, s.len, s.d3 / 2)], out.walls);
       out.axes.push([
         [-20, 0],
-        [s.len + 20, 0],
+        [s.len + (s.joint ? s.joint.depth + s.joint.next : 0) + 20, 0],
       ]);
       if (s.holes) {
         // Holes on the far half of the wall, seen through the bore.

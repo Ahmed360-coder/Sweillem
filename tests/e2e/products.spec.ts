@@ -148,6 +148,12 @@ test("the size finder shows every product family in 3D and to scale", async ({ p
   await expect(finder).toContainText("260.0 ± 0.5");
   await expect(finder).toContainText("263.0 ± 0.5");
 
+  // Perforated pipe: drawn with its socket joint, the socket sizes taken from the pipe table.
+  await families.getByRole("button", { name: "Perforated Pipe", exact: true }).click();
+  await expect(finder).toContainText("Socket inner ø d4 (mm), from the DN 300 N pipe");
+  await finder.getByRole("button", { name: "To scale" }).click();
+  await expect(finder.getByRole("img", { name: /Close-up of the socket joint of the Perforated Pipe, MP system, DN 300/ })).toBeVisible();
+
   // The U-trap has no published sizes: shape only, with SWEILLEM's drawing.
   await families.getByRole("button", { name: "U-Trap", exact: true }).click();
   await expect(finder).toContainText("publishes no sizes");

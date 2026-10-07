@@ -317,14 +317,33 @@ function perforated(): ViewerType[] {
         const around = leadingNumber(cell(t, r, z1));
         const along = leadingNumber(cell(t, r, z2));
         if (dn === null || d1 === null || d3 === null || len === null || dia === null || around === null || along === null) return [];
+        // The joint: this table gives no socket sizes, so the socket and seal are the
+        // N class pipe's at this size (same d1 and d3 as the perforated pipe).
+        const pipe = pipeRows.find((p) => p.dn === dn && p.strength === "N" && p.d4 !== null && p.d7 !== null);
+        const depth = socketDepth(d1);
+        const joint = pipe ? { d4: pipe.d4!, d7: pipe.d7!, depth, seal: SEAL, next: Math.round(Math.max(250, d3 * 0.6)) } : undefined;
+        const socketFigures = pipe
+          ? (["d4", "d7"] as const).map((key) => {
+              const i = col(pipe.table, key);
+              return { label: `${columnHeading(pipe.table.columns[i])}, from the DN ${dn} N pipe`, value: cellText(pipe.row[i]) };
+            })
+          : [];
         return [
           {
             size,
             dn,
             strength: null,
-            shape: { kind: "straight", d1, d3, len, holes: { dia, around, along, arc: arcDeg } },
-            figures: figuresOf(t, r).filter((f) => !/holes Z/.test(f.label) || f.label.startsWith(code)),
-            drawn: [`Hole positions: ${around} around and ${along} along, as published; their spacing is drawn even.`],
+            shape: { kind: "straight", d1, d3, len, holes: { dia, around, along, arc: arcDeg }, joint },
+            figures: [...figuresOf(t, r).filter((f) => !/holes Z/.test(f.label) || f.label.startsWith(code)), ...socketFigures],
+            drawn: [
+              `Hole positions: ${around} around and ${along} along, as published; their spacing is drawn even.`,
+              ...(joint
+                ? [
+                    `Joint: the perforated pipe table gives no socket sizes, so the socket (d4) and seal (d7) are the DN ${dn} N pipe's. Socket depth ${depth} mm and seal thickness ${SEAL} mm are drawn, not published.`,
+                    "On the right, the next pipe's spigot is pushed home into the socket.",
+                  ]
+                : []),
+            ],
             href: explorerHref("perforated-pipe", g.id, null, size),
             quote: { product: `Perforated pipe, ${code} system`, size: `DN ${size}` },
           },
@@ -405,7 +424,7 @@ const build: Record<string, { note: string; types: () => ViewerType[] }> = {
   "jointing-systems": { note: "A spigot pushed home into the next pipe's socket, in section, to scale.", types: jointingSystems },
   "short-pieces": { note: "Section through the centre, to scale.", types: shortPieces },
   "input-clutch-end-plugs": { note: "A socket closed by its end plug, in section, to scale.", types: endPlugs },
-  "perforated-pipe": { note: "Section through the centre, to scale. Dots: the holes in the far wall.", types: perforated },
+  "perforated-pipe": { note: "Section through the centre, to scale, with the socket joint to the next pipe. Dots: the holes in the far wall.", types: perforated },
   "enlarger-reducer": { note: "Section through the centre, to scale.", types: enlargerReducer },
   "half-channels": { note: "End view, to scale.", types: halfChannels },
 };

@@ -133,6 +133,16 @@ export function FamilySizeViewer({ family }: { family: ViewerFamily }) {
   }
 
   if (!item) return null;
+  // Close-up frame around a straight piece's socket joint, if it has one.
+  const jointBox: [number, number, number, number] | null =
+    item.shape.kind === "straight" && item.shape.joint
+      ? (() => {
+          const { len, d3 } = item.shape;
+          const j = item.shape.joint!;
+          const h = Math.max(j.d4, j.d7) / 2 + j.seal + (d3 - item.shape.d1) / 2 + 20;
+          return [len - j.depth * 1.2, 0, len + j.depth + Math.min(j.next, j.depth * 1.2), h];
+        })()
+      : null;
   const shownSize = `DN ${item.size}`;
   const classes = (["N", "H"] as const).filter((c) => type.items.some((i) => i.strength === c));
   const desc = `${title}, ${shownSize}${item.strength ? ` ${item.strength} class` : ""}`;
@@ -155,8 +165,19 @@ export function FamilySizeViewer({ family }: { family: ViewerFamily }) {
             {show3d ? (
               <Fitting3D key={type.id} shape={item.shape} frame={frame3d} onFail={() => setNo3d(true)} className="h-full" label={`3D model of the ${desc} on a 100 mm floor grid.`} />
             ) : (
-              <div className="h-full pt-16 sm:pt-20">
-                <FittingDrawing shape={item.shape} frame={frame2d} label={`${desc}, drawn to scale on a 100 mm grid.`} />
+              <div className="flex h-full flex-col pt-16 sm:pt-20">
+                <div className="min-h-0 flex-1">
+                  <FittingDrawing shape={item.shape} frame={frame2d} label={`${desc}, drawn to scale on a 100 mm grid.`} />
+                </div>
+                {jointBox && (
+                  // The joint is small next to a 2 m pipe: a close-up of it, on the same 100 mm grid.
+                  <div className="h-[44%] border-t border-line">
+                    <p className="px-4 pt-2 font-mono text-[10px] tracking-[.1em] text-muted uppercase sm:px-6">Joint, close-up</p>
+                    <div className="h-[calc(100%-22px)]">
+                      <FittingDrawing shape={item.shape} frame={jointBox} label={`Close-up of the socket joint of the ${desc}: the next pipe's spigot pushed home and sealed, to scale on a 100 mm grid.`} />
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
