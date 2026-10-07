@@ -45,7 +45,10 @@ test.describe("joint demo", () => {
     const demo = page.locator("figure.joint-demo");
     const push = demo.getByRole("slider", { name: "Push the pipes together" });
     await pushHome(page);
-    for (let i = 0; i < 20; i++) await page.keyboard.press("ArrowLeft");
+    // Set the slider straight to 80% (in the snap zone). Twenty arrow presses
+    // raced the snap: each key-up glides back home, and on a slow runner the
+    // glide won before the next press.
+    await push.fill("80");
     await expect(demo).toHaveAttribute("data-stage", "entering");
     await push.blur();
     await expect(demo).toHaveAttribute("data-stage", "sealed");

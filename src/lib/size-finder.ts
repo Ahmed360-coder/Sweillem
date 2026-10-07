@@ -84,7 +84,7 @@ function pipeAt(table: SpecTable, group: string, dn: number): PipeAtSize | null 
   return { strength: table.strength, title: tableTitle(table), d1, d3, length: Math.max(...lengths), figures, href: explorerHref("pipes", group, table.strength, String(dn)) };
 }
 
-function explorerHref(slug: string, group: string, strength: StrengthClass | null, size: string) {
+export function explorerHref(slug: string, group: string, strength: StrengthClass | null, size: string) {
   const q = new URLSearchParams({ product: slug, type: group, dn: size });
   if (strength) q.set("class", strength);
   return `/products/explorer?${q}`;
