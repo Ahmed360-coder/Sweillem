@@ -12,12 +12,14 @@
     "check": "npm run content:check && npm run lint && npm run typecheck",
     "content:build": "node scripts/build-specs.mjs",
     "content:check": "node scripts/check-content.mjs && tsc --noEmit -p tsconfig.content.json",
-    "content:fetch-assets": "node scripts/fetch-live-assets.mjs"
+    "content:fetch-assets": "node scripts/fetch-live-assets.mjs",
+    "assistant:knowledge": "node scripts/assistant-knowledge.mjs"
   },
   "engines": {
     "node": ">=22"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.131.0",
     "motion": "^13.4.6",
     "next": "^16.3.8",
     "react": "^19.3.0",
