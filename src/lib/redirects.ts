@@ -7,7 +7,7 @@ import manifest from "../../content/assets-manifest.json" with { type: "json" };
 interface Redirect {
   source: string;
   destination: string;
-  permanent: true;
+  statusCode: 301;
   has?: { type: "query"; key: string; value?: string }[];
 }
 
@@ -93,7 +93,7 @@ export function uploadRedirects(): Record<string, string> {
   return out;
 }
 
-const permanent = (source: string, destination: string): Redirect => ({ source, destination, permanent: true });
+const permanent = (source: string, destination: string): Redirect => ({ source, destination, statusCode: 301 });
 
 export function legacyRedirects(): Redirect[] {
   return [

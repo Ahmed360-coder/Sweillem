@@ -1,17 +1,19 @@
 import { company } from "@content/company";
 import { products } from "@content/products";
 
+/** The site's home: canonical URLs, metadataBase, Open Graph, robots.txt, the sitemap and JSON-LD. */
+export const PRODUCTION_URL = "https://sweillem.net";
+
 /**
- * Where this build is served, for canonical URLs, share pictures, the sitemap and
- * structured data. Set NEXT_PUBLIC_SITE_URL=https://sweillem.net when the domain
- * moves over (Milestone 8). Until then Vercel builds use their own address, so
- * links shared from sweillem.vercel.app or a preview show their picture.
+ * Where this build is served. One setting, NEXT_PUBLIC_SITE_URL, defaulting to
+ * https://sweillem.net. Preview deployments (which are noindex) use their own
+ * branch address instead, so their share pictures load.
  */
 function resolveSiteUrl() {
   const env = process.env;
   if (env.NEXT_PUBLIC_SITE_URL) return env.NEXT_PUBLIC_SITE_URL;
-  const host = env.VERCEL_ENV === "production" ? env.VERCEL_PROJECT_PRODUCTION_URL : (env.VERCEL_BRANCH_URL ?? env.VERCEL_URL);
-  return host ? `https://${host}` : "https://sweillem.net";
+  const preview = env.VERCEL_ENV === "preview" ? (env.VERCEL_BRANCH_URL ?? env.VERCEL_URL) : undefined;
+  return preview ? `https://${preview}` : PRODUCTION_URL;
 }
 
 export const siteUrl = resolveSiteUrl().replace(/\/$/, "");

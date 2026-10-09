@@ -2,7 +2,7 @@
 
 ## Redirects from the old site
 
-`src/lib/redirects.ts` lists every address the old WordPress site used (from the Milestone 1 capture in `content/live-site` and `content/assets-manifest.json`). `next.config.ts` serves them as permanent (308) redirects, so bookmarks, search results and links on other sites keep working once sweillem.net points here.
+`src/lib/redirects.ts` lists every address the old WordPress site used (from the Milestone 1 capture in `content/live-site` and `content/assets-manifest.json`). `next.config.ts` serves them as permanent (301) redirects, so bookmarks, search results and links on other sites keep working once sweillem.net points here.
 
 | Old address | New page |
 |---|---|
@@ -32,7 +32,11 @@ Files on the old site that this site does not carry (the six Quality pictures on
 
 ## The site address (for Milestone 8)
 
-Canonical URLs, share pictures, the sitemap and structured data use the address the build is served from: the Vercel production address (sweillem.vercel.app) on production, the branch address on previews. **At launch, set `NEXT_PUBLIC_SITE_URL=https://sweillem.net` in Vercel and redeploy**, so everything points at the real domain.
+Canonical URLs, `metadataBase`, Open Graph URLs and share pictures, the `robots.txt` Sitemap line, the `sitemap.xml` entries and the JSON-LD all come from one setting, `NEXT_PUBLIC_SITE_URL` (`src/lib/site.ts`), which defaults to `https://sweillem.net`. Preview deployments use their own branch address instead, so their share pictures load; they are noindex anyway.
+
+Only the production domain may be indexed. `next.config.ts` sends `X-Robots-Tag: noindex, nofollow` on every response served from any other host (sweillem.vercel.app, previews, localhost), and previews also carry a `noindex` robots meta tag and a closed `robots.txt`.
+
+Until sweillem.net points at Vercel, links shared from sweillem.vercel.app point their share picture at sweillem.net, which still serves the old site, so chat apps show no picture. If that matters before launch, set `NEXT_PUBLIC_SITE_URL=https://sweillem.vercel.app` for Production in Vercel, and remove it (or set it to `https://sweillem.net`) at launch.
 
 ## Checks
 
