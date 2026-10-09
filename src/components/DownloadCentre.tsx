@@ -149,7 +149,7 @@ function Entry({ d }: { d: DownloadItem }) {
         <p className="flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[12px] font-medium tracking-[.1em] uppercase">
           {d.country && <span className="text-muted">{d.country}</span>}
           {d.status === "expired" && <span className="rounded-full border border-current px-2 py-0.5 text-warn">Past its date</span>}
-          {d.status === "unavailable" && <span className="rounded-full bg-sunk px-2 py-0.5 text-muted">Not available yet</span>}
+          {d.status === "unavailable" && <span className="rounded-full bg-sunk px-2 py-0.5 text-muted">On request</span>}
         </p>
         <h3 className="text-[17px] leading-snug">{d.title}</h3>
         <p className="text-base text-muted sm:text-[15px]">{d.detail}</p>
@@ -177,7 +177,7 @@ function Entry({ d }: { d: DownloadItem }) {
         )}
         {d.status === "unavailable" && (
           <Link href="/contact" className="dl-action dl-action-quiet">
-            <span>Ask SWEILLEM for a copy</span>
+            <span>Ask us for a copy</span>
           </Link>
         )}
       </div>

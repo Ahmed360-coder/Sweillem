@@ -218,7 +218,7 @@ export function TileRotator() {
         </div>
         <figcaption className="border-t border-line px-4 py-2.5 text-[13px] text-muted sm:px-6">
           {no3d ? "SWEILLEM clay roof tile." : "Tap a tile to lift it out. "}
-          The shape follows the real tile, but SWEILLEM doesn’t publish tile sizes yet, so this roof is not to scale.
+          Illustration, not to scale.
         </figcaption>
       </figure>
 

@@ -3,7 +3,6 @@ import { PageHeader } from "@/components/PageHeader";
 import { ProcessJourney, type ProcessStep } from "@/components/ProcessJourney";
 import { ScrollJourney } from "@/components/ScrollJourney";
 import { Section } from "@/components/Section";
-import { SourceNote } from "@/components/SourceNote";
 import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata({
@@ -82,9 +81,6 @@ export default function ProcessPage() {
 
       <Section id="steps" title="Each step, with the facts">
         <ProcessJourney steps={steps} />
-        <SourceNote className="mt-8">
-          Sources: SWEILLEM’s 2024 company report and deck, and the Joint Performance page on sweillem.net.
-        </SourceNote>
       </Section>
 
       <CtaBand />

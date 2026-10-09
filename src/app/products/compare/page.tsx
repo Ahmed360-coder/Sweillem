@@ -3,7 +3,6 @@ import { ButtonLink } from "@/components/Button";
 import { CompareClasses } from "@/components/CompareClasses";
 import { PageHeader } from "@/components/PageHeader";
 import { Section } from "@/components/Section";
-import { SourceNote } from "@/components/SourceNote";
 import { pageMetadata } from "@/lib/metadata";
 import { cellText, rowSize } from "@/lib/specs";
 
@@ -25,7 +24,7 @@ const NAMES: Record<(typeof KEYS)[number], string> = {
 
 function first(t: typeof n, size: string, key: string) {
   const i = t.columns.findIndex((c) => c.key === key);
-  const vals = [...new Set(t.rows.filter((r) => rowSize(t, r) === size).map((r) => cellText(r[i])))];
+  const vals = [...new Set(t.rows.filter((r) => rowSize(t, r) === size).map((r) => cellText(r[i], t.columns[i])))];
   return vals.length ? vals.join(" · ") : "–";
 }
 
@@ -85,7 +84,7 @@ export default function ComparePage() {
             </tbody>
           </table>
         </div>
-        <SourceNote className="mt-4">From the N and H pipe tables on sweillem.net/pipes, as published. “–” means that class is not made in that size.</SourceNote>
+        <p className="mt-4 text-sm text-muted">“–” means that class is not made in that size; “n/a” means no strength class applies to that size.</p>
         <div className="mt-6 flex flex-wrap gap-3">
           <ButtonLink href="/products/pipes#specifications" arrow>
             Full pipe tables

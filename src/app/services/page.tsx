@@ -4,7 +4,6 @@ import Link from "next/link";
 import { CtaBand } from "@/components/CtaBand";
 import { PageHeader } from "@/components/PageHeader";
 import { Section } from "@/components/Section";
-import { SourceNote } from "@/components/SourceNote";
 import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata({
@@ -33,7 +32,7 @@ const services = [
   },
   {
     title: "Delivery on time",
-    text: "Shortest delivery time is one of SWEILLEM’s main objectives, with continuous work on delivery time, price and performance.",
+    text: "Short delivery times are one of our main objectives, with continuous work on delivery time, price and performance.",
     source: "About Us",
   },
   {
@@ -108,7 +107,6 @@ export default function ServicesPage() {
                   {s.cta}
                 </Link>
               )}
-              <SourceNote>Source: {s.source}</SourceNote>
             </li>
           ))}
         </ol>

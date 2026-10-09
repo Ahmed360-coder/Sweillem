@@ -69,6 +69,20 @@ test("sitemap lists every page and robots.txt points to it", async ({ request })
   expect(locs.sort()).toEqual([...staticRoutes].sort());
   const robots = await (await request.get("/robots.txt")).text();
   expect(robots).toMatch(/User-Agent: \*/i);
+  // Without NEXT_PUBLIC_SITE_URL every absolute URL is on the real domain.
+  if (!process.env.NEXT_PUBLIC_SITE_URL) expect(xml).toContain("<loc>https://sweillem.net</loc>");
+});
+
+test("only the production domain may be indexed", async ({ request }) => {
+  for (const host of ["sweillem.vercel.app", "sweillem-git-branch-ahmed.vercel.app", "localhost"]) {
+    const res = await request.get("/about", { headers: { host } });
+    expect(res.headers()["x-robots-tag"], host).toBe("noindex, nofollow");
+  }
+  if (process.env.NEXT_PUBLIC_SITE_URL) return;
+  for (const host of ["sweillem.net", "www.sweillem.net"]) {
+    const res = await request.get("/about", { headers: { host } });
+    expect(res.headers()["x-robots-tag"], host).toBeUndefined();
+  }
 });
 
 test.describe("old sweillem.net addresses", () => {
@@ -76,7 +90,7 @@ test.describe("old sweillem.net addresses", () => {
     for (const old of [from, `${from}/`]) {
       test(`${old} → ${to}`, async ({ request }) => {
         const res = await request.get(old, { maxRedirects: 0 });
-        expect(res.status()).toBe(308);
+        expect(res.status()).toBe(301);
         expect(res.headers().location).toBe(to);
       });
     }
@@ -92,14 +106,14 @@ test.describe("old sweillem.net addresses", () => {
 
   test("WordPress ?page_id= links reach the page", async ({ request }) => {
     const res = await request.get("/?page_id=8", { maxRedirects: 0 });
-    expect(res.status()).toBe(308);
+    expect(res.status()).toBe(301);
     expect(new URL(res.headers().location, "http://x").pathname).toBe("/about");
   });
 
   test("archive pages go to the closest page", async ({ request }) => {
     for (const [old, to] of [["/category/uncategorized/", "/"], ["/projects/cat/europe/", "/projects#germany"], ["/author/admin/", "/"]]) {
       const res = await request.get(old, { maxRedirects: 0 });
-      expect(res.status(), old).toBe(308);
+      expect(res.status(), old).toBe(301);
       expect(res.headers().location, old).toBe(to);
     }
   });
@@ -107,7 +121,7 @@ test.describe("old sweillem.net addresses", () => {
   test("uploaded files land on the copy in this site", async ({ request }) => {
     for (const [from, to] of Object.entries(uploadRedirects())) {
       const res = await request.get(from, { maxRedirects: 0 });
-      expect(res.status(), from).toBe(308);
+      expect(res.status(), from).toBe(301);
       expect(decodeURI(res.headers().location), from).toBe(to);
       expect((await request.head(to)).status(), to).toBe(200);
     }

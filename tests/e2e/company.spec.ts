@@ -74,7 +74,7 @@ test.describe("company pages (Milestone 3)", () => {
 
   test("home journey card links to the scroll journey", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("link", { name: /Scroll the journey/ }).click();
+    await page.getByRole("link", { name: /See the full journey/ }).click();
     await expect(page).toHaveURL(/\/process#journey$/);
     await expect(page.locator("#journey")).toBeVisible();
   });

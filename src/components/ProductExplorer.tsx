@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import type { ProductSpecs, StrengthClass } from "@content/types";
 import {
+  cellNote,
   cellText,
   classNames,
   columnName,
@@ -217,7 +218,7 @@ export function ProductExplorer({
         {figures.length > 0 && (
           <dl className="grid grid-cols-2 overflow-hidden rounded-inner border border-line bg-surface sm:grid-cols-4">
             {figures.map((i) => {
-              const values = [...new Set(rows.map((r) => cellText(r[i])))];
+              const values = [...new Set(rows.map((r) => cellText(r[i], table.columns[i])))];
               const unit = columnUnit(table.columns[i]);
               return (
                 <div key={i} className="grid content-start gap-1 p-3 shadow-[0_0_0_.5px_var(--line)]">
@@ -241,7 +242,7 @@ export function ProductExplorer({
                   {differs.length > 0 && (
                     <span className="font-normal text-muted">
                       {" · "}
-                      {differs.map((i) => `${columnName(table.columns[i])} ${cellText(row[i])}${columnUnit(table.columns[i]) ? ` ${columnUnit(table.columns[i])}` : ""}`).join(", ")}
+                      {differs.map((i) => `${columnName(table.columns[i])} ${cellText(row[i], table.columns[i])}${columnUnit(table.columns[i]) ? ` ${columnUnit(table.columns[i])}` : ""}`).join(", ")}
                     </span>
                   )}
                 </span>
@@ -257,7 +258,9 @@ export function ProductExplorer({
                         {columnName(c)}
                         {columnUnit(c) && ` (${columnUnit(c)})`}
                       </dt>
-                      <dd className="font-mono [overflow-wrap:anywhere]">{cellText(row[ci])}</dd>
+                      <dd className="font-mono [overflow-wrap:anywhere]" title={cellNote(row[ci], c)}>
+                        {cellText(row[ci], c)}
+                      </dd>
                     </div>
                   ))}
                 </dl>
@@ -272,9 +275,8 @@ export function ProductExplorer({
         </div>
 
         <p className="text-sm text-muted">
-          Values as SWEILLEM publishes them.{" "}
           <Link className="link" href={`/products/${product.slug}#${table.id}`}>
-            See the whole table
+            See the full specification table
           </Link>
         </p>
       </section>

@@ -6,8 +6,9 @@ import { ButtonLink } from "@/components/Button";
 import { CtaBand } from "@/components/CtaBand";
 import { ClayHero } from "@/components/ClayHero";
 import { FamilyGrid } from "@/components/FamilyGrid";
+import { JourneyScrollHint, JourneyTeaser } from "@/components/JourneyTeaser";
 import { Section } from "@/components/Section";
-import { frameSVG, getChapters, H, W } from "@/lib/journey/frames";
+import { frameSVG, getChapters } from "@/lib/journey/frames";
 import { baseOpenGraph } from "@/lib/metadata";
 import { organizationJsonLd } from "@/lib/structured-data";
 
@@ -16,8 +17,8 @@ export const metadata: Metadata = {
   openGraph: { ...baseOpenGraph, url: "/" },
 };
 
-// The journey card shows the kiln at its 1200 °C peak, door shut and glowing,
-// drawn by the same code as the Process journey.
+// Before scripts run (and with reduced motion) the journey card shows the kiln at
+// its 1200 °C peak; JourneyTeaser then steps it through all nine stages on scroll.
 const fire = getChapters("en").find((c) => c.id === "fire")!;
 const teaserFrame = frameSVG(fire.start + fire.lead + 8.2, { uid: "teaser" });
 
@@ -110,32 +111,14 @@ export default function HomePage() {
               From Aswan clay to the trench
             </h2>
             <p className="lede">
-              Follow one pipe from the quarry, through the kiln, to a sewer line in the ground. You move it along as you
-              scroll.
+              Follow one pipe from the quarry, through the kiln, to a sewer line in the ground.
+              <JourneyScrollHint />
             </p>
             <Link href="/process#steps" className="link w-fit">
               Every step in detail
             </Link>
           </div>
-          <Link
-            href="/process#journey"
-            className="reveal group relative block overflow-hidden rounded-card bg-(--j-bg) shadow-card"
-          >
-            <svg
-              viewBox={`0 0 ${W} ${H}`}
-              className="block h-auto w-full transition-transform duration-700 ease-glaze group-hover:scale-[1.02]"
-              aria-hidden="true"
-              dangerouslySetInnerHTML={{ __html: teaserFrame }}
-            />
-            <span className="absolute start-3 top-3 flex items-center gap-3 rounded-full bg-ink/85 py-1 ps-1 pe-4 text-paper shadow-card backdrop-blur-sm sm:start-4 sm:top-4 sm:py-1.5 sm:ps-1.5 sm:pe-5">
-              <span className="hex grid size-10 place-content-center bg-brand text-on-brand transition-transform duration-300 ease-set group-hover:scale-110 sm:size-12">
-                <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
-                  <path d="M12 5v14M6 13l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
-              <span className="font-display text-base font-semibold sm:text-lg">Scroll the journey</span>
-            </span>
-          </Link>
+          <JourneyTeaser initial={teaserFrame} />
         </div>
       </section>
 

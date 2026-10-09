@@ -66,10 +66,45 @@ export function columnHeading(col: SpecColumn): string {
   return unit ? `${columnName(col)} (${unit})` : columnName(col);
 }
 
-/** Cell text for display. Soft hyphens on the live site stand for a dash. */
-export function cellText(text: string): string {
-  const t = text.replace(/­/g, "-").trim();
+/** Shown, with NO_CLASS_NOTE as its tooltip, where a pipe size has no strength class. */
+export const NO_CLASS = "n/a";
+// TODO(factory): confirm the strength class (TKL) of N class DN 125 and DN 150, or that none applies.
+export const NO_CLASS_NOTE = "Not applicable to this size: see the crushing strength FN.";
+
+/**
+ * Cell text for display. Soft hyphens stand for a dash. The * and ** footnote
+ * marks are dropped, because their footnote text is not on the site yet
+ * (TODO(factory): footnote text, see docs/factory-todo.md). A strength class
+ * cell with no class reads "n/a".
+ */
+export function cellText(text: string, col?: SpecColumn): string {
+  const t = text.replace(/­/g, "-").replace(/\s*\*+/g, "").trim();
+  if (col?.key === "strengthClass" && (t === "-" || t === "")) return NO_CLASS;
   return t === "" ? "–" : t;
+}
+
+/** Tooltip for a cell, when its value needs one. */
+export function cellNote(text: string, col?: SpecColumn): string | undefined {
+  return cellText(text, col) === NO_CLASS ? NO_CLASS_NOTE : undefined;
+}
+
+/**
+ * Rows for display: rows of the same size that differ only in their length are
+ * shown as one row, e.g. DN 150 at "1 / 1.25 / 1.5" m.
+ */
+export function displayRows(table: SpecTable): string[][] {
+  const li = table.columns.findIndex((c) => c.key === "length");
+  if (li < 0) return table.rows;
+  const out: string[][] = [];
+  for (const row of table.rows) {
+    const prev = out.at(-1);
+    if (prev && row.every((c, i) => i === li || c === prev[i]) && !prev[li].split(" / ").includes(row[li])) {
+      prev[li] = `${prev[li]} / ${row[li]}`;
+    } else {
+      out.push([...row]);
+    }
+  }
+  return out;
 }
 
 /** Leading number of a cell ("687 ± 12**" -> 687), or null. */
@@ -111,7 +146,7 @@ export function tableTitle(table: SpecTable): string {
 
 /** Size label of a row: "300", "300/150" (junctions) or "150/200" (enlarger). */
 export function rowSize(table: SpecTable, row: string[]): string {
-  const dn = row[0].replace(/\*+$/, "").replace(/\s+/g, "");
+  const dn = row[0].replace(/\*+/g, "").replace(/\s+/g, "");
   const i = table.columns.findIndex((c) => c.key === "dn2");
   return i >= 0 ? `${dn}/${row[i].trim()}` : dn;
 }

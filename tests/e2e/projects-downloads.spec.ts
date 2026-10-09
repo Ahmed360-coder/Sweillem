@@ -92,11 +92,11 @@ test.describe("downloads page", () => {
     await page.goto("/downloads");
     for (const name of ["BENOR", "CERTIFIKA'T", "NOPWASD", "NF CSTB 108", "NL BSB", "TUV"]) {
       const row = page.locator("li", { has: page.getByRole("heading", { name, exact: true }) });
-      await expect(row.getByText("Not available yet")).toBeVisible();
-      await expect(row.getByRole("link")).toHaveText(["Ask SWEILLEM for a copy"]);
+      await expect(row.getByText("On request", { exact: true })).toBeVisible();
+      await expect(row.getByRole("link")).toHaveText(["Ask us for a copy"]);
     }
     await page.getByLabel("Only what can be opened now").check();
-    await expect(page.getByText("Not available yet")).toHaveCount(0);
+    await expect(page.getByText("On request", { exact: true })).toHaveCount(0);
     const hrefs = await page.locator("#main li a[href^='/']").evaluateAll((as) => as.map((a) => a.getAttribute("href")!));
     expect(hrefs.length).toBeGreaterThan(15);
     for (const href of new Set(hrefs)) expect((await request.get(href.split("#")[0])).status(), href).toBe(200);

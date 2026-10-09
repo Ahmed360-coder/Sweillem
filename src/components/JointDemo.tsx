@@ -323,7 +323,7 @@ export function JointDemo({ className = "" }: { className?: string }) {
       </div>
 
       <figcaption className="text-[13px] text-muted">
-        Schematic, not to scale. Seal and test pressures from the Joint Performance page on sweillem.net.
+        Schematic, not to scale.
       </figcaption>
     </figure>
   );

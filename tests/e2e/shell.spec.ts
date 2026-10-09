@@ -298,7 +298,8 @@ test.describe("home hero", () => {
     const box = (await hero.boundingBox())!;
     const height = page.viewportSize()!.height;
     expect(Math.abs(box.y + box.height - height)).toBeLessThanOrEqual(2);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("SWEILLEM Vitrified Clay Pipes Co.");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("Vitrified clay pipes for sewer and drainage, made in Egypt since 1935");
+    await expect(hero.getByRole("img", { name: "SWEILLEM Vitrified Clay Pipes Co." })).toBeVisible();
     // The big logo has a real size (Safari once drew it at 0 px), and the whole of it,
     // tagline included, sits above the pipes so no pipe covers the name.
     const logo = (await hero.locator(".clay-hero-logo svg").boundingBox())!;

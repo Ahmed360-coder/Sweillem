@@ -4,8 +4,8 @@ import { company } from "@content/company";
 import { EnquiryForm } from "@/components/EnquiryForm";
 import { PageHeader } from "@/components/PageHeader";
 import { Section } from "@/components/Section";
-import { SourceNote } from "@/components/SourceNote";
 import { QuoteIcon } from "@/components/icons";
+import { landlines, mobile, whatsapp } from "@/lib/contact";
 import { formsEnabled } from "@/lib/enquiry-server";
 import { locations } from "@/lib/locations";
 import { pageMetadata } from "@/lib/metadata";
@@ -16,8 +16,6 @@ export const metadata = pageMetadata({
   path: "/contact",
 });
 
-const [mobile, ...landlines] = company.phones;
-const mobileDigits = mobile.replace(/\D/g, "").replace(/^2?0?/, "");
 const office = locations[0];
 
 function mapsHref(address: string) {
@@ -55,10 +53,25 @@ export default function ContactPage() {
                 </a>
               </Row>
               <Row label="Phone">
-                <a href={`tel:+20${mobileDigits}`} className="whitespace-nowrap">
-                  {mobile}
+                <a href={mobile.href} className="whitespace-nowrap">
+                  {mobile.display}
                 </a>
-                <span className="mt-1 block text-[15px] text-muted">Also {landlines.join(", ")}</span>
+                <span className="mt-1 block text-[15px] text-muted">
+                  Landlines{" "}
+                  {landlines.map((l, i) => (
+                    <span key={l.href}>
+                      {i > 0 && " / "}
+                      <a href={l.href} className="whitespace-nowrap" aria-label={l.display}>
+                        {i === 0 ? l.display : l.last2}
+                      </a>
+                    </span>
+                  ))}
+                </span>
+              </Row>
+              <Row label="WhatsApp">
+                <a href={whatsapp.href} target="_blank" rel="noopener" className="whitespace-nowrap">
+                  Message us on WhatsApp<span className="sr-only"> (opens in a new tab)</span>
+                </a>
               </Row>
               <Row label="Address">
                 {office.address}
@@ -67,7 +80,6 @@ export default function ContactPage() {
                 </a>
               </Row>
             </dl>
-            <SourceNote className="mt-4">Source: Contact Us on sweillem.net.</SourceNote>
           </section>
 
           <Link
@@ -89,13 +101,13 @@ export default function ContactPage() {
             <h2 id="message-title" className="text-2xl">
               Send a message
             </h2>
-            <p className="text-muted">Leave an email address so SWEILLEM can reply.</p>
+            <p className="text-muted">Leave an email address so we can reply.</p>
           </div>
           <EnquiryForm kind="contact" enabled={formsEnabled()} />
         </section>
       </div>
 
-      <Section id="places" title="Other SWEILLEM places" lede="Addresses as SWEILLEM publishes them on its site and certificates.">
+      <Section id="places" title="Other SWEILLEM places" lede="Our other addresses in Egypt, Germany and Saudi Arabia.">
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {locations.slice(1).map((l) => (
             <li key={l.name + l.kind} className="grid content-start gap-2 rounded-card border border-line bg-surface p-5">
@@ -107,7 +119,6 @@ export default function ContactPage() {
                   About Euro Sweillem
                 </Link>
               )}
-              <SourceNote>Source: {l.source}</SourceNote>
             </li>
           ))}
         </ul>

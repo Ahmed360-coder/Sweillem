@@ -102,7 +102,7 @@ export function CompareClasses({ n, h }: { n: SpecTable; h: SpecTable }) {
               </>
             ) : (
               <p className="rounded-inner border border-dashed border-line p-5 text-muted">
-                SWEILLEM does not publish DN {size} in {label}.
+                DN {size} is not made in {label}.
               </p>
             )}
           </div>

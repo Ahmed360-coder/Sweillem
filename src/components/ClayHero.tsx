@@ -44,9 +44,10 @@ const cssVars = (vars: Record<string, string>) => Object.fromEntries(Object.entr
 export function ClayHero() {
   return (
     <section aria-label="Introduction" className="clay-hero">
-      <h1 className="clay-hero-logo">
+      <h1 className="sr-only">Vitrified clay pipes for sewer and drainage, made in Egypt since 1935</h1>
+      <div className="clay-hero-logo">
         <Logo title="SWEILLEM Vitrified Clay Pipes Co." />
-      </h1>
+      </div>
 
       {pieces.map((p, i) => (
         // Decorative renders; plain img keeps them out of the image optimiser's blur and resize steps.

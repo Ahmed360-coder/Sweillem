@@ -5,7 +5,6 @@ import { PageHeader } from "@/components/PageHeader";
 import { ProjectGallery } from "@/components/ProjectGallery";
 import { ProjectsMap } from "@/components/ProjectsMap";
 import { Section } from "@/components/Section";
-import { SourceNote } from "@/components/SourceNote";
 import { pageMetadata } from "@/lib/metadata";
 import { photoCount, projectStories } from "@/lib/project-galleries";
 import { mapData } from "@/lib/projects-map";
@@ -51,7 +50,6 @@ export default function ProjectsPage() {
                     </li>
                   ))}
                 </ul>
-                <SourceNote>{s.source}</SourceNote>
                 {s.onMap && (
                   <a href="#map" className="link tap w-fit text-base sm:text-[15px]">
                     Back to the map

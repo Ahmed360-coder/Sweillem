@@ -73,7 +73,7 @@ const certificateItems: DownloadItem[] = certificateRecords.map((c) => {
     detail: `${c.title}. Issued by ${c.issuer}, number ${c.number}.`,
     country: countryOf[c.id] ?? "Egypt",
     note: lapsed
-      ? `Valid until ${date(c.validUntil)}. This copy has passed its date; ask SWEILLEM for the current one.`
+      ? `Valid until ${date(c.validUntil)}. This copy has passed its date; ask us for the current one.`
       : `Valid until ${date(c.validUntil)}.`,
     status: lapsed ? "expired" : "available",
     actions,
@@ -88,9 +88,10 @@ const brokenItems: DownloadItem[] = certificates
     id: c.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
     kind: "certificate",
     title: c.name,
-    detail: "Approval named on the old Downloads page.",
+    detail: "Approval certificate.",
     country: countryName[c.country] ?? c.country,
-    note: "Its link on the old site was broken, so there is no file to offer yet.",
+    // TODO(factory): a PDF copy of this approval (docs/factory-todo.md).
+    note: "Ask us for a copy.",
     status: "unavailable",
     actions: [],
     keywords: "approval",
@@ -118,8 +119,9 @@ const documentItems: DownloadItem[] = [
     id: "catalogue-2024",
     kind: "document",
     title: "Product catalogue 2024",
-    detail: "SWEILLEM’s catalogue, named on the old home page.",
-    note: "No file was ever linked to it. Until SWEILLEM publishes one, the spec sheets above list every size it publishes.",
+    detail: "Our product catalogue.",
+    // TODO(factory): the catalogue PDF (docs/factory-todo.md).
+    note: "Ask us for a copy. The spec sheets above list every size.",
     status: "unavailable",
     actions: [],
     keywords: "catalog brochure",
@@ -128,8 +130,9 @@ const documentItems: DownloadItem[] = [
     id: "quality-policy",
     kind: "document",
     title: "Quality policy",
-    detail: "SWEILLEM’s quality policy, named on the old home page.",
-    note: "No file was ever linked to it.",
+    detail: "Our quality policy.",
+    // TODO(factory): the quality policy PDF (docs/factory-todo.md).
+    note: "Ask us for a copy.",
     status: "unavailable",
     actions: [],
     keywords: "quality",

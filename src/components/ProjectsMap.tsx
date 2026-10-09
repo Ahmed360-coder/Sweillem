@@ -300,7 +300,6 @@ export function ProjectsMap({
   const pipeId = `pmap-pipe${uid}`;
   // Markets too small to see as a shape (Singapore, Hong Kong) also get a red disc.
   const smallMarkets = new Set(geo?.markets.filter((m) => extent(m.d) < 14).map((m) => m.id));
-  const namedCount = data.markets.filter((m) => m.source === "about").length;
 
   return (
     <div
@@ -518,7 +517,7 @@ export function ProjectsMap({
           </li>
           <li className="flex items-center gap-2">
             <span aria-hidden="true" className="pmap-key pmap-key-market" />
-            Country SWEILLEM names
+            Export market
           </li>
         </ul>
       </div>
@@ -540,9 +539,7 @@ export function ProjectsMap({
                 {pickedMarket.name}
               </h3>
               <p className="text-[15px] text-muted">
-                {pickedMarket.source === "about"
-                  ? `One of the ${namedCount} countries SWEILLEM names as customers on its About Us page, reached from Cairo.`
-                  : "Filled red on SWEILLEM’s own export map, reached from Cairo."}
+                One of our export markets, reached from Cairo.
               </p>
             </div>
           ) : (

@@ -11,6 +11,7 @@ export interface Milestone {
   when?: string;
   title: string;
   text: string;
+  /** Where the fact comes from. For editors only, not shown on the page. */
   source: string;
   /** How far the business reaches at this point: index into `reach`, 1-based. */
   reach: number;
@@ -208,7 +209,6 @@ export function HeritageTrack({ milestones, reach }: { milestones: Milestone[]; 
                 )}
                 <h3 className="text-xl">{m.title}</h3>
                 <p className="text-base sm:text-[15px] text-muted">{m.text}</p>
-                <span className="font-mono text-[12px] text-muted">Source: {m.source}</span>
               </div>
             </li>
           ))}
