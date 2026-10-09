@@ -36,7 +36,7 @@ export default function ProductsPage() {
     {
       href: "/products/explorer",
       title: "Product explorer",
-      text: `Pick a product, a class and a size and see its exact row. ${explorerProducts.length} products, ${totalRows} published rows.`,
+      text: `Pick a product, a class and a size and see its exact row. ${explorerProducts.length} products, ${totalRows} specification rows.`,
       art: <ExplorerArt className="h-full w-full" />,
     },
     {
@@ -87,7 +87,7 @@ export default function ProductsPage() {
         id="size"
         eyebrow="Size finder"
         title="Slide to your size"
-        lede={`Pick a product family, drag through its published sizes and turn the piece in 3D, or see it drawn to scale with its published figures. Pipes run from DN ${stops[0].dn} to ${stops.at(-1)!.dn}, with every fitting SWEILLEM makes at each size.`}
+        lede={`Pick a product family, drag through its sizes and turn the piece in 3D, or see it drawn to scale with its figures. Pipes run from DN ${stops[0].dn} to ${stops.at(-1)!.dn}, with every fitting SWEILLEM makes at each size.`}
       >
         <SizeFinder stops={stops} families={families} />
       </Section>

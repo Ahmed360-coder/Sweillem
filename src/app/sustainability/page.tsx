@@ -4,7 +4,6 @@ import { CountUp } from "@/components/CountUp";
 import { CtaBand } from "@/components/CtaBand";
 import { PageHeader } from "@/components/PageHeader";
 import { Section } from "@/components/Section";
-import { SourceNote } from "@/components/SourceNote";
 import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata({
@@ -14,7 +13,7 @@ export const metadata = pageMetadata({
   path: "/sustainability",
 });
 
-// 2023 figures exactly as published on the live Sustainability page.
+// 2023 figures exactly as on the old Sustainability page (May 2025).
 const emissions = [
   { label: "Scope 1", detail: "Direct: diesel and natural gas in production", tonnes: 19963.9, share: "88%" },
   { label: "Scope 2, location-based", detail: "Indirect: purchased electricity", tonnes: 1464.2, share: "6.5%" },
@@ -108,9 +107,7 @@ export default function SustainabilityPage() {
             </tbody>
           </table>
         </div>
-        <SourceNote className="mt-3">
-          Figures as published on the Sustainability page of sweillem.net (May 2025). Shares are SWEILLEM’s own.
-        </SourceNote>
+        <p className="mt-3 text-sm text-muted">2023 figures, reported in May 2025.</p>
       </Section>
 
       <Section id="scopes" title="What each scope covers" lede="SWEILLEM follows the Greenhouse Gas Protocol, which separates direct emissions from those in the supply chain.">

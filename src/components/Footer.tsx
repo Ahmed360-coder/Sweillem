@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { company } from "@content/company";
+import { mobile, whatsapp } from "@/lib/contact";
 import { footerNav, site } from "@/lib/site";
 import { Logo } from "./Logo";
 
@@ -14,6 +16,24 @@ export function Footer() {
           <p className="max-w-[34ch] text-muted">
             Vitrified clay pipes and fittings for sewer and drainage networks. Cairo, since {site.founded}.
           </p>
+          <ul className="mt-4 grid gap-0.5">
+            <li>
+              <a href={`mailto:${company.email}`} className="inline-flex min-h-11 items-center text-ink no-underline hover:text-maroon md:min-h-0 md:py-1">
+                {company.email}
+              </a>
+            </li>
+            <li>
+              <a href={mobile.href} className="inline-flex min-h-11 items-center whitespace-nowrap text-ink no-underline hover:text-maroon md:min-h-0 md:py-1">
+                {mobile.display}
+              </a>
+            </li>
+            <li>
+              <a href={whatsapp.href} target="_blank" rel="noopener" className="inline-flex min-h-11 items-center text-ink no-underline hover:text-maroon md:min-h-0 md:py-1">
+                {whatsapp.label}
+                <span className="sr-only"> (opens in a new tab)</span>
+              </a>
+            </li>
+          </ul>
         </div>
         {footerNav.map((group) => (
           <nav key={group.title} aria-label={group.title}>

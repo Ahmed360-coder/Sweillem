@@ -5,8 +5,8 @@ import { productSpecs } from "@content/products";
 import { CtaBand } from "@/components/CtaBand";
 import { PageHeader } from "@/components/PageHeader";
 import { Section } from "@/components/Section";
-import { SourceNote } from "@/components/SourceNote";
 import { pageMetadata } from "@/lib/metadata";
+import { NO_CLASS, NO_CLASS_NOTE, cellText } from "@/lib/specs";
 
 export const metadata = pageMetadata({
   title: "Quality: made and tested to EN 295",
@@ -24,7 +24,7 @@ function strengthRows() {
     if (!t) return map;
     const col = (key: string) => t.columns.findIndex((c) => c.key === key);
     const [dn, tkl, fn] = [col("dn"), col("strengthClass"), col("crushingStrength")];
-    for (const r of t.rows) if (!map.has(r[dn])) map.set(r[dn], { tkl: r[tkl], fn: r[fn] });
+    for (const r of t.rows) if (!map.has(r[dn])) map.set(r[dn], { tkl: cellText(r[tkl], t.columns[tkl]), fn: cellText(r[fn]) });
     return map;
   };
   const n = pick("N");
@@ -37,9 +37,9 @@ function strengthRows() {
 const standards = [
   { name: "EN 295", what: "European standard for vitrified clay pipes", proof: "DIN CERTCO certificate P1S048 (seals)" },
   { name: "SASO GSO EN 295", what: "Gulf version of EN 295, for Saudi Arabia", proof: "SASO quality mark licence" },
-  { name: "ZPWN 295:2016", what: "German standard", proof: "Named on About Us" },
-  { name: "ES 56/2005", what: "Egyptian standard", proof: "Named on About Us" },
-  { name: "ASTM C700", what: "American standard", proof: "Named on About Us" },
+  { name: "ZPWN 295:2016", what: "German standard", proof: "Our pipes are made to it" },
+  { name: "ES 56/2005", what: "Egyptian standard", proof: "Our pipes are made to it" },
+  { name: "ASTM C700", what: "American standard", proof: "Our pipes are made to it" },
   { name: "ISO 9001:2015", what: "Quality management", proof: "Certificates 8488 and MSE 0640525A" },
   { name: "ISO 14001:2015", what: "Environmental management", proof: "Certificates 8401 and MSE 0640525B" },
   { name: "ISO 45001:2018", what: "Health and safety management", proof: "Certificates 9720 and MSE 0640525C" },
@@ -110,23 +110,23 @@ export default function QualityPage() {
                   <th scope="row" className="px-4 py-2.5 text-start font-mono font-semibold">
                     {r.dn}
                   </th>
-                  <td className="border-s border-line px-4 py-2.5">{r.n?.tkl ?? "-"}</td>
-                  <td className="px-4 py-2.5">{r.n?.fn ?? "-"}</td>
-                  <td className="border-s border-line px-4 py-2.5">{r.h?.tkl ?? "-"}</td>
-                  <td className="px-4 py-2.5">{r.h?.fn ?? "-"}</td>
+                  <td className="border-s border-line px-4 py-2.5" title={r.n?.tkl === NO_CLASS ? NO_CLASS_NOTE : undefined}>{r.n?.tkl ?? "–"}</td>
+                  <td className="px-4 py-2.5">{r.n?.fn ?? "–"}</td>
+                  <td className="border-s border-line px-4 py-2.5" title={r.h?.tkl === NO_CLASS ? NO_CLASS_NOTE : undefined}>{r.h?.tkl ?? "–"}</td>
+                  <td className="px-4 py-2.5">{r.h?.fn ?? "–"}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        <SourceNote className="mt-3">
-          From the N and H pipe tables on sweillem.net, as published. “-” means the table gives no value for that size. Full
-          dimensions are on the{" "}
+        <p className="mt-3 text-sm text-muted">
+          “–” means that class is not made in that size; “n/a” means no strength class applies to that size. Full dimensions are on
+          the{" "}
           <Link href="/products/pipes" className="link">
             Pipes
           </Link>{" "}
           page.
-        </SourceNote>
+        </p>
       </Section>
 
       <Section id="standards" title="Standards SWEILLEM works to" lede={`Product standards for the pipes and their joints, and ${managementCount} certified management systems.`}>
@@ -150,7 +150,7 @@ export default function QualityPage() {
         </p>
       </Section>
 
-      <Section id="checks" title="Where quality is checked" lede="Checks named in SWEILLEM’s own description of how a pipe is made.">
+      <Section id="checks" title="Where quality is checked" lede="The checks built into how we make every pipe.">
         <ol className="grid gap-3 md:grid-cols-4">
           {checks.map((c, i) => (
             <li
@@ -194,23 +194,9 @@ export default function QualityPage() {
             </p>
           </article>
         </div>
-        <SourceNote className="mt-3">From About Us on sweillem.net.</SourceNote>
       </Section>
 
-      <section aria-labelledby="en295-title" className="pb-[clamp(24px,4vw,48px)]">
-        <div className="wrap">
-          <div className="grid gap-2 rounded-card border border-dashed border-line p-[clamp(20px,3vw,28px)]">
-            <h2 id="en295-title" className="text-lg">
-              EN 295 and GSO EN 295 requirement tables
-            </h2>
-            <p className="max-w-[70ch] text-base sm:text-[15px] text-muted">
-              The current site shows these requirements as pictures hosted on another website. They will appear here as
-              readable tables once SWEILLEM supplies them as text.
-            </p>
-          </div>
-        </div>
-      </section>
-
+      {/* TODO(factory): EN 295 and GSO EN 295 requirement tables as text (docs/factory-todo.md). */}
       <CtaBand />
     </>
   );

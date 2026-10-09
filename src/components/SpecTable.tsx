@@ -1,5 +1,5 @@
 import type { SpecTable as Table } from "@content/types";
-import { cellText, columnHeading, columnName, columnUnit, rowSize, tableTitle } from "@/lib/specs";
+import { cellNote, cellText, columnHeading, columnName, columnUnit, displayRows, rowSize, tableTitle } from "@/lib/specs";
 import { AddToQuote } from "./AddToQuote";
 
 /** Rows a phone shows before the rest of a table folds away. */
@@ -7,10 +7,12 @@ const PHONE_ROWS = 3;
 
 /**
  * One published spec table. Wide screens and print get the table; phones get
- * one card per row so nothing scrolls sideways. Cell text is as published.
+ * one card per row so nothing scrolls sideways. Rows that differ only in
+ * length are shown as one row (displayRows).
  */
 export function SpecTable({ table, productName, headingLevel = 3 }: { table: Table; productName: string; headingLevel?: 2 | 3 }) {
   const H = `h${headingLevel}` as const;
+  const rows = displayRows(table);
   const title = tableTitle(table);
   const headingId = `${table.id}-title`;
   const quoteItem = (row: string[]) => ({
@@ -20,8 +22,8 @@ export function SpecTable({ table, productName, headingLevel = 3 }: { table: Tab
   });
   const quoteLabel = (row: string[], i: number) => `Add DN ${rowSize(table, row)} (row ${i + 1}) of ${title} to quote`;
   // A table only folds when it would hide at least two rows.
-  const shown = table.rows.length > PHONE_ROWS + 1 ? PHONE_ROWS : table.rows.length;
-  const folded = table.rows.length - shown;
+  const shown = rows.length > PHONE_ROWS + 1 ? PHONE_ROWS : rows.length;
+  const folded = rows.length - shown;
   const card = (row: string[], ri: number) => (
     <li key={ri} className="rounded-inner border border-line bg-surface p-4">
       <div className="mb-3 flex items-center justify-between gap-3">
@@ -40,7 +42,9 @@ export function SpecTable({ table, productName, headingLevel = 3 }: { table: Tab
                 {columnName(c)}
                 {unit && <span> ({unit})</span>}
               </dt>
-              <dd className="font-mono [overflow-wrap:anywhere]">{cellText(row[ci + 1])}</dd>
+              <dd className="font-mono [overflow-wrap:anywhere]" title={cellNote(row[ci + 1], c)}>
+                {cellText(row[ci + 1], c)}
+              </dd>
             </div>
           );
         })}
@@ -55,7 +59,7 @@ export function SpecTable({ table, productName, headingLevel = 3 }: { table: Tab
           {title}
         </H>
         <p className="font-mono text-xs tracking-[.08em] text-muted uppercase">
-          {table.rows.length} {table.rows.length === 1 ? "row" : "rows"}
+          {rows.length} {rows.length === 1 ? "row" : "rows"}
         </p>
       </div>
 
@@ -68,7 +72,6 @@ export function SpecTable({ table, productName, headingLevel = 3 }: { table: Tab
                 <th
                   key={i}
                   scope="col"
-                  title={c.label}
                   className={`px-3 py-2.5 text-[12.5px] leading-tight font-semibold ${i === 0 ? "sticky left-0 z-10 bg-sunk" : ""}`}
                 >
                   {columnHeading(c)}
@@ -80,7 +83,7 @@ export function SpecTable({ table, productName, headingLevel = 3 }: { table: Tab
             </tr>
           </thead>
           <tbody className="divide-y divide-line">
-            {table.rows.map((row, ri) => (
+            {rows.map((row, ri) => (
               <tr key={ri} className="hover:bg-sunk/60">
                 {row.map((cell, ci) =>
                   ci === 0 ? (
@@ -88,8 +91,8 @@ export function SpecTable({ table, productName, headingLevel = 3 }: { table: Tab
                       {cellText(cell)}
                     </th>
                   ) : (
-                    <td key={ci} className="px-3 py-2 font-mono whitespace-nowrap">
-                      {cellText(cell)}
+                    <td key={ci} className="px-3 py-2 font-mono whitespace-nowrap" title={cellNote(cell, table.columns[ci])}>
+                      {cellText(cell, table.columns[ci])}
                     </td>
                   ),
                 )}
@@ -104,24 +107,19 @@ export function SpecTable({ table, productName, headingLevel = 3 }: { table: Tab
 
       {/* Cards: phones. Long tables show the first few rows and fold the rest away,
           so a phone page stays a few screens long. */}
-      <ul className="grid gap-3 md:hidden print:hidden">{table.rows.slice(0, shown).map(card)}</ul>
+      <ul className="grid gap-3 md:hidden print:hidden">{rows.slice(0, shown).map(card)}</ul>
       {folded > 0 && (
         <details className="group grid gap-3 md:hidden print:hidden">
           <summary className="mx-auto flex min-h-11 w-fit cursor-pointer list-none items-center gap-2 rounded-full border border-line bg-surface px-5 text-sm font-semibold text-maroon [&::-webkit-details-marker]:hidden">
-            <span className="group-open:hidden">Show all {table.rows.length} rows</span>
+            <span className="group-open:hidden">Show all {rows.length} rows</span>
             <span className="hidden group-open:inline">Show fewer rows</span>
             <svg viewBox="0 0 24 24" className="size-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
               <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </summary>
-          <ul className="mt-3 grid gap-3">{table.rows.slice(shown).map((row, i) => card(row, i + shown))}</ul>
+          <ul className="mt-3 grid gap-3">{rows.slice(shown).map((row, i) => card(row, i + shown))}</ul>
         </details>
       )}
     </section>
   );
-}
-
-/** True when any cell or heading carries the unexplained * / ** marks. */
-export function hasFootnoteMarks(tables: Table[]): boolean {
-  return tables.some((t) => t.columns.some((c) => c.label.includes("*")) || t.rows.some((r) => r.some((c) => c.includes("*"))));
 }

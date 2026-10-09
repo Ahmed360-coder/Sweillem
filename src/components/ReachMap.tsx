@@ -22,8 +22,8 @@ function extent(d: string) {
  */
 const markets = map.markets.map((m) => ({ ...m, small: extent(m.d) < 14 }));
 const groups = [
-  { title: "Named on SWEILLEM’s About Us page", items: markets.filter((m) => m.source === "about") },
-  { title: "Also marked on SWEILLEM’s own map", items: markets.filter((m) => m.source === "map") },
+  { title: "Our customer countries", items: markets.filter((m) => m.source === "about") },
+  { title: "More export markets", items: markets.filter((m) => m.source === "map") },
 ];
 
 /** A vitrified clay pipe, spigot end first, drawn around 0,0 so it can ride a route. */

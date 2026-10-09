@@ -13,6 +13,7 @@ import {
   type FieldName,
 } from "@/lib/enquiry";
 import type { QuoteItem } from "@/lib/quote";
+import { mobile } from "@/lib/contact";
 
 type Values = Pick<EnquiryInput, "name" | "email" | "phone" | "company" | "country" | "project" | "topic" | "message">;
 const blank: Values = { name: "", email: "", phone: "", company: "", country: "", project: "", topic: "", message: "" };
@@ -21,8 +22,6 @@ type Problem = "not-configured" | "rate-limited" | "failed" | "offline" | "sent-
 
 const fieldOrder: FieldName[] = ["items", "name", "email", "phone", "company", "country", "project", "topic", "message"];
 
-const mobile = company.phones[0];
-const mobileHref = `tel:+20${mobile.replace(/\D/g, "").replace(/^2?0?/, "")}`;
 
 /** Plain-text version of the request for the "email it instead" link. */
 function mailtoHref(kind: EnquiryKind, v: Values, items: QuoteItem[]) {
@@ -233,8 +232,8 @@ export function EnquiryForm({
         <p className="rounded-inner border border-dashed border-line bg-sunk/60 px-4 py-3 text-[15px]">
           Online sending is being set up. Until it is, this form puts your {isQuote ? "request" : "message"} into an email to{" "}
           <a href={`mailto:${company.email}`}>{company.email}</a>, or you can call{" "}
-          <a href={mobileHref} className="whitespace-nowrap">
-            {mobile}
+          <a href={mobile.href} className="whitespace-nowrap">
+            {mobile.display}
           </a>
           .
         </p>

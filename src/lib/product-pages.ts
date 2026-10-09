@@ -3,9 +3,9 @@ import type { Product } from "@content/types";
 import { families } from "./families";
 import { classNames, dnRange, jointsOf, strengthsOf } from "./specs";
 
-// Page-level details for each product page. Everything is taken from the
-// live product pages or computed from their tables; nothing is described
-// that SWEILLEM does not publish (docs/content-gaps.md 5.1, 5.6).
+// Page-level details for each product page. Everything comes from the spec
+// tables or facts already on the site; nothing is described that SWEILLEM has
+// not stated (docs/content-gaps.md 5.1, 5.6, docs/factory-todo.md).
 
 export interface Drawing {
   src: string;
@@ -32,7 +32,7 @@ const extras: Record<string, PageExtras> = {
       {
         src: "/images/products/perforated-pipe-drawing.jpg",
         alt: "Drawing of a perforated pipe: side view with rows of holes along length L1, outer diameter d3, inner diameter d1, and an end view of the MP system",
-        caption: "Perforated pipe, side view and end view (MP system). Drawing from sweillem.net.",
+        caption: "Perforated pipe, side view and end view (MP system)..",
         width: 1000,
         height: 260,
       },
@@ -49,7 +49,7 @@ const extras: Record<string, PageExtras> = {
       {
         src: "/images/products/enlarger-drawing.jpg",
         alt: "Drawing of an enlarger in section: a socket at nominal size DN1 widening to a larger DN2",
-        caption: "Enlarger: DN1 widens to DN2. Drawing from sweillem.net.",
+        caption: "Enlarger: DN1 widens to DN2..",
         forTable: "enlarger",
         width: 513,
         height: 248,
@@ -57,7 +57,7 @@ const extras: Record<string, PageExtras> = {
       {
         src: "/images/products/reducer-drawing.jpg",
         alt: "Drawing of a reducer in section: a socket at nominal size DN1 narrowing to a smaller DN2",
-        caption: "Reducer: DN1 narrows to DN2. Drawing from sweillem.net.",
+        caption: "Reducer: DN1 narrows to DN2..",
         forTable: "reducers",
         width: 913,
         height: 408,
@@ -70,7 +70,7 @@ const extras: Record<string, PageExtras> = {
       {
         src: "/images/products/half-channel-drawing.jpg",
         alt: "Drawing of two half channels showing nominal size DN, radius R, height H, wall s and length L",
-        caption: "Half channels 180°: DN, R, H, s and L. Drawing from sweillem.net.",
+        caption: "Half channels 180°: DN, R, H, s and L..",
         width: 850,
         height: 290,
       },
@@ -81,7 +81,7 @@ const extras: Record<string, PageExtras> = {
       {
         src: "/images/products/u-trap.jpg",
         alt: "Section drawing of a U-trap with dimensions DN2 d8, d4, d3, A, B and M1 marked",
-        caption: "U-trap in section, with its dimension letters. Drawing from sweillem.net.",
+        caption: "U-trap in section, with its dimension letters..",
         width: 1000,
         height: 845,
       },
@@ -123,11 +123,14 @@ export function productPage(slug: string): ProductPage | undefined {
     facts.push({ label: "Specification rows", value: `${rows} in ${spec.tables.length} ${spec.tables.length === 1 ? "table" : "tables"}` });
     summary = `${product.name} in nominal sizes DN ${lo} to ${hi}${
       strengths.length === 2 ? ", in normal (N) and extra (H) strength classes" : ""
-    }. Every size SWEILLEM publishes is listed below, with its dimensions${joints.length ? " and joint type" : ""}.`;
+    }. Every size is listed below, with its dimensions${joints.length ? " and joint type" : ""}.`;
+  } else if (slug === "jointing-systems") {
+    summary =
+      "SWEILLEM pipes join with F and C joints. Our polyurethane joint, at 67 ± 5 Shore A, keeps roots out and stays watertight at 0.5, 1 and 2.4 bar.";
   } else if (product.state === "drawing") {
-    summary = `SWEILLEM publishes a dimension drawing for the ${product.name.toLowerCase()} but no table of sizes yet.`;
+    summary = `The ${product.name.toLowerCase()} in section, with its dimensions marked. Ask us for the sizes your line needs.`;
   } else {
-    summary = `SWEILLEM lists ${product.name.toLowerCase()} among its products but has not published a description or sizes yet.`;
+    summary = `${product.name} for SWEILLEM vitrified clay pipe lines. Contact us for sizes and specifications.`;
   }
 
   return {

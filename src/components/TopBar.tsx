@@ -1,9 +1,7 @@
 import { company } from "@content/company";
+import { mobile, whatsapp } from "@/lib/contact";
 import { site } from "@/lib/site";
 import { ThemeToggle } from "./ThemeSwitch";
-
-const mobile = company.phones[0];
-const mobileHref = `tel:+20${mobile.replace(/\D/g, "").replace(/^2?0?/, "")}`;
 
 /**
  * Slim bar above the header on every page: how to reach SWEILLEM on the left,
@@ -18,8 +16,12 @@ export function TopBar() {
           <a href={`mailto:${company.email}`} className="truncate text-ink no-underline hover:text-maroon">
             {company.email}
           </a>
-          <a href={mobileHref} className="hidden whitespace-nowrap text-ink no-underline hover:text-maroon min-[640px]:inline">
-            {mobile}
+          <a href={mobile.href} className="hidden whitespace-nowrap text-ink no-underline hover:text-maroon min-[640px]:inline">
+            {mobile.display}
+          </a>
+          <a href={whatsapp.href} target="_blank" rel="noopener" className="whitespace-nowrap text-ink no-underline hover:text-maroon">
+            {whatsapp.label}
+            <span className="sr-only"> (opens in a new tab)</span>
           </a>
           <span className="hidden whitespace-nowrap min-[980px]:inline">
             Vitrified clay pipes, made in Egypt since {site.founded}

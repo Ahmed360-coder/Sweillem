@@ -4,7 +4,6 @@ import { CtaBand } from "@/components/CtaBand";
 import { JointDemo } from "@/components/JointDemo";
 import { PageHeader } from "@/components/PageHeader";
 import { Section } from "@/components/Section";
-import { SourceNote } from "@/components/SourceNote";
 import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata({
@@ -73,7 +72,7 @@ export default function JointPerformancePage() {
         </div>
       </Section>
 
-      <Section id="test" title="The line test" lede="How water tightness is checked on a pipeline, as SWEILLEM describes it.">
+      <Section id="test" title="The line test" lede="How water tightness is checked on a pipeline.">
         <ol className="grid gap-3 md:grid-cols-3">
           {testSteps.map((t, i) => (
             <li
@@ -145,7 +144,6 @@ export default function JointPerformancePage() {
             </p>
           </div>
         </div>
-        <SourceNote className="mt-4">Text and figures from Joint Performance on sweillem.net.</SourceNote>
       </Section>
 
       <Section id="seals" title="Certified seals">

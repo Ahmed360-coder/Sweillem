@@ -68,7 +68,7 @@ function lengthMm(t: SpecTable, r: string[]): number | null {
 function figuresOf(t: SpecTable, r: string[]) {
   return t.columns.flatMap((c, i) => {
     if (c.key === "dn") return [];
-    const value = cellText(r[i] ?? "");
+    const value = cellText(r[i] ?? "", c);
     return value === "–" ? [] : [{ label: columnHeading(c), value }];
   });
 }
@@ -140,7 +140,7 @@ function bends(): ViewerType[] {
           strength,
           shape: { kind: "bend", d1, d3, angle, radius: Math.round(1.5 * d3) },
           figures: figuresOf(t, r),
-          drawn: ["Bend radius: not published, drawn at 1.5 × the outer ø."],
+          drawn: ["Bend radius drawn at 1.5 × the outer ø."],
           href: explorerHref("bends", specGroups(spec).find((g) => g.tables.includes(t))!.id, t.strength, size),
           quote: { product: `Bends, ${angle}°`, size: `DN ${size}`, ...(strength && { strengthClass: strength }) },
         },
@@ -176,7 +176,7 @@ function junctions(): ViewerType[] {
         const len = lengthMm(t, r) ?? (dn >= 400 ? 1000 : 500);
         if (lengthMm(t, r) === null) drawn.push(`Length: not in this row, drawn ${len / 1000} m.`);
         const branch = Math.round(Math.max(b3 * 0.6, 120));
-        drawn.push("Branch length beyond the main pipe: not published.");
+        drawn.push("Branch length beyond the main pipe is illustrative.");
         return [
           {
             size,
@@ -231,7 +231,7 @@ function shortPieces(): ViewerType[] {
           const small = pipeAt(dn, "N");
           if (small) {
             shape = { kind: "taper", a1: small.d1, a3: small.d3, b1: d1, b3: d3, len };
-            drawn.push(`Small end: the DN ${dn} pipe (inner ø ${small.d1} mm, outer ø ${small.d3} mm). Cone length is not published.`);
+            drawn.push(`Small end: the DN ${dn} pipe (inner ø ${small.d1} mm, outer ø ${small.d3} mm). Cone length is illustrative.`);
           }
         }
         return classes.length
@@ -265,7 +265,7 @@ function jointingSystems(): ViewerType[] {
       strength: p.strength,
       shape: { kind: "joint", d1: p.d1, d3: p.d3, d4: p.d4!, d7: p.d7!, depth, seal: SEAL },
       figures: [fig("joint"), fig("d4"), fig("d7"), fig("d3"), fig("d1")],
-      drawn: [`Socket depth: not published, drawn ${depth} mm.`, `Seal thickness: not published, drawn ${SEAL} mm.`],
+      drawn: [`Socket depth drawn at ${depth} mm (illustrative).`, `Seal thickness drawn at ${SEAL} mm (illustrative).`],
       href: explorerHref("pipes", pipeGroupId(p.table), p.strength, p.size),
       quote: { product: "Jointing systems, C joint", size: `DN ${p.dn}`, strengthClass: p.strength },
     };
@@ -295,10 +295,10 @@ function pipeWithJoints(): ViewerType[] {
       shape: { kind: "straight", d1: p.d1, d3: p.d3, len, joint: { d4: p.d4!, d7: p.d7!, depth, seal: SEAL, next: 0 } },
       figures: figuresOf(p.table, p.row),
       drawn: [
-        `Socket depth: not published, drawn ${depth} mm.`,
-        `Seal thickness: not published, drawn ${SEAL} mm.`,
-        `Length: the longest published, ${len / 1000} m.`,
-        "DN 125 and 150 use the F joint, whose sizes are not published, so they are not drawn here.",
+        `Socket depth drawn at ${depth} mm (illustrative).`,
+        `Seal thickness drawn at ${SEAL} mm (illustrative).`,
+        `Length: ${len / 1000} m, the longest made.`,
+        "DN 125 and 150 use the F joint, which is not drawn here.",
       ],
       href: explorerHref("pipes", pipeGroupId(p.table), p.strength, p.size),
       quote: { product: `Pipes, ${tableTitle(p.table)}`, size: `DN ${p.dn}`, strengthClass: p.strength },
@@ -318,7 +318,7 @@ function endPlugs(): ViewerType[] {
       strength: p.strength,
       shape: { kind: "plug", d1: p.d1, d3: p.d3, d4: p.d4!, depth, seal: SEAL, plug },
       figures: [{ label: `${columnHeading(p.table.columns[i])}, the plug's seat`, value: cellText(p.row[i]) }],
-      drawn: ["No sizes are published for end plugs: drawn to fit the socket of the pipe at this size.", `Plug thickness ${plug} mm and socket depth ${depth} mm are drawn, not published.`],
+      drawn: ["End plug drawn to fit the socket of the pipe at this size.", `Plug thickness ${plug} mm and socket depth ${depth} mm are illustrative.`],
       href: null,
       quote: { product: "End plug", size: `DN ${p.dn}`, strengthClass: p.strength },
     };
@@ -370,10 +370,10 @@ function perforated(): ViewerType[] {
             shape: { kind: "straight", d1, d3, len, holes: { dia, around, along, arc: arcDeg }, joint },
             figures: [...figuresOf(t, r).filter((f) => !/holes Z/.test(f.label) || f.label.startsWith(code)), ...socketFigures],
             drawn: [
-              `Hole positions: ${around} around and ${along} along, as published; their spacing is drawn even.`,
+              `Hole positions: ${around} around and ${along} along; spacing drawn even.`,
               ...(joint
                 ? [
-                    `Joint: the perforated pipe table gives no socket sizes, so the socket (d4) and seal (d7) are the DN ${dn} N pipe's. Socket depth ${depth} mm and seal thickness ${SEAL} mm are drawn, not published.`,
+                    `Joint: socket (d4) and seal (d7) drawn from the DN ${dn} N pipe. Socket depth ${depth} mm and seal thickness ${SEAL} mm are illustrative.`,
                     "On the right, the next pipe's spigot is pushed home into the socket.",
                   ]
                 : []),
@@ -412,7 +412,7 @@ function enlargerReducer(): ViewerType[] {
           strength: null,
           shape: { kind: "taper", a1: a.d1, a3: a.d3, b1: b.d1, b3: b.d3, len: LEN },
           figures,
-          drawn: [`Diameters: from the DN ${dn} and DN ${dn2} pipes; this table gives sizes only.`, `Length: not published, drawn ${LEN} mm like the ÜF short piece.`],
+          drawn: [`Diameters drawn from the DN ${dn} and DN ${dn2} pipes.`, `Length drawn at ${LEN} mm, like the ÜF short piece.`],
           href: explorerHref("enlarger-reducer", g.id, null, size),
           quote: { product: g.label, size: `DN ${size}` },
         },
@@ -443,7 +443,7 @@ function halfChannels(): ViewerType[] {
         strength: null,
         shape: { kind: "channel", dn, h, wall, len },
         figures: figuresOf(t, r),
-        drawn: [p ? `Wall: not published, drawn ${wall} mm like the DN ${dn} pipe.` : `Wall: not published, drawn ${wall} mm.`],
+        drawn: [p ? `Wall drawn at ${wall} mm, like the DN ${dn} pipe.` : `Wall drawn at ${wall} mm.`],
         href: explorerHref("half-channels", g.id, null, size),
         quote: { product: "Half channels 180°", size: `DN ${size}` },
       },
@@ -481,7 +481,7 @@ export function viewerFamilies(): ViewerFamily[] {
         {
           slug: p.slug,
           name: p.name,
-          note: "Shape only: SWEILLEM publishes no U-trap sizes.",
+          note: "Shape only, not to scale.",
           types: [],
           shapeOnly: { image: p.images[0], alt: "SWEILLEM's dimension drawing of the U-trap (DN2 d8, d4, d3, A, B, M1), with no values", shape: { kind: "utrap", d1: pipe.d1, d3: pipe.d3 } },
         },

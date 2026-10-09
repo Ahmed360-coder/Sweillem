@@ -200,7 +200,7 @@ export function PipeSizeSlider({ stops, initialDn = 300 }: { stops: SizeStop[]; 
           </div>
           <figcaption className="border-t border-line px-4 py-2.5 text-[13px] text-muted sm:px-6">
             {show3d
-              ? `To scale on a 100 mm grid, bold every 500 mm: ${pipe.d3} mm across and ${pipe.length} m long, the longest published length.`
+              ? `To scale on a 100 mm grid, bold every 500 mm: ${pipe.d3} mm across and ${pipe.length} m long, the longest made.`
               : `End face to scale on a 100 mm grid. Dashed: DN ${largest.dn}, the largest size.`}
           </figcaption>
         </figure>
@@ -336,9 +336,9 @@ export function PipeSizeSlider({ stops, initialDn = 300 }: { stops: SizeStop[]; 
             </ul>
           ) : (
             <p className="rounded-inner border border-dashed border-line p-4 text-muted">
-              SWEILLEM publishes no fittings at DN {stop.dn}, only the pipe.{" "}
+              At DN {stop.dn} we list the pipe only.{" "}
               <Link className="link relative" href="/contact">
-                Ask about this size
+                Ask about fittings for this size
               </Link>
             </p>
           )}

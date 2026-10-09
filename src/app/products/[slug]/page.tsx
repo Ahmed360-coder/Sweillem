@@ -12,8 +12,8 @@ import { PageHeader } from "@/components/PageHeader";
 import { PrintButton } from "@/components/PrintButton";
 import { ProductExplorer } from "@/components/ProductExplorer";
 import { Section } from "@/components/Section";
-import { SourceNote } from "@/components/SourceNote";
-import { SpecTable, hasFootnoteMarks } from "@/components/SpecTable";
+import { SpecTable } from "@/components/SpecTable";
+import { AddToQuote } from "@/components/AddToQuote";
 import { pageMetadata } from "@/lib/metadata";
 import { productPage, type Drawing } from "@/lib/product-pages";
 import { siteUrl } from "@/lib/site";
@@ -52,7 +52,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
   const { slug } = await params;
   const page = productPage(slug);
   if (!page) notFound();
-  const { product, family, spec, drawings, legend, facts, summary, transcribed } = page;
+  const { product, family, spec, drawings, legend, facts, summary } = page;
   const loose = drawings.filter((d) => !d.forTable);
 
   return (
@@ -92,7 +92,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
                 <Image src={family.picture.src} alt={family.picture.alt} fill priority unoptimized={family.picture.src.endsWith(".svg")} sizes="(min-width: 1024px) 560px, 100vw" className="drawing bg-white object-contain" />
               </div>
               {family.picture.drawn && (
-                <figcaption className="text-sm text-muted">Schematic section drawn for this site. SWEILLEM has not published a drawing of this product.</figcaption>
+                <figcaption className="text-sm text-muted">Schematic section (not to scale).</figcaption>
               )}
             </figure>
           ) : null}
@@ -128,8 +128,8 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
                 <PrintButton />
               </>
             ) : (
-              <ButtonLink href="/contact" arrow>
-                Ask SWEILLEM about {product.name.toLowerCase()}
+              <ButtonLink href={slug === "jointing-systems" ? "/contact" : "#sizes"} arrow>
+                {slug === "jointing-systems" ? "Ask us for jointing system details" : `Ask us about ${product.name.toLowerCase()}`}
               </ButtonLink>
             )}
             {slug === "pipes" && (
@@ -147,7 +147,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
           id="try-the-joint"
           eyebrow="Try it"
           title="Push a joint home"
-          lede="Drag the pipes together and watch the polyurethane seal squeeze into place, then test it at the published pressures."
+          lede="Drag the pipes together and watch the polyurethane seal squeeze into place, then test it at 0.5, 1 and 2.4 bar."
           className="no-print bg-sunk/50"
         >
           <JointDemo className="mx-auto max-w-[760px]" />
@@ -166,7 +166,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
             <div className="grid gap-3">
               <p className="eyebrow">Specifications</p>
               <h2 id="specifications-title" className="text-[clamp(26px,3.4vw,42px)]">
-                Every published size
+                Every size
               </h2>
             </div>
             {spec.tables.map((t) => {
@@ -178,26 +178,13 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
                 </div>
               );
             })}
-            <div className="grid gap-2">
-              {hasFootnoteMarks(spec.tables) && (
-                <SourceNote>
-                  Values marked * or ** carry a footnote on SWEILLEM’s published table, but the footnote text itself is not published.
-                </SourceNote>
-              )}
-              <SourceNote>
-                {transcribed
-                  ? `SWEILLEM publishes these tables as pictures. They were typed out cell by cell from the pictures on sweillem.net${family.href.replace("/products", "")}.`
-                  : `Copied cell for cell from the tables on sweillem.net${family.href.replace("/products", "")}, as published.`}{" "}
-                Column names are written out in full; hover a heading to see it as published.
-              </SourceNote>
-            </div>
           </div>
         </section>
       )}
 
-      {!spec && product.state === "empty" && slug !== "jointing-systems" && (
-        <div className="wrap py-6">
-          <EmptyProduct name={product.name} />
+      {!spec && slug !== "jointing-systems" && (
+        <div id="sizes" className="wrap scroll-mt-28 py-6">
+          <AskForSizes name={product.name} />
         </div>
       )}
 
@@ -216,35 +203,44 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
   );
 }
 
-function EmptyProduct({ name }: { name: string }) {
+// TODO(factory): real sizes and specifications for products without a spec table
+// (input clutch & end plugs, U-trap sizes). See docs/factory-todo.md.
+function AskForSizes({ name }: { name: string }) {
   return (
-    <div className="grid justify-items-start gap-3 rounded-card border border-dashed border-line bg-surface p-[clamp(20px,3vw,32px)]">
-      <h2 className="text-xl">No sizes published yet</h2>
+    <div className="grid justify-items-start gap-3 rounded-card border border-line bg-surface p-[clamp(20px,3vw,32px)]">
+      <h2 className="text-xl">Contact us for sizes and specifications</h2>
       <p className="max-w-[60ch] text-muted">
-        The {name.toLowerCase()} page on SWEILLEM’s current site is empty, so there is nothing to copy yet. SWEILLEM can tell you which
-        sizes are available for your line.
+        Tell us the line you are building and we will send the sizes and figures of the {name.toLowerCase()} to match it.
       </p>
+      <div className="no-print flex flex-wrap items-center gap-3">
+        <AddToQuote item={{ product: name, size: "To confirm" }} label={`Add to quote: ${name}`} />
+        <ButtonLink href="/contact" variant="ghost">
+          Contact us
+        </ButtonLink>
+      </div>
     </div>
   );
 }
 
+// TODO(factory): real jointing system specs (seal sizes, F joint dimensions,
+// materials per joint type). See docs/factory-todo.md.
 function JointingFacts() {
   return (
     <div className="grid gap-3 rounded-card border border-line bg-surface p-5">
-      <h2 className="text-xl">What SWEILLEM publishes about its joints</h2>
+      <h2 className="text-xl">Our jointing systems</h2>
       <ul className="grid list-disc gap-2 ps-5 text-[15px]">
         <li>
-          The spec tables give each size a joint type, <span className="font-mono">F</span> or <span className="font-mono">C</span>. In the{" "}
+          Every size has an <span className="font-mono">F</span> or <span className="font-mono">C</span> joint. In the{" "}
           <Link href="/products/pipes" className="link">
             pipe tables
           </Link>
-          , F is listed for DN 125 to 200 and C for DN 200 to 1000.
+          , F is used for DN 125 to 200 and C for DN 200 to 1000.
         </li>
-        <li>To stop roots getting in, SWEILLEM uses a polyurethane joint with a hardness of 67 ± 5 Shore A.</li>
+        <li>To stop roots getting in, we use a polyurethane joint with a hardness of 67 ± 5 Shore A.</li>
         <li>Joints are watertight at 0.5, 1 and 2.4 bar, internal or external, and tested for angular deflection to EN 295-3:2012.</li>
       </ul>
       <p className="text-sm text-muted">
-        The Jointing Systems page on the current site is empty. The test results are on{" "}
+        See the test results on{" "}
         <Link href="/joint-performance" className="link">
           Joint performance
         </Link>

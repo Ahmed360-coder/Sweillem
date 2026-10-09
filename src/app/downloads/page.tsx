@@ -19,7 +19,7 @@ export default function DownloadsPage() {
       <PageHeader
         eyebrow="Downloads"
         title="Certificates and spec sheets"
-        lede={`Everything SWEILLEM publishes, in one searchable list: ${files} files and spec sheets you can open now, and the documents that are still to come, marked as such.`}
+        lede={`Our certificates, approvals and spec sheets in one searchable list: ${files} files you can open now, and documents we send on request.`}
       >
         <p className="max-w-[70ch] text-base text-muted sm:text-[15px]">
           For each certificate’s issuer, number and scope in full, see{" "}

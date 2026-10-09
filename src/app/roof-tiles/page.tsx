@@ -2,8 +2,6 @@ import Link from "next/link";
 import { CtaBand } from "@/components/CtaBand";
 import { PageHeader } from "@/components/PageHeader";
 import { RoofTileViewer } from "@/components/RoofTileViewer";
-import { Section } from "@/components/Section";
-import { SourceNote } from "@/components/SourceNote";
 import { TileJourney, type TileStep } from "@/components/TileJourney";
 import { pageMetadata } from "@/lib/metadata";
 
@@ -61,7 +59,7 @@ const steps: TileStep[] = [
   {
     id: "roof",
     title: "On the roof",
-    text: "Row by row, from the eaves to the ridge, the tiles close the roof. This last scene is an illustration.",
+    text: "Row by row, from the eaves to the ridge, the tiles close the roof.",
   },
 ];
 
@@ -87,27 +85,18 @@ export default function RoofTilesPage() {
         </div>
         <TileJourney steps={steps} />
         <div className="wrap pt-8">
-          <SourceNote>
-            Steps from SWEILLEM’s published manufacturing process (About and the company deck), which SWEILLEM describes for its clay
-            products. Before firing the tile is
-            drawn; the photo of the finished tile appears from packing onwards, and the roof scene is an illustration. See the{" "}
+          <p className="text-muted">
+            The steps follow the manufacturing process we use for our clay products. See the{" "}
             <Link href="/process" className="link">
               pipe journey
             </Link>{" "}
             for the full story.
-          </SourceNote>
+          </p>
         </div>
       </section>
 
-      <Section id="details" eyebrow="Specifications" title="Sizes and standards to follow">
-        <div className="grid gap-4 rounded-card border border-dashed border-line bg-surface p-[clamp(20px,3vw,32px)] md:grid-cols-[1fr_auto] md:items-center">
-          <p className="max-w-[62ch] text-muted">
-            SWEILLEM has not published tile models, sizes, weights, coverage or standards yet. They will be added here as soon as they
-            are. Until then, ask SWEILLEM directly and say which colour and how many square metres you need.
-          </p>
-        </div>
-      </Section>
-      <CtaBand title="Roofing a building?" text="Tell SWEILLEM the colour, the roof area and where the tiles are going." />
+      {/* TODO(factory): tile models, sizes, weights, coverage and standards. See docs/factory-todo.md. */}
+      <CtaBand title="Roofing a building?" text="Tell us the colour, the roof area and where the tiles are going, and we will quote." />
     </>
   );
 }

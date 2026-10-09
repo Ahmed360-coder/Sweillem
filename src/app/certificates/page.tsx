@@ -102,7 +102,7 @@ export default function CertificatesPage() {
       <PageHeader
         eyebrow="Certificates"
         title="Certificates"
-        lede="Every certificate SWEILLEM publishes, with its issuer, number and dates read from the document itself. Open any one to see the full copy."
+        lede="Every SWEILLEM certificate, with its issuer, number and dates. Open any one to see the full copy."
       />
 
       <Section id="product" title="Product certificates" lede="For the pipes and their joint seals.">
@@ -116,7 +116,7 @@ export default function CertificatesPage() {
       <Section
         id="management"
         title="Management systems"
-        lede="ISO 9001, ISO 14001 and ISO 45001. SWEILLEM publishes copies from two certification bodies, and both are listed."
+        lede="ISO 9001, ISO 14001 and ISO 45001. We are certified by two certification bodies, and both sets are listed."
       >
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {management.map((c, i) => (

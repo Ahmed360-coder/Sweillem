@@ -107,19 +107,19 @@ export function FamilySizeViewer({ family }: { family: ViewerFamily }) {
           {viewSwitch}
           <div className="aspect-[6/5]">
             {show3d ? (
-              <Fitting3D shape={s.shape} frame={frame3d} onFail={() => setNo3d(true)} className="h-full" label={`3D model of the ${family.name}, shape only: no sizes are published.`} />
+              <Fitting3D shape={s.shape} frame={frame3d} onFail={() => setNo3d(true)} className="h-full" label={`3D model of the ${family.name}, shape only, not to scale.`} />
             ) : (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={s.image} alt={s.alt} className="h-full w-full bg-white object-contain p-4 pt-20" />
             )}
           </div>
           <figcaption className="border-t border-line px-4 py-2.5 text-[13px] text-muted sm:px-6">
-            {show3d ? "Shape only, after SWEILLEM's drawing. No U-trap sizes are published, so it is not to scale." : "SWEILLEM's drawing names the dimensions but publishes no values, so it cannot be drawn to scale."}
+            {show3d ? "Shape only, not to scale." : "Section with the dimensions marked, not to scale."}
           </figcaption>
         </figure>
         <div className="grid gap-4 rounded-card border border-line bg-surface p-[clamp(18px,3vw,24px)]">
           <h3 className="text-xl">{family.name}</h3>
-          <p className="text-muted">SWEILLEM makes the {family.name} but publishes no sizes for it. Ask for the size you need and we will send its figures.</p>
+          <p className="text-muted">Ask us for the {family.name} size you need and we will send its figures.</p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
             <AddToQuote item={{ product: family.name, size: "Size to confirm" }} label={`Add to quote: ${family.name}`} />
             <Link className="link relative text-sm" href={`/products/${family.slug}`}>
@@ -236,7 +236,7 @@ export function FamilySizeViewer({ family }: { family: ViewerFamily }) {
             </ol>
           </div>
         ) : (
-          <p className="font-mono text-xs tracking-[.12em] text-muted uppercase">One size published: DN {item.size}</p>
+          <p className="font-mono text-xs tracking-[.12em] text-muted uppercase">One size: DN {item.size}</p>
         )}
       </div>
 
@@ -305,7 +305,7 @@ export function FamilySizeViewer({ family }: { family: ViewerFamily }) {
           </div>
           {item.drawn.length > 0 && (
             <div className="grid gap-1.5 border-t border-line pt-3 text-[13px] text-muted">
-              <p className="font-semibold text-ink">Drawn, not published</p>
+              <p className="font-semibold text-ink">Drawing notes</p>
               <ul className="grid list-disc gap-1 ps-5">
                 {item.drawn.map((d) => (
                   <li key={d}>{d}</li>

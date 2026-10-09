@@ -22,7 +22,7 @@ export const metadata = pageMetadata({
 const stats = [
   { value: "90+", label: "Years of experience", source: "About Us" },
   { value: "1987", label: "New factory with advanced production lines", source: "About Us" },
-  { value: "14", label: "Countries named on the customer list, from Germany to Brunei", source: "About Us" },
+  { value: "14", label: "Countries on our customer list, from Germany to Brunei", source: "About Us" },
 ];
 
 function Photo({ src, alt, contain }: { src: string; alt: string; contain?: boolean }) {
@@ -188,7 +188,6 @@ export default function AboutPage() {
                 same: continuous improvement in delivery time, price and performance.
               </p>
             </div>
-            <SourceNote>Edited from About Us on sweillem.net.</SourceNote>
           </div>
           <div className="grid grid-cols-2 gap-3 self-start">
             <div className="reveal relative col-span-2 aspect-[16/9] overflow-hidden rounded-card">
@@ -235,7 +234,7 @@ export default function AboutPage() {
             From a Cairo plant in 1935 to today
           </h2>
           <p className="lede">
-            The main steps in SWEILLEM’s history, with the years SWEILLEM has published.
+            The main steps in our history, from one Cairo plant to customers on three continents.
           </p>
         </div>
         <HeritageTrack milestones={milestones} reach={reach} />
@@ -248,12 +247,11 @@ export default function AboutPage() {
       >
         <ReachMap />
         <SourceNote className="mt-4">
-          The list on About Us ends with “etc.”, so the map also marks the countries filled red on SWEILLEM’s own export
-          map. Map shapes: Natural Earth. Satellite views: NASA Earth at Night and Blue Marble.
+          Map shapes: Natural Earth. Satellite views: NASA Earth at Night and Blue Marble.
         </SourceNote>
       </Section>
 
-      <Section id="locations" title="Where SWEILLEM is" lede="Addresses as SWEILLEM publishes them on its site and certificates.">
+      <Section id="locations" title="Where SWEILLEM is" lede="Our office, factory and other addresses in Egypt, Germany and Saudi Arabia.">
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {locations.map((l, i) => (
             <li
@@ -264,7 +262,6 @@ export default function AboutPage() {
               <span className="font-mono text-[12px] font-medium tracking-[.12em] text-maroon uppercase">{l.kind}</span>
               <h3 className="text-lg">{l.name}</h3>
               <p className="text-base sm:text-[15px]">{l.address}</p>
-              <SourceNote>Source: {l.source}</SourceNote>
             </li>
           ))}
         </ul>

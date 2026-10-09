@@ -4,7 +4,6 @@ import Link from "next/link";
 import { CtaBand } from "@/components/CtaBand";
 import { PageHeader } from "@/components/PageHeader";
 import { Section } from "@/components/Section";
-import { SourceNote } from "@/components/SourceNote";
 import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata({
@@ -34,7 +33,7 @@ const points = [
   },
   {
     title: "Shorter delivery",
-    text: "Shortest delivery time is one of SWEILLEM’s main objectives, and warehouses in different parts of the world keep it short.",
+    text: "Short delivery times are one of our main objectives, and warehouses in different parts of the world keep it short.",
     source: "About Us",
   },
   {
@@ -93,7 +92,6 @@ export default function EuroSweillemPage() {
                   Quality and standards
                 </Link>
               )}
-              <SourceNote>Source: {p.source}</SourceNote>
             </li>
           ))}
         </ul>
@@ -115,7 +113,7 @@ export default function EuroSweillemPage() {
 
       <Section id="address" title="SWEILLEM in Germany">
         <div className="reveal grid gap-2 rounded-card border border-line bg-surface p-[clamp(20px,3vw,32px)] sm:max-w-md">
-          <p className="font-mono text-[12px] font-medium tracking-[.12em] text-maroon uppercase">Address listed on sweillem.net</p>
+          <p className="font-mono text-[12px] font-medium tracking-[.12em] text-maroon uppercase">Our address in Germany</p>
           <p className="text-lg">
             Stiegstraße 60
             <br />

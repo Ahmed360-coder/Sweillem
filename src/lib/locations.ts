@@ -1,5 +1,5 @@
-// SWEILLEM's places, as the company publishes them on its site and
-// certificates. Used on About and Contact.
+// SWEILLEM's places. `source` records where each address comes from, for
+// editors only; it is not shown. Used on About and Contact.
 
 export interface Place {
   kind: string;
