@@ -1,17 +1,20 @@
 import { expect, test } from "@playwright/test";
 import { productSpecs } from "../../content/products";
+import { cellText, displayRows } from "../../src/lib/specs";
 import { skipIntro } from "./helpers";
 
 test.beforeEach(async ({ page }) => skipIntro(page));
 
-test("every published spec row is on its product page", async ({ page }) => {
+test("every spec row is on its product page", async ({ page }) => {
   for (const [slug, spec] of Object.entries(productSpecs)) {
     await page.goto(`/products/${slug}`);
     for (const t of spec.tables) {
       const rows = page.locator(`#${t.id} table tbody tr`);
-      await expect(rows, `${slug} ${t.id}`).toHaveCount(t.rows.length);
-      // Spot-check the last row cell for cell (soft hyphens render as "-").
-      const last = t.rows.at(-1)!.map((c) => c.replace(/­/g, "-").trim() || "–");
+      // Rows that differ only in length are merged into one.
+      const shown = displayRows(t);
+      await expect(rows, `${slug} ${t.id}`).toHaveCount(shown.length);
+      // Spot-check the last row cell for cell, as displayed (no footnote marks, "n/a" for no class).
+      const last = shown.at(-1)!.map((c, i) => cellText(c, t.columns[i]));
       const cells = await rows.last().locator("th, td").allInnerTexts();
       expect(cells.slice(0, last.length).map((c) => c.trim())).toEqual(last);
     }
@@ -66,10 +69,11 @@ test("add to quote with reduced motion counts straight away and flies nothing", 
 test("compare shows both classes for a shared size and says when a class is missing", async ({ page }) => {
   await page.goto("/products/compare");
   await page.locator("label", { hasText: /^400/ }).click();
-  await expect(page.locator("section[aria-live]")).toContainText("486 ± 8**");
-  await expect(page.locator("section[aria-live]")).toContainText("492 ± 8**");
+  await expect(page.locator("section[aria-live]")).toContainText("486 ± 8");
+  await expect(page.locator("section[aria-live]")).toContainText("492 ± 8");
+  await expect(page.locator("section[aria-live]")).not.toContainText("*");
   await page.locator("label", { hasText: /^900/ }).click();
-  await expect(page.locator("section[aria-live]")).toContainText("does not publish DN 900 in N class");
+  await expect(page.locator("section[aria-live]")).toContainText("DN 900 is not made in N class");
 });
 
 test("roof tile viewer switches colour and view", async ({ page }) => {
@@ -87,8 +91,9 @@ test("on a phone, a long spec table shows three rows and folds the rest away", a
   const table = page.locator("#n-pipes-normal-strength");
   const cards = table.locator("li:visible");
   await expect(cards).toHaveCount(3);
-  await table.getByText("Show all 16 rows").click();
-  await expect(cards).toHaveCount(16);
+  await table.getByText("Show all 11 rows").click();
+  await expect(cards).toHaveCount(11);
+  await expect(cards.filter({ hasText: "1 / 1.25 / 1.5" })).toHaveCount(1);
   await table.getByText("Show fewer rows").click();
   await expect(cards).toHaveCount(3);
 });
@@ -117,11 +122,11 @@ test("size slider redraws the pipe and lists the fittings made at that size", as
   await expect(finder.getByRole("img", { name: /DN 125 N class pipe drawn to scale/ })).toBeVisible();
   await expect(finder.getByRole("link", { name: /^Enlarger 125/ })).toHaveAttribute("href", /product=enlarger-reducer.*dn=125%2F150/);
 
-  // DN 1000 is H class only, and no fitting is published at that size.
+  // DN 1000 is H class only, and no fitting is listed at that size.
   await slider.fill("12");
   await expect(finder).toContainText("1120 ± 15");
   await expect(finder.getByRole("radio", { name: /^H class/ })).toBeChecked();
-  await expect(finder).toContainText("publishes no fittings at DN 1000");
+  await expect(finder).toContainText("At DN 1000 we list the pipe only");
 });
 
 test("the size finder shows every product family in 3D and to scale", async ({ page }) => {
@@ -142,7 +147,7 @@ test("the size finder shows every product family in 3D and to scale", async ({ p
   await slider.fill("0");
   await expect(slider).toHaveAttribute("aria-valuetext", "DN 125");
   await expect(finder).toContainText("90° ± 5°");
-  await expect(finder).toContainText("Bend radius: not published");
+  await expect(finder).toContainText("Bend radius drawn at 1.5 × the outer ø.");
   await expect(finder.getByRole("img", { name: /3D model of the Bends, 90°, DN 125 N class/ })).toBeVisible();
   await finder.getByRole("button", { name: "To scale" }).click();
   await expect(finder.getByRole("img", { name: /Bends, 90°, DN 125 N class, drawn to scale/ })).toBeVisible();
@@ -166,7 +171,7 @@ test("the size finder shows every product family in 3D and to scale", async ({ p
   await finder.getByRole("button", { name: "To scale" }).click();
   await expect(finder.getByRole("img", { name: /Close-up of the spigot end and its seal of the Pipe with joints, C joint, DN 500 N class/ })).toBeVisible();
   await expect(finder.getByRole("img", { name: /Close-up of the socket end and its seal/ })).toBeVisible();
-  await expect(finder.getByText("Socket depth: not published, drawn 110 mm.")).toBeVisible();
+  await expect(finder.getByText("Socket depth drawn at 110 mm (illustrative).")).toBeVisible();
 
   // Perforated pipe: drawn with its socket joint, the socket sizes taken from the pipe table.
   await families.getByRole("button", { name: "Perforated Pipe", exact: true }).click();
@@ -174,12 +179,12 @@ test("the size finder shows every product family in 3D and to scale", async ({ p
   await finder.getByRole("button", { name: "To scale" }).click();
   await expect(finder.getByRole("img", { name: /Close-up of the socket joint of the Perforated Pipe, MP system, DN 300/ })).toBeVisible();
 
-  // The U-trap has no published sizes: shape only, with SWEILLEM's drawing.
+  // The U-trap has no size table: shape only, with its drawing.
   await families.getByRole("button", { name: "U-Trap", exact: true }).click();
-  await expect(finder).toContainText("publishes no sizes");
+  await expect(finder).toContainText("Ask us for the U-Trap size you need");
   await expect(slider).toHaveCount(0);
   await finder.getByRole("button", { name: "To scale" }).click();
-  await expect(finder.getByRole("img", { name: /dimension drawing of the U-trap/ })).toBeVisible();
+  await expect(finder.getByRole("img", { name: /Section drawing of the U-trap/ })).toBeVisible();
 
   // Back to pipes: the pipe slider and its fittings list.
   await families.getByRole("button", { name: "Pipes", exact: true }).click();

@@ -102,7 +102,7 @@ test("empty quote list: the form asks for a description instead", async ({ page 
 test("contact page: details and form", async ({ page }) => {
   await page.goto("/contact");
   await expect(page.getByRole("link", { name: "info@sweillem.net" }).first()).toHaveAttribute("href", "mailto:info@sweillem.net");
-  await expect(page.getByRole("link", { name: "(+2) 01005382615" }).first()).toHaveAttribute("href", "tel:+201005382615");
+  await expect(page.getByRole("link", { name: "+20 100 538 2615" }).first()).toHaveAttribute("href", "tel:+201005382615");
   await expect(page.getByText("Osman Towers, Kornish El Nile")).toBeVisible();
 
   await page.getByRole("button", { name: "Prepare message" }).click();

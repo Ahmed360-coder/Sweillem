@@ -13,9 +13,11 @@ export function TopBar() {
     <div className="border-b border-line bg-sunk text-[13px] text-muted">
       <div className="wrap flex min-h-11 items-center justify-between gap-3">
         <p className="flex min-w-0 items-center gap-4">
-          <a href={`mailto:${company.email}`} aria-label={`Email ${company.email}`} className="truncate text-ink no-underline hover:text-maroon">
+          <a href={`mailto:${company.email}`} className="truncate text-ink no-underline hover:text-maroon">
             {/* Narrow phones: a short label, so the address is never cut off. */}
-            <span className="min-[420px]:hidden">Email</span>
+            <span className="min-[420px]:hidden">
+              Email<span className="sr-only"> {company.email}</span>
+            </span>
             <span className="max-[419px]:hidden">{company.email}</span>
           </a>
           <a href={mobile.href} className="hidden whitespace-nowrap text-ink no-underline hover:text-maroon min-[640px]:inline">

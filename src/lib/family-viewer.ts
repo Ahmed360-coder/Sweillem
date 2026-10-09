@@ -483,7 +483,7 @@ export function viewerFamilies(): ViewerFamily[] {
           name: p.name,
           note: "Shape only, not to scale.",
           types: [],
-          shapeOnly: { image: p.images[0], alt: "SWEILLEM's dimension drawing of the U-trap (DN2 d8, d4, d3, A, B, M1), with no values", shape: { kind: "utrap", d1: pipe.d1, d3: pipe.d3 } },
+          shapeOnly: { image: p.images[0], alt: "Section drawing of the U-trap with its dimensions marked: DN2 d8, d4, d3, A, B and M1", shape: { kind: "utrap", d1: pipe.d1, d3: pipe.d3 } },
         },
       ];
     }

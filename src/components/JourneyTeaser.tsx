@@ -68,8 +68,7 @@ export function JourneyTeaser({ initial }: { initial: string }) {
   );
 }
 
-/** "Scroll to move it along", only where scrolling does move it. */
+/** "Scroll down and the pipe moves", hidden with reduced motion, where the card stays on the kiln. Pure CSS, so server and client HTML match. */
 export function JourneyScrollHint() {
-  const reduce = useReducedMotion();
-  return reduce ? null : <> Scroll down and the pipe moves with you.</>;
+  return <span className="motion-reduce:hidden"> Scroll down and the pipe moves with you.</span>;
 }
